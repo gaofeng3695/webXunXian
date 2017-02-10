@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/lib/css/bootstrap.css" rel="stylesheet">
+        <link href="/src/css/index.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="index_wrapper">
+            <div class=" container-fluid">
+                <!-- /.row -->
+                <div class="row dashboard">
+                    <div class="col-lg-3 col-md-6 col-xs-12 box">
+                        <div class="title"><span>企业人员</span></div>
+                        <div class="qtty"><span class="num">--</span><span>人</span></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-xs-12 box">
+                        <div class="title">巡检中人员</div>
+                        <div class="qtty"><span class="num">--</span><span>人</span></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-xs-12 box">
+                        <div class="title">本日最新事件</div>
+                        <div class="qtty"><span class="num">--</span><span>起</span></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-xs-12 box">
+                        <div class="title">本日最新任务</div>
+                        <div class="qtty"><span class="num">--</span><span>起</span></div>
+                    </div>
+
+                    <!--<div class="col-lg-3 col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-comments fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge">26</div>
+                                        <div>New Comments!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+                <!-- /.row -->
+                <div class="row row_main">
+                    <!--任务图表-->
+                    <div class="col-lg-5 mainbox">
+                        <div class="title">本周任务</div>
+                        <div class="sub_title">
+                            <div class="box01">
+                                <div>任务总量</div>
+                                <div class="num">10</div>
+                            </div>
+                            <div class="box01">
+                                <div>已完成</div>
+                                <div class="num">7</div>
+                            </div>
+                            <div class="box01">
+                                <div>处理中</div>
+                                <div class="num">3</div>
+                            </div>
+                        </div>
+                        <div id="taskChart" class="chart"></div>
+                    </div>
+                    <!--任务列表-->
+                    <div class="col-lg-7 mainbox">
+                        <div class="title">任务代办（ <span>5</span> ）
+                            <a class="more" href="/index.html">更多 ></a>
+                        </div>
+                        <div class="wrapper">
+                            <div class="line">
+                                <div class="line_title">
+                                    <span class="person">张三子</span>
+                                    <span>任务号：</span>
+                                    <span>201609087897</span>
+                                </div>
+                                <div class="sub_wrap">
+                                    <div class="icon record">
+
+                                    </div>
+                                    <div class="mybtn">
+                                        处置
+                                    </div>
+                                    <div class="content">
+                                        <div class="desc">
+                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
+                                        </div>
+                                        <div class="dis_title">
+                                            <span class="person">李明飞</span>
+                                            <span class="handle">填写了处置信息</span>
+                                            <span class="date">2016.9.12 10:17</span>
+                                        </div>
+                                        <div class="dispose">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="line_title">
+                                    <span class="person">张三子</span>
+                                    <span>任务号：</span>
+                                    <span>201609087897</span>
+                                </div>
+                                <div class="sub_wrap">
+                                    <div class="icon record">
+
+                                    </div>
+                                    <div class="mybtn">
+                                        处置
+                                    </div>
+                                    <div class="content">
+                                        <div class="desc">
+                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
+                                        </div>
+                                        <div class="dis_title">
+                                            <span class="person">李明飞</span>
+                                            <span class="handle">填写了处置信息</span>
+                                            <span class="date">2016.9.12 10:17</span>
+                                        </div>
+                                        <div class="dispose">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="line_title">
+                                    <span class="person">张三子</span>
+                                    <span>任务号：</span>
+                                    <span>201609087897</span>
+                                </div>
+                                <div class="sub_wrap">
+                                    <div class="icon record">
+
+                                    </div>
+                                    <div class="mybtn">
+                                        处置
+                                    </div>
+                                    <div class="content">
+                                        <div class="desc">
+                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
+                                        </div>
+                                        <div class="dis_title">
+                                            <span class="person">李明飞</span>
+                                            <span class="handle">填写了处置信息</span>
+                                            <span class="date">2016.9.12 10:17</span>
+                                        </div>
+                                        <div class="dispose">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--事件图表-->
+                    <div class="col-lg-5 mainbox">
+                        <div class="title">本周事件 <span>2016.02.17-2016.02.24</span></div>
+                        <div id="eventChart" class="chart">这是图表</div>
+                        <div class="sub_title">
+                            <div class="line">
+                                <div class="ceil">
+                                    <div class="ceil_box e_all">
+                                        <span>总巡线事件</span>
+                                        <span>（<span>100</span>起）</span>
+                                    </div>
+                                </div>
+                                <div class="ceil">
+                                    <div class="ceil_box e_nature">
+                                        <span>自然灾害</span>
+                                        <span><span>30</span>起</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="ceil">
+                                    <div class="ceil_box e_other">
+                                        <span>第三方施工</span>
+                                        <span><span>30</span>起</span>
+                                    </div>
+                                </div>
+                                <div class="ceil">
+                                    <div class="ceil_box e_self">
+                                        <span>管线设备</span>
+                                        <span><span>30</span>起</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--事件列表-->
+                    <div class="col-lg-7 mainbox">
+                        <div class="title">事件描述（ <span>5</span> ）
+                            <a class="more" href="/index.html">更多 ></a>
+                        </div>
+                        <div class="line">
+                            <div class="line_title">
+                                <span class="perosn">张擅自</span>
+                                <span>事件号：</span>
+                                <span>201609087897</span>
+                            </div>
+                            <div class="sub_wrap">
+                                <div class="icon record">
+
+                                </div>
+
+                                <div class="content">
+                                    <div class="con_title">
+                                        <span class="date">2016.12.12 12:14</span>
+                                        <span class="type">第三方施工——道路返修</span>
+                                        <span class="scope">所属范围内</span>
+                                    </div>
+                                    <div class="des_wrap">
+                                        <div class="mybtn">
+                                            查看
+                                        </div>
+                                        <div class="desc">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                        <div class="dist">
+                                            北京市海淀区科大天工大厦A座13层
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="line_title">
+                                <span>事件号：</span>
+                                <span>201609087897</span>
+                            </div>
+                            <div class="sub_wrap">
+                                <div class="icon record">
+
+                                </div>
+
+                                <div class="content">
+                                    <div class="con_title">
+                                        <span class="date">2016.12.12 12:14</span>
+                                        <span class="type">第三方施工——道路返修</span>
+                                        <span class="scope">所属范围内</span>
+                                    </div>
+                                    <div class="des_wrap">
+                                        <div class="mybtn">
+                                            查看
+                                        </div>
+                                        <div class="desc">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                        <div class="dist">
+                                            北京市海淀区科大天工大厦A座13层
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="line_title">
+                                <span>事件号：</span>
+                                <span>201609087897</span>
+                            </div>
+                            <div class="sub_wrap">
+                                <div class="icon record">
+
+                                </div>
+
+                                <div class="content">
+                                    <div class="con_title">
+                                        <span class="date">2016.12.12 12:14</span>
+                                        <span class="type">第三方施工——道路返修</span>
+                                        <span class="scope">所属范围内</span>
+                                    </div>
+                                    <div class="des_wrap">
+                                        <div class="mybtn">
+                                            查看
+                                        </div>
+                                        <div class="desc">
+                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                        </div>
+                                        <div class="dist">
+                                            北京市海淀区科大天工大厦A座13层
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+        </div>
+    <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/echarts.js"></script>
+    <script src="/src/js/index.js"></script>
+    </body>
+</html>

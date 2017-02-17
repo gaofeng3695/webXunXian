@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/lib/css/bootstrap.css" rel="stylesheet">
+
+    <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
+    <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/src/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="/src/css/jasxxws.css" rel="stylesheet">
+    <link href="/src/css/event.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">
+                    <img src="/src/images/main/icon_logo.png">
+                    <span>巡线卫士</span>
+                    <img src="/src/images/main/logo_desc.png">
+                </a>
+            </div>
+            <ul class="nav navbar-right top-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 张三丰 <b class="caret"></b></a>
+                    <ul class="dropdown-menu alert-dropdown">
+                        <li>
+                            <a href="#">个人资料</a>
+                        </li>
+                        <li>
+                            <a href="#">修改密码</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+                    <ul class="dropdown-menu alert-dropdown">
+                        <li>
+                            <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">View All</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <ul class="dropdown-menu alert-dropdown">
+                        <li>
+                            <a href="#">个人资料</a>
+                        </li>
+                        <li>
+                            <a href="#">修改密码</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li class="active">
+                        <a href="index.html"><i class="fa fa-fw fa-home"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="/src/html/event.html"><i class="fa fa-fw fa-list-ul"></i> 事件管理</a>
+                    </li>
+                    <li>
+                        <a href="/src/html/task.html"><i class="fa fa-fw fa-file"></i> 任务管理</a>
+                    </li>
+                    <li>
+                        <a href="forms.html"><i class="fa fa-fw fa-map-marker"></i> 一张图</a>
+                    </li>
+                    <li>
+                        <a href="bootstrap-elements.html"><i class="fa fa-fw fa-wrench"></i> 设备管理</a>
+                    </li>
+                    <li>
+                        <a href="bootstrap-grid.html"><i class="fa fa-fw fa-bar-chart-o"></i> 统计分析</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-briefcase"></i> 企业管理 <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="demo" class="collapse">
+                            <li>
+                                <a href="#">Dropdown Item</a>
+                            </li>
+                            <li>
+                                <a href="#">Dropdown Item</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="blank-page.html"><i class="fa fa-fw fa-envelope"></i> 消息中心</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+            <!-- container-fluid -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        2131
+                    </div>
+                </div>
+                <!--筛选条件-->
+                <div class="screening">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3">
+                            <div class="btn-group select_btn status_relation1" data-toggle="buttons">
+                                <label class="btn btn-default">
+                                    <input type="radio" name="status" autocomplete="off" checked>全部
+                                </label>
+                                <label class="btn btn-default active">
+                                    <input type="radio" name="status" autocomplete="off">处理中
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="radio" name="status" autocomplete="off">已完成
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="btn-group select_btn" data-toggle="buttons">
+                                <label class="btn btn-default active">
+                                    <input type="radio" name="date" autocomplete="off" checked>今天
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="radio" name="date" autocomplete="off">本周
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="radio" name="date" autocomplete="off">本月
+                                </label>
+                            </div>
+                        </div>
+                        <!--搜索框-->
+                        <div class="col-lg-3 col-md-3 col-lg-offset-1 col-md-offset-1">
+                            <div class="input_append">
+                                <input type="text" class="search-query" placeholder="输入关键字搜索"><button type="submit" class="btn">确定</button>
+                            </div>
+                        </div>
+                        <!--/搜索框-->
+                        <div class="col-lg-2 col-md-2 text-right">
+                            <button class="btn btn_search">高级搜索&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-down"></span></button>
+                        </div>
+                    </div>
+                    <!--条件-->
+                    <div class="row">
+                        <div class="container-fluid">
+                            <div class="nav_main">
+                                <b class="org_bot_cor">
+                                    <i></i>
+                                </b>
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 text-right">
+                                        事件状态：
+                                    </div>
+                                    <div class="col-lg-11 col-md-11 main_list status_relation2">
+                                        <span>全部</span>
+                                        <span class="active">处理中</span>
+                                        <span>已完成</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 text-right">
+                                        事件类型：
+                                    </div>
+                                    <div class="col-lg-11 col-md-11 main_list status_nav">
+                                        <span class="active">全部</span>
+                                        <span>第三方活动<i class="glyphicon glyphicon-menu-down"></i></span>
+                                        <span>自然灾害<i class="glyphicon glyphicon-menu-down"></i></span>
+                                        <span>管道设施<i class="glyphicon glyphicon-menu-down"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row status_list">
+                                    <div class="col-lg-1 col-md-1"></div>
+                                    <div class="col-lg-11 col-md-11 main_list">
+                                        <ul>
+                                            <li>（
+                                                <span class="active">全部</span>
+                                                <span>施工</span>
+                                                <span>占压</span>
+                                                <span>圈闭或包封</span>
+                                                <span>碾压</span>
+                                                <span>耕种</span>
+                                                <span>疏浚与清淤</span>
+                                                <span>其他</span>）
+                                            </li>
+                                            <li>（
+                                                <span class="active">全部</span>
+                                                <span>地面沉降或塌陷</span>
+                                                <span>边坡变化</span>
+                                                <span>深根植物倾倒</span>
+                                                <span>水淹</span>
+                                                <span>泥石流</span>
+                                                <span>山体滑坡</span>
+                                                <span>其他</span>）
+                                            </li>
+                                            <li>（
+                                                <span class="active">全部</span>
+                                                <span>本体</span>
+                                                <span>附属设施</span>）
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 text-right">
+                                        时&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;间：
+                                    </div>
+                                    <div class="col-lg-11 col-md-11 main_list">
+                                        <span class="active">全部</span>
+                                        <span>自定义</span>
+                                        <input size="16" type="text" id="datetimeStart" readonly class="form_datetime"> --
+                                        <input size="16" type="text" id="datetimeEnd" readonly class="form_datetime">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 text-right">
+                                        所属范围：
+                                    </div>
+                                    <div class="col-lg-11 col-md-11 main_list">
+                                        <span class="active">全部</span>
+                                        <span>保护范围内</span>
+                                        <span>保护范围外</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-1 col-md-1 text-right">
+                                        漏气状态：
+                                    </div>
+                                    <div class="col-lg-11 col-md-11 main_list">
+                                        <span class="active">全部</span>
+                                        <span>漏气</span>
+                                        <span>未漏气</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--条件-->
+                </div>
+                <!--/筛选条件-->
+
+                <!--数据列表-->
+                <div class="data_tab">
+                    <div class="row">
+                        <div class="container-fluid">
+                            <div id="toolbar" class="btn-group">
+                                <button id="btn_add" type="button" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                                </button>
+                            </div>
+                            <table id="table"></table>
+                        </div>
+                    </div>
+                </div>
+                <!--/数据列表-->
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/bootstrap.min.js"></script>
+    <script src="/lib/js/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="/src/js/event/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="/src/js/event/event.js"></script>
+
+    <script type="text/javascript">
+        $("#datetimeStart").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            // startDate: new Date()
+        }).on("click", function() {
+            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
+        });
+        $("#datetimeEnd").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            // startDate: new Date()
+        }).on("click", function() {
+            $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
+        });
+    </script>
+
+    <script>
+        /**
+         * Created by raid on 2016/12/28.
+         */
+        $(function() {
+            window.operateEvents = {
+                'click .remove': function(e, value, row, index) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/wadmin/ad/deleteAd",
+                        data: {
+                            adId: row['adId']
+                        },
+                        dataType: 'JSON',
+                        success: function(data) {
+                            if (data.result != 0) {
+                                toastr.info("info", data.message);
+                                return;
+                            }
+                            toastr.success("success", '删除成功');
+                            $("#table").bootstrapTable('remove', {
+                                field: 'adId',
+                                values: [row['adId']]
+                            });
+                        }
+                    });
+
+                    return false;
+                },
+                'click .using': function(e, value, row, index) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/wadmin/ad/usingAd",
+                        data: {
+                            adId: row['adId']
+                        },
+                        dataType: 'JSON',
+                        success: function(data) {
+                            if (data.result != 0) {
+                                toastr.info("info", data.message);
+                                return;
+                            }
+                            toastr.success("success", '使用该广告');
+                            $("#table").bootstrapTable('refresh');
+                        }
+                    });
+
+                    return false;
+                },
+                'click .upload': function(e, value, row, index) {
+                    $('.adUpload').fileupload({
+                        url: '/wadmin/ad/adUpload/adId/' + row['adId'],
+                        dataType: 'json',
+                        add: function(e, data) {
+                            data.submit();
+                        },
+                        done: function(e, data) {
+                            var response = data.result;
+                            if (response.result != 0) {
+                                toastr.error(response.message);
+                                return false;
+                            }
+                            toastr.success("上传成功");
+                            $("#table").bootstrapTable('refresh');
+                        }
+                    });
+
+                    return false;
+                }
+            };
+
+
+            /*bootstrap table*/
+            $('#table').bootstrapTable({
+                url: "/wadmin/ad/doAdList", //请求数据url
+                toolbar: "#toolbar",
+                // toolbarAlign : "right",
+                queryParams: function(params) {
+                    return {
+                        offset: params.offset, //页码
+                        limit: params.limit, //页面大小
+                        search: params.search, //搜索
+                        order: params.order, //排序
+                        ordername: params.sort, //排序
+                    };
+                },
+                detailView: true,
+                detailFormatter: function(index, row) {
+                    var image = '<div class="photos">' +
+                        '<a target="_blank" href="' + row['jumpUrl'] + '"><img alt="image" class="feed-photo" src="' + row['picUrl'] + '"></a>' +
+                        '</div>';
+                    return image;
+                },
+                showHeader: true,
+                showColumns: true,
+                showRefresh: true,
+                pagination: true, //分页
+                sidePagination: 'server', //服务器端分页
+                pageNumber: 1,
+                pageList: [5, 10, 20, 50], //分页步进值
+                search: true, //显示搜索框
+                //表格的列
+                columns: [{
+                    field: 'state', //域值
+                    checkbox: true, //复选框
+                    align: 'center',
+                    // title: '广告ID', //标题
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '4%',
+                }, {
+                    field: 'picUrl', //域值
+                    title: '任务编号', //标题
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    formatter: function(value, row, index) {
+                        return "<img style='width: 50px;height: 50px;' src='" + value + "' alt=''>"
+                    }
+                }, {
+                    field: 'jumpUrl', //域值
+                    title: '任务状态', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '8%',
+                    editable: true,
+                    cellStyle: function(value, row, index) {
+                        return {
+                            css: {
+                                "max-width": "300px",
+                                "word-wrap": "break-word",
+                                "word-break": "normal"
+                            }
+                        };
+                    }
+                }, {
+                    field: 'adDesc', //域值
+                    title: '事件类型', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: true,
+                }, {
+                    field: 'displayType', //域值
+                    title: '最新处置类型', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: {
+                        type: 'select',
+                        source: [ //0->无广告，1->静态不可点击，2->静态可点击，3->动态不可点击，4->动态可点击
+                            {
+                                value: 0,
+                                text: '无广告'
+                            }, {
+                                value: 1,
+                                text: '静态不可点击'
+                            }, {
+                                value: 2,
+                                text: '静态可点击'
+                            }, {
+                                value: 3,
+                                text: '动态不可点击'
+                            }, {
+                                value: 4,
+                                text: '动态可点击'
+                            },
+                        ]
+                    }
+                }, {
+                    field: 'displaySeconds', //域值
+                    title: '最新处置时间', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: true,
+                }, {
+                    field: 'scope', //域值
+                    title: '任务发起人', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '8%',
+                    editable: {
+                        type: 'select',
+                        source: [ //0->全国
+                            {
+                                value: 0,
+                                text: '全国'
+                            },
+                        ]
+                    }
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    width: '20%',
+                    formatter: operateFormatter
+                }],
+                onEditableSave: function(field, row, oldValue, $el) {
+                    $.ajax({
+                        type: "post",
+                        url: "/wadmin/ad/updateAdInfo",
+                        dataType: 'json',
+                        data: row,
+                        success: function(data, status) {
+                            if (status == "success" && data.result == 0) {
+                                toastr.success('更新成功');
+                                if (field == 'jumpUrl') {
+                                    $('#table').bootstrapTable("refresh");
+                                }
+                                return true;
+                            } else {
+                                toastr.info(data.message);
+                                $('#table').bootstrapTable("refresh");
+                            }
+                        },
+                        error: function() {
+                            alert("Error");
+                        },
+                        complete: function() {
+
+                        }
+
+                    });
+                }
+            });
+
+            $("#btn_add").click(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/wadmin/ad/addAd",
+                    dataType: 'JSON',
+                    success: function(data) {
+                        if (data.result != 0) {
+                            toastr.info("info", data.message);
+                            return;
+                        }
+                        toastr.success("success", '标签');
+                        $("#table").bootstrapTable('insertRow', {
+                            index: 0,
+                            row: data.data
+                        });
+                    }
+                });
+
+            });
+
+            function operateFormatter(value, row, index) {
+                return [
+                    '<a class="using" href="javascript:void(0)" title="Remove">',
+                    '<i class="fa fa-check"></i>',
+                    '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+                    '<a class="upload" style="cursor: pointer" href="javascript:void(0)" title="Upload">',
+                    '<label style="cursor: pointer" for="' + row['adId'] + '">',
+                    '<i class="fa fa-upload"></i>',
+                    '<input type="file" name="adUpload" style="display: none;" class="adUpload" id="' + row['adId'] + '" >',
+                    '</label>',
+                    '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+                    '<a class="remove" href="javascript:void(0)" title="Using">',
+                    '<i class="fa fa-times"></i>',
+                    '</a>',
+                ].join('');
+            }
+
+        });
+    </script>
+</body>
+
+</html>

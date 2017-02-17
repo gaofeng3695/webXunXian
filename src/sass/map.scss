@@ -1,0 +1,272 @@
+$blue : #51b7ff;
+.hide{
+    display: none;
+}
+@mixin hidd{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li{
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.mdl_wrapper{
+    position: relative;
+    height: 900px;
+    min-width: 600px;
+    margin: -10px;
+    .map_wrapper{
+        height: 100%;
+    }
+}
+
+.tab_wrapper{
+    position : absolute;
+    font-size: 12px;
+    color: #666;
+    top: 40px;
+    left: 40px;
+    z-index: 999;
+    .item_wrapper{
+        box-shadow:0px 0px 12px #888;
+        overflow: hidden;
+        background: rgba(88,88,88,.9);
+        margin: 0;
+        padding:0 ;
+        list-style: none;
+        .border{
+            width: 1px;
+            height: 22px;
+            margin-top:6px;
+            background: #fff;
+            float: left;
+        }
+        .item{
+
+            float: left;
+            box-sizing: border-box;
+            width: 87px;
+            padding-left: 11px;
+            font-size: 12px;
+            color: white;
+            line-height: 36px;
+            cursor: pointer;
+            &:hover{
+                background-color: rgba(11,11,11,.4) !important;
+            }
+            &.active{
+                background-color: rgba(11,11,11,.4) !important;
+            }
+            &:nth-child(1){
+                background: url(/src/images/map/icon_down.png) no-repeat 69px center;
+            }
+            &:nth-child(3){
+                background: url(/src/images/map/icon_down.png) no-repeat 69px center;
+            }
+            &:nth-child(5){
+                background: url(/src/images/map/icon_search.png) no-repeat 65px center;
+                background-size: 13px;
+            }
+            &:nth-child(7){
+                background: url(/src/images/map/icon_down.png) no-repeat 56px center;
+                padding-left:24px;
+
+            }
+        }
+    }
+    .result_wrapper{
+        width: 351px;
+        margin-top: 5px;
+        /*box-shadow:0px 0px 12px #ccc;*/
+        .sub_wrapper{
+            box-shadow:0px 0px 12px #888;
+            background: #fff;
+            border: 2px solid #ececec;
+            padding-bottom: 10px;
+            .title{
+                padding-left: 20px;
+                box-sizing: border-box;
+                line-height: 28px;
+                overflow: hidden;
+                .num{
+                    color: $blue;
+                    margin-right: 25px;
+                    padding-left: 6px;
+                }
+                .close_btn{
+                    float: right;
+                    padding: 0 8px;
+                    margin-right: 10px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    &:hover{
+                        color: $blue;
+                    }
+                }
+            }
+            .search_wrapper{
+                overflow: hidden;
+                border: 2px solid $blue;
+                height: 31px;
+                width: 330px;
+                margin:10px auto;
+                background: #fff;
+                input{
+                    float: left;
+                    height: 27px;
+                    width: 280px;
+                    line-height: 27px;
+                    outline: none;
+                    -webkit-appearance: none;
+                    border: none;
+                    padding-left: 8px;
+                }
+                span{
+                    cursor: pointer;
+                    float: right;
+                    width: 44px;
+                    height: 27px;
+                    background: $blue url(/src/images/map/icon_search.png) no-repeat center center;
+                }
+            }
+            .result{
+                max-height: 500px;
+                ul{
+                    li{
+                        height: 35px;
+                        line-height: 31px;
+                        border: 2px solid #fff;
+                        cursor: pointer;
+                        &:hover{
+                           background: #edf7ff;
+                        }
+                        &.active{
+                            border-color:$blue;
+                            background: #edf7ff;
+                        }
+
+                    }
+                }
+                &.people{
+                    ul{
+                        li{
+                            span{
+                                display: inline-block;
+                                &.name{
+                                    @include hidd;
+                                    width: 60px;
+                                    margin: 0 10px 0 38px;
+                                }
+                                &.dept{
+                                    @include hidd;
+                                    width: 80px;
+                                    margin: 0 10px;
+                                }
+                                &.task{
+                                    @include hidd;
+                                    width: 80px;
+                                    margin: 0 10px;
+                                }
+                            }
+                        }
+                    }
+                }
+                &.event ul li{
+                    line-height: 24px;
+                    height: auto;
+                    padding: 8px 18px ;
+                    .line01{
+                        height: 24px;
+                        span{
+                            display: inline-block;
+                        }
+                        .type{
+                            @include hidd;
+                            width: 120px;
+                            margin-right: 10px;
+                        }
+                        .name{
+                            @include hidd;
+                            width: 50px;
+                        }
+                        .date{
+                            @include hidd;
+                            padding-left: 20px;
+                            background: url(/src/images/map/icon_clock.png) no-repeat 0 center;
+                        }
+                    }
+                    .loca_desc{
+                        @include hidd;
+                        padding-left: 20px;
+                        background: url(/src/images/index/icon_loca.png) no-repeat 0 center;
+                        background-size: 13px 16px;
+                    }
+
+                }
+                &.location ul li{
+                    padding: 6px 20px;
+                    line-height: 24px;
+                    height: auto;
+                    .loca{
+                        @include hidd;
+                    }
+                    .loca_desc{
+                        @include hidd;
+                        padding-left: 20px;
+                        background: url(/src/images/index/icon_loca.png) no-repeat 0 center;
+                        background-size: 13px 16px;
+                    }
+                }
+
+            }
+        }
+        .tool_wrapper{
+            box-shadow:0px 0px 12px #888;
+            position: absolute;
+            right: 0;
+            line-height: 36px;
+            background: #fff;
+            padding: 0 8px;
+            div{
+                cursor: pointer;
+                padding: 0 0 0 22px;
+                &.distance{
+                    background: url(/src/images/map/i_dis.png) no-repeat 0 center;
+                    &:hover{
+                        color: $blue;
+                        background-image: url(/src/images/map/i_dis_a.png)
+                    }
+                }
+                &.area{
+                    background: url(/src/images/map/i_area.png) no-repeat 0 center;
+                    &:hover{
+                        color: $blue;
+                        background-image: url(/src/images/map/i_area_a.png)
+                    }
+                }
+                &.output{
+                    background: url(/src/images/map/i_out.png) no-repeat 0 center;
+                    &:hover{
+                        color: $blue;
+                        background-image: url(/src/images/map/i_out_a.png)
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+
+
+
+
+

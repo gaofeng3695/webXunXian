@@ -1,19 +1,19 @@
 {
-  "name": "xun_xian_wei_shi",
-  "version": "1.0.0",
-  "description": "xun_xian_wei_shi package.json",
-  "scripts": {
-    "start": " gulp sass && concurrently  \"lite-server\" \"gulp sass:watch\" "
-  },
-  "keywords": [],
-  "author": "jas group",
-  "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
-    "concurrently": "^3.1.0",
-    "gulp": "^3.9.1",
-    "gulp-sass": "^3.1.0",
-    "lite-server": "^2.2.2"
-  },
-  "repository": {}
+    "name": "xun_xian_wei_shi",
+    "version": "1.0.0",
+    "description": "xun_xian_wei_shi package.json",
+    "scripts": {
+        "start": " gulp sass && concurrently  \"lite-server\" \"gulp sass:watch\" "
+    },
+    "keywords": [],
+    "author": "jas group",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {
+        "concurrently": "^3.1.0",
+        "gulp": "^3.9.1",
+        "gulp-sass": "^3.1.0",
+        "lite-server": "^2.2.2"
+    },
+    "repository": {}
 }

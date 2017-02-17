@@ -1,0 +1,295 @@
+#page-wrapper {
+    background: #edf1f2;
+    padding: 0 0 10px 0;
+    $seaH: 36px;
+    ul,
+    li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    input,
+    button {
+        outline: none;
+    }
+    .event_map {
+        #event_map {
+            height: 600px;
+            display: none;
+            border-bottom: 1px solid #ddd;
+        }
+        .bottom_btn {
+            height: 20px;
+            span {
+                display: inline-block;
+                height: 14px;
+                width: 44px;
+                cursor: pointer;
+            }
+            .map_up {
+                background: url(/src/images/event/map_up.png) no-repeat;
+            }
+            .map_down {
+                background: url(/src/images/event/map_down.png) no-repeat;
+            }
+        }
+    }
+    .screening {
+        background: #fff;
+        border-radius: 5px;
+        border: 1px solid #e1e5e6;
+        padding: 12px 10px;
+        box-shadow: 2px 1px #e1e5e6;
+        font-size: 14px;
+        .select_btn {
+            width: 100%;
+            label {
+                width: 33%;
+                height: $seaH;
+                line-height: $seaH;
+                padding: 0;
+                color: #999;
+                border-color: #e3e2e2;
+            }
+            .active {
+                color: #59b6fc;
+                background: #ecf7ff;
+                border-color: #59b6fc;
+            }
+        }
+        .input_append {
+            width: 100%;
+            .search-query {
+                height: $seaH;
+                border-radius: 18px 0 0 18px;
+                border: 1px solid #e3e2e2;
+                vertical-align: middle;
+                // padding-left: 25px;
+                text-indent: 25px;
+                width: 70%;
+            }
+            input::-webkit-input-placeholder {
+                background: url(/src/images/event/search.png) 6px center no-repeat;
+            }
+            input:-moz-placeholder {
+                background: url(/src/images/event/search.png) 6px center no-repeat;
+            }
+            input::-moz-placeholder {
+                background: url(/src/images/event/search.png) 6px center no-repeat;
+            }
+            input:-ms-input-placeholder {
+                background: url(/src/images/event/search.png) 6px center no-repeat;
+            }
+            button[type=submit] {
+                background: #59b6fc;
+                height: $seaH;
+                line-height: $seaH;
+                border: none;
+                color: #fff;
+                display: inline-block;
+                // padding: 0 15px;
+                border-radius: 0 18px 18px 0;
+                width: 30%;
+                text-align: center;
+                padding: 0;
+            }
+        }
+        .btn_search {
+            border: 1px solid #59b6fc;
+            background: #ecf7ff;
+            color: #59b6fc;
+            height: $seaH;
+            line-height: $seaH;
+            padding: 0 15px;
+            border-radius: 18px;
+        }
+        .nav_main {
+            background: #f7f7f7;
+            border: 1px solid #e3e2e2;
+            margin-top: 10px;
+            padding: 20px 0;
+            font-size: 14px;
+            color: #666;
+            position: relative;
+            display: none;
+            b.org_bot_cor {
+                width: 0;
+                height: 0;
+                font-size: 0;
+                border-width: 0 10px 10px;
+                border-style: solid;
+                border-color: transparent transparent #e3e2e2;
+                // _border-color: red white white;
+                position: absolute;
+                right: 42px;
+                top: -10px;
+                i {
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    border-width: 0 10px 10px;
+                    border-style: solid;
+                    border-color: transparent transparent #f7f7f7;
+                    position: absolute;
+                    top: 1px;
+                    left: -10px;
+                }
+            }
+            .row {
+                line-height: 48px;
+                .main_list {
+                    span {
+                        color: #000;
+                        cursor: pointer;
+                        margin-right: 30px;
+                        i {
+                            color: #bbb;
+                            margin-left: 5px;
+                        }
+                        &:hover {
+                            color: #59b6fc;
+                            i {
+                                color: #59b6fc;
+                            }
+                        }
+                        &:last-child {
+                            margin: 0;
+                        }
+                    }
+                    .active {
+                        color: #59b6fc;
+                        i {
+                            color: #59b6fc;
+                        }
+                    }
+                    .form_datetime {
+                        height: 36px;
+                        line-height: 36px;
+                        border-radius: 5px;
+                        border: 1px solid #e3e2e2;
+                        cursor: pointer;
+                    }
+                }
+            }
+            .status_list {
+                display: none;
+            }
+        }
+    }
+    .data_tab {
+        background: #fff;
+        border-radius: 5px;
+        border: 1px solid #e1e5e6;
+        padding: 12px 10px;
+        box-shadow: 2px 1px #e1e5e6;
+        font-size: 14px;
+        margin-top: 15px;
+    }
+}
+
+#details {
+    background: #e7e8ec;
+    top: 50%;
+    left: 50%;
+    width: 1000px;
+    margin-left: -500px;
+    height: 600px;
+    margin-top: -300px;
+    border-radius: 8px;
+    font-size: 14px;
+    overflow: hidden;
+    .modal-header {
+        height: 40px;
+        background: #344052;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        h3 {
+            line-height: 40px;
+            font-size: 16px;
+            text-align: center;
+            margin: 0;
+            a {
+                color: #fff;
+                margin-top: 6px;
+                margin-right: 10px;
+                font-weight: none;
+                opacity: 1;
+            }
+        }
+    }
+    .modal-body {
+        padding: 20px 20px 0 20px;
+        overflow-y: auto;
+        height: 510px;
+        .details_main {
+            background: #fff;
+            min-height: 490px;
+            border: 1px solid #fcfcfc;
+            padding: 20px;
+            .container-fluid {
+                border: 1px solid #ddd;
+                .row {
+                    border-bottom: 1px solid #ddd;
+                    background: #f7f7f7;
+                    &:last-child {
+                        border: none;
+                    }
+                    .details_title {
+                        line-height: 36px;
+                        padding-right: 10px;
+                        color: #666;
+                        border-left: 1px solid #ddd;
+                        &:first-child {
+                            border-left: none;
+                        }
+                    }
+                    .details_text {
+                        line-height: 24px;
+                        padding: 6px 10px;
+                        background: #fff;
+                        min-height: 36px;
+                        border-left: 1px solid #ddd;
+                    }
+                }
+            }
+        }
+    }
+    .modal-footer {
+        text-align: center;
+        background: #344052;
+        height: 50px;
+        padding: 0;
+        margin: 0;
+        button {
+            height: 36px;
+            border: none;
+            width: 120px;
+            margin-top: 7px;
+            font-size: 16px;
+        }
+    }
+}
+
+#addEvent {
+    @extend #details;
+    // display: block;
+    .modal-body {
+        padding: 20px 20px 0 20px;
+        overflow-y: auto;
+        height: 510px;
+        .event_form {
+            background: #fff;
+            border-radius: 5px;
+        }
+    }
+    .modal-footer {
+        button {
+            margin: 7px 30px 0 30px;
+        }
+        .submit {
+            background: #59b6fc;
+            color: #fff;
+        }
+    }
+}

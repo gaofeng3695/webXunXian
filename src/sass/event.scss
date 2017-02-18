@@ -191,13 +191,14 @@
     background: #e7e8ec;
     top: 50%;
     left: 50%;
-    width: 1000px;
-    margin-left: -500px;
+    width: 800px;
+    margin-left: -400px;
     height: 600px;
     margin-top: -300px;
     border-radius: 8px;
     font-size: 14px;
     overflow: hidden;
+    display: none;
     .modal-header {
         height: 40px;
         background: #344052;
@@ -273,14 +274,145 @@
 
 #addEvent {
     @extend #details;
-    // display: block;
     .modal-body {
         padding: 20px 20px 0 20px;
         overflow-y: auto;
         height: 510px;
+        textarea {
+            resize: none;
+        }
         .event_form {
             background: #fff;
             border-radius: 5px;
+            padding: 20px;
+            min-height: 490px;
+            color: #636363;
+            .form_part {
+                width: 50%;
+                float: left;
+            }
+            .has-feedback {
+                .form-control {
+                    padding-right: 38px;
+                    background: #fff;
+                    cursor: pointer;
+                }
+                .form-control-feedback {
+                    right: 20px;
+                }
+            }
+            .form_list {
+                overflow: hidden;
+                line-height: 30px;
+                margin-top: 15px;
+                .list_left {
+                    width: 80px;
+                    float: left;
+                }
+                .list_right {
+                    margin-left: 80px;
+                    width: auto;
+                    padding: 0 20px 0 10px;
+                    .form_radio {
+                        overflow: hidden;
+                        margin-bottom: 15px;
+                        .form_radio_l {
+                            width: 80px;
+                            float: left;
+                            label {
+                                cursor: pointer;
+                            }
+                            .pay_list_c1 {
+                                width: 20px;
+                                height: 20px;
+                                cursor: pointer;
+                                display: inline-block;
+                                text-align: center;
+                                background: url(/src/images/event/radio_n.png) no-repeat;
+                                background-size: 100% 100%;
+                                vertical-align: middle;
+                                margin-right: 10px;
+                            }
+                            .on {
+                                background: url(/src/images/event/radio.png) no-repeat;
+                                background-size: 100% 100%;
+                            }
+                            .radioclass {
+                                opacity: 0;
+                                cursor: pointer;
+                                -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+                                filter: alpha(opacity=0);
+                                width: 100%;
+                                height: 100%;
+                                display: inline-block;
+                            }
+                        }
+                        .form_radio_r {
+                            margin-left: 80px;
+                            width: auto;
+                            p {
+                                color: #979797;
+                                padding-left: 10px;
+                            }
+                            .form-control-feedback {
+                                right: 0;
+                            }
+                        }
+                    }
+                }
+            }
+            .feedback_img {
+                padding-top: 10px;
+                .feedback_img_list {
+                    float: left;
+                    .feedback_images {
+                        width: 104px;
+                        height: 78px;
+                        float: left;
+                        margin-right: 20px;
+                        position: relative;
+                        img {
+                            width: 104px;
+                            height: 78px;
+                        }
+                        span {
+                            width: 28px;
+                            height: 28px;
+                            cursor: pointer;
+                            background: url(/src/images/event/close.png) no-repeat;
+                            display: inline-block;
+                            *display: inline;
+                            *zoom: 1;
+                            position: absolute;
+                            top: 0px;
+                            right: 0px;
+                            margin-right: -12px;
+                            margin-top: -10px;
+                        }
+                    }
+                }
+                .feedback_img_add {
+                    width: 104px;
+                    height: 78px;
+                    float: left;
+                    span {
+                        width: 104px;
+                        height: 78px;
+                        display: inline-block;
+                        *display: inline;
+                        *zoom: 1;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                    input {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .form_line {
+            border-bottom: 1px solid #ddd;
+            margin-top: 20px;
         }
     }
     .modal-footer {
@@ -291,5 +423,24 @@
             background: #59b6fc;
             color: #fff;
         }
+    }
+}
+
+#event_address {
+    @extend #details;
+    width: 600px;
+    height: 400px;
+    margin-left: -300px;
+    margin-top: -200px;
+    .modal-body {
+        height: 310px;
+        padding: 0;
+        #address_map {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .modal-footer {
+        background: #fff;
     }
 }

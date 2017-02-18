@@ -127,15 +127,15 @@
                     <div class="top">
                         <div class="row search_title">
                             <div class="col-lg-6 col-xs-12 btn_wrapper">
-                                <div class="col-xs-6" data-class="date">
-                                    <div class="item col-xs-4" data-value="day">今天</div>
-                                    <div class="item col-xs-4 active" data-value="week">本周</div>
-                                    <div class="item col-xs-4" data-value="month">本月</div>
+                                <div class="col-xs-6">
+                                    <div class="item col-xs-4 ">今天</div>
+                                    <div class="item col-xs-4 active">本周</div>
+                                    <div class="item col-xs-4">本月</div>
                                 </div>
-                                <div class="col-xs-6" data-class="status">
-                                    <div class="item col-xs-4 active" data-value="1,0">全部</div>
-                                    <div class="item col-xs-4" data-value="1">有事件</div>
-                                    <div class="item col-xs-4" data-value="0">无事件</div>
+                                <div class="col-xs-6">
+                                    <div class="item col-xs-4 active">全部</div>
+                                    <div class="item col-xs-4">有事件</div>
+                                    <div class="item col-xs-4">无事件</div>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-xs-12 right_wrapper">
@@ -157,53 +157,94 @@
                                     <i></i>
                                 </b>
                                 <div class="son_wrapper">
-                                    <!-- 时间begin -->
+                                    <div class="line">
+                                        <div class="title">事件状态</div>
+                                        <div class="item_box">
+                                            <div class="item1">
+                                                <span class="item">全部</span>
+                                                <span class="item active">处理中</span>
+                                                <span class="item">已完成</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="line">
+                                        <div class="title">事件状态</div>
+                                        <div class="item_box">
+                                            <div class="item1">
+                                                <span class=" item active">全部</span>
+                                                <span class="item">第三方活动<i class="glyphicon glyphicon-menu-down"></i></span>
+                                                <span class="item">自然灾害<i class="glyphicon glyphicon-menu-down"></i></span>
+                                                <span class="item">管道设施<i class="glyphicon glyphicon-menu-down"></i></span>
+                                            </div>
+                                            <div class="item2">
+                                                <div class="item2_id">
+                                                    <b>（</b>
+                                                    <span class="item active">全部</span>
+                                                    <span class="item">施工</span>
+                                                    <span class="item">占压</span>
+                                                    <span class="item">圈闭或包封</span>
+                                                    <span class="item">碾压</span>
+                                                    <span class="item">耕种</span>
+                                                    <span class="item">疏浚与清淤</span>
+                                                    <span class="item">其他</span>
+                                                    <b>）</b>
+                                                </div>
+                                                <div class="item2_id active">
+                                                    <b>（</b>
+                                                    <span class="item active">全部</span>
+                                                    <span class="item">施工</span>
+                                                    <span class="item">占压</span>
+                                                    <span class="item">圈闭或包封</span>
+                                                    <span class="item">碾压</span>
+                                                    <span class="item">耕种</span>
+                                                    <span class="item">疏浚与清淤</span>
+                                                    <span class="item">其他</span>
+                                                    <b>）</b>
+                                                </div>
+                                                <div class="item2_id">
+                                                    <b>（</b>
+                                                    <span class="item active">全部</span>
+                                                    <span class="item">施工</span>
+                                                    <span class="item">占压</span>
+                                                    <span class="item">圈闭或包封</span>
+                                                    <span class="item">碾压</span>
+                                                    <span class="item">耕种</span>
+                                                    <span class="item">疏浚与清淤</span>
+                                                    <span class="item">其他</span>
+                                                    <b>）</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="line">
                                         <div class="title">时间</div>
                                         <div class="item_box">
-                                            <div class="item1" data-class="date">
-                                                <span class="item" data-value="all">不限</span>
-                                                <span class="item active" data-value="day">今日</span>
-                                                <span class="item" data-value="week">本周</span>
-                                                <span class="item" data-value="month">本月</span>
-                                                <span class="date" data-class="date">
-                                                    <span class="diy">自定义</span>
-                                                    <span>：</span>
+                                            <div class="item1">
+                                                <span class="item">不限</span>
+                                                <span class="item active">今日</span>
+                                                <span class="item">本周</span>
+                                                <span class="item">本月</span>
+                                                <span class="date">
+                                                    <span class="diy">自定义：</span>
                                                     <input size="16" type="text" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
                                                     <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
                                                     <input size="16" type="text" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
-                                                    <span class="item" data-value="diy">确定</span>
+                                                    <span class="item">确定</span>
                                                 </span>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <!-- 时间end -->
-
-                                    <!-- 事件状态begin -->
-                                    <div class="line">
-                                        <div class="title">事件</div>
-                                        <div class="item_box">
-                                            <div class="item1" data-class="status">
-                                                <span class="item" data-value="1,0">全部</span>
-                                                <span class="item active" data-value="1">有事件</span>
-                                                <span class="item" data-value="0">无事件</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 事件状态end -->
-
-                                    <!-- 人员start -->
                                     <div class="line">
                                         <div class="title">人员</div>
                                         <div class="item_box">
                                             <div class="item1">
-                                                <span class="peo_wrapper" data-class="userIds">
+                                                <span class="peo_wrapper">
                                                     <span class="peo_border">
                                                         <input class="peo_selected" readonly>
                                                         <span class="mybtn"></span>
                                                     </span>
-                                                    <span class="item" data-value="user">确定</span>
+                                                    <span class="item">确定</span>
                                                     <span class="clear">清空人员</span>
                                                 </span>
 
@@ -211,7 +252,6 @@
 
                                         </div>
                                     </div>
-                                    <!-- 人员end -->
                                 </div>
                                 <div class="btn_wrapper">
                                     <span class="clear">清空筛选条件</span>
@@ -251,7 +291,6 @@
             $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
         });
     </script>
-    <script src="/src/js/track.js"></script>
 </body>
 
 </html>

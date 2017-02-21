@@ -33,12 +33,12 @@ $(".btn1").click(function() {
     var _data = { "sendNum": number, "sendMode": 1, "verifyCode": verifyCode };
     $.ajax({
         type: "GET",
-        url: "http://localhost:3000/cloudlink-core-framework/login/checkVerifyCode",
+        url: "/cloudlink-core-framework/login/checkVerifyCode",
         contentType: "application/json",
-        data: JSON.stringify(_data),
-        dataType: "text",
+        data: _data,
+        dataType: "json",
         success: function(data, status) {
-            var success = JSON.parse(data).success;
+            var success = data.success;
             if (success == 1) {
                 $('.top img').attr('src', 'src/images/enrollImg/2.png')
                 $('.bottom1,.bottom3,.bottom4,.Notes').css({
@@ -47,19 +47,24 @@ $(".btn1").click(function() {
                 $('.bottom2').css({
                     display: "block"
                 })
+                $('.top img').attr('src', 'src/images/forgetImg/2.png')
+                $('.bottom1').css({
+                    display: "none"
+                })
+                $('.bottom2').css({
+                    display: "block"
+                })
             } else {
-                alert('验证码填写错误');
+                $('.SMScodeMsg').css({
+                    display: 'block'
+                });
+                $('.SMScodeMsg span').text('手机号或验证码错误');
+                return;
             }
         }
     });
     // 短信验证码校验接口调用结束
-    $('.top img').attr('src', 'src/images/forgetImg/2.png')
-    $('.bottom1').css({
-        display: "none"
-    })
-    $('.bottom2').css({
-        display: "block"
-    })
+
 })
 $(".btn2").click(function() {
     $('.pw1').blur();
@@ -73,26 +78,28 @@ $(".btn2").click(function() {
 
     //重置密码
     var mobileNum = $('.phone').val();
-    var password = $('.password1').val();
+    var password = MD5($('.pw1').val());
     var verifyCode = $('.SMScode').val();
 
     var _data = { "mobileNum": mobileNum, "password": password, "verifyCode": verifyCode }
     $.ajax({
-        url: "http://localhost:3000/cloudlink-core-framework/login/resetPassword",
+        url: "/cloudlink-core-framework/login/resetPassword",
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify(_data),
-        dataType: "text",
-        success: function(data, status) {}
+        dataType: "json",
+        success: function(data, status) {
+            $('.top img').attr('src', 'src/images/forgetImg/3.png')
+            $('.bottom2').css({
+                display: "none"
+            })
+            $('.bottom3').css({
+                display: "block"
+            })
+        }
     });
 
-    $('.top img').attr('src', 'src/images/forgetImg/3.png')
-    $('.bottom2').css({
-        display: "none"
-    })
-    $('.bottom3').css({
-        display: "block"
-    })
+
 })
 $(".btnhid").click(function() {
         location.href = "login.html"
@@ -140,13 +147,13 @@ $('.phone').blur(function() {
             // 手机号是否注册过接口调用开始
             var _data = { "registNum": val };
             $.ajax({
-                url: "http://localhost:3000/cloudlink-core-framework/isExist",
-                type: "POST",
+                url: "/cloudlink-core-framework/login/isExist",
+                type: "GET",
                 contentType: "application/json",
-                data: JSON.stringify(_data),
-                dataType: "text",
+                data: _data,
+                dataType: "json",
                 success: function(data, status) {
-                    var res = JSON.parse(data).rows.isExist;
+                    var res = data.rows.isExist;
                     if (res == 1) {
                         $('.phoneMeg').css({
                             display: 'none'
@@ -230,13 +237,24 @@ $('.styles').click(function() {
         var number = $('.phone').val();
         var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
         $.ajax({
-            url: "http://localhost:3000/cloudlink-core-framework/login/getVerifyCode",
+            url: "/cloudlink-core-framework/login/getVerifyCode",
             type: "GET",
             contentType: "application/json",
-            dataType: "text",
-            data: JSON.stringify(_data),
+            dataType: "json",
+            data: _data,
             success: function(data) {
-                // var verifyCode = JSON.parse(data).rows.verifyCode;
+                // var res = data.rows.isExist;
+                // if (res == 1) {
+                //     $('.phoneMeg').css({
+                //         display: 'none'
+                //     });
+                // } else {
+                //     $('.phoneMeg').css({
+                //         display: 'block'
+                //     });
+                //     $('.phoneMeg span').text('手机号码未注册');
+                //     e = false;
+                // }
             }
         })
 

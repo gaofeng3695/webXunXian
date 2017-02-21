@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="src/css/enroll.css" rel="stylesheet">
-    <link href="src/css/loginCommon.css" rel="stylesheet">
+    <link href="/src/css/enroll.css" rel="stylesheet">
+    <link href="/src/css/loginCommon.css" rel="stylesheet">
 </head>
 
 <body>
@@ -15,7 +15,7 @@
             <div class="font">欢迎注册</div>
         </div>
         <div class="poskuai">
-            <div class="top"><img src="src/images/enrollImg/1.png" alt=""></div>
+            <div class="top"><img src="/src/images/enrollImg/1.png" alt=""></div>
             <div class="Contain">
                 <div class="bottom1 bottom" style="display:block;">
                     <div class="one">
@@ -66,36 +66,16 @@
                         <div class="center1 fl"><input class="companyName" type="text" placeholder="&nbsp;企业名称仅支持简体中文、英文大小写字母"></div>
                         <div class="right1 companyMsg fl"><span></span></div>
                     </div>
-                    <!--<div class="one">
-                        <div class="left1 fl"><span class="color">*</span>所在地：</div>
-                        <div class="center2 fl">
-                            <select>
-                                <option>请选择省份</option>
-                                <option>50-100人</option>
-                                <option>100-200人</option>
-                                <option>200-500人</option>
-                                <option>500人以上</option>
-                            </select>
-                            <select>
-                                <option>请选择城市</option>
-                                <option>50-100人</option>
-                                <option>100-200人</option>
-                                <option>200-500人</option>
-                                <option>500人以上</option>
-                            </select>
-                        </div>
-                        <div class="right1 fl"><span>请选择省份/城市</span></div>
-                    </div>-->
                     <div class="one">
                         <div class="left1 fl"><span class="color">*</span>公司规模：</div>
                         <div class="center1 fl">
                             <select class="companyScale">
-                                <option>请选择</option>
-                                <option>50人以下</option>
-                                <option>50-100人</option>
-                                <option>100-200人</option>
-                                <option>200-500人</option>
-                                <option>500人以上</option>
+                                <option value="0">请选择</option>
+                                <option value="1">50人以下</option>
+                                <option value="2">50 - 100</option>
+                                <option value="3">100 - 200</option>
+                                <option value="4">200 - 500</option>
+                                <option value="5">500人以上</option>
                             </select>
                         </div>
                         <div class="right1 companyTs fl"><span></span></div>
@@ -105,9 +85,9 @@
                         <div class="center1 fl">
                             <select class="companyRole">
                                 <option>请选择</option>
-                                <option>企业管理人员</option>
-                                <option>巡线工作人员</option>
-                                <option>其他普通人员</option>
+                                <option value="7ee6a23a-c352-41c2-b2a4-93cb6a1a0e9b">企业管理人员</option>
+                                <option value="dfd82f79-f2d3-4be4-9789-7837d54695f9">巡线工作人员</option>
+                                <option value="b5215de6-12f6-4ebc-a349-db00dccb96f2">其他普通人员</option>
                             </select></div>
                         <div class="right1 roleTs fl"><span></span></div>
                     </div>
@@ -124,9 +104,10 @@
         </div>
     </div>
     <p class="words">北京中盈安信技术服务股份有限公司旗下网站：巡线卫士<span>©</span>2016 京 B2-20080224-16</p>
-    <script src=" lib/js/jquery-1.12.4.min.js "></script>
-    <script src="lib/js/bootstrap.min.js "></script>
-    <script src="src/js/login/enroll.js"></script>
+    <script src="/lib/js/jquery-1.12.4.min.js "></script>
+    <script src="/lib/js/bootstrap.min.js "></script>
+    <script src="/src/js/login/enroll.js"></script>
+    <script src="/src/js/common/md5.js"></script>
     <script>
     </script>
 </body>

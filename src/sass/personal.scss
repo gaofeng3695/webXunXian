@@ -1,0 +1,61 @@
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    #page-wrapper {
+        background: #edf1f2;
+        .container-fluid {
+            margin: 12px 10px;
+            background: #fcfcfc;
+            .user-base,
+            .user-position,
+            .user-contact {
+                margin: 16px 0px;
+                border: 1px solid #e2e2e2;
+                .panel-heading {
+                    text-align: center;
+                    font-size: 14px;
+                    color: #3e3e3e;
+                }
+                .uploadpicture {
+                    cursor: pointer;
+                }
+                #upload {
+                    display: none;
+                }
+                select {
+                    width: 100%;
+                }
+                .row {
+                    margin: 10px;
+                }
+                img {
+                    width: 200px;
+                    height: 200px;
+                }
+                .img-desc {
+                    margin-top: 10px;
+                    font-size: 10px;
+                    color: #989898;
+                }
+            }
+        }
+        .quite {
+            text-align: center;
+            margin: 20px 0px;
+            button {
+                background: #59b6fc;
+                width: 120px;
+                color: #fff;
+            }
+            ;
+        }
+    }
+    
+    .userdes {
+        font-size: 14px;
+        color: #666;
+        height: 36px;
+        line-height: 36px;
+    }

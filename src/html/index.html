@@ -49,30 +49,30 @@
                 <div class="row row_main">
                     <!--任务图表-->
                     <div class="col-lg-5 mainbox">
-                        <div class="title">本周任务</div>
+                        <div class="title">本周任务 <span class="thisWeek"></span></div>
                         <div class="sub_title">
                             <div class="box01">
                                 <div>任务总量</div>
-                                <div class="num">10</div>
+                                <div id="taskChart_all" class="num">--</div>
                             </div>
                             <div class="box01">
                                 <div>已完成</div>
-                                <div class="num">7</div>
+                                <div id="taskChart_done" class="num">--</div>
                             </div>
                             <div class="box01">
                                 <div>处理中</div>
-                                <div class="num">3</div>
+                                <div id="taskChart_doing" class="num">--</div>
                             </div>
                         </div>
                         <div id="taskChart" class="chart"></div>
                     </div>
                     <!--任务列表-->
                     <div class="col-lg-7 mainbox">
-                        <div class="title">任务代办（ <span>5</span> ）
+                        <div class="title">任务待办（ <span id="eventList_total">5</span> ）
                             <a class="more" href="/index.html">更多 ></a>
                         </div>
-                        <div class="wrapper">
-                            <div class="line">
+                        <div id="taskList_wrapper" class="wrapper">
+                            <!--<div class="line">
                                 <div class="line_title">
                                     <span class="person">张三子</span>
                                     <span>任务号：</span>
@@ -100,12 +100,12 @@
                                     </div>
 
                                 </div>
-                            </div>
-                            <div class="line">
+                            </div>-->
+                            <!--<div class="line">
                                 <div class="line_title">
-                                    <span class="person">张三子</span>
+                                    <span class="person">item.createUserName</span>
                                     <span>任务号：</span>
-                                    <span>201609087897</span>
+                                    <span>item.code</span>
                                 </div>
                                 <div class="sub_wrap">
                                     <div class="icon record">
@@ -116,67 +116,38 @@
                                     </div>
                                     <div class="content">
                                         <div class="desc">
-                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
+                                            item.eventDescription
                                         </div>
                                         <div class="dis_title">
-                                            <span class="person">李明飞</span>
-                                            <span class="handle">填写了处置信息</span>
-                                            <span class="date">2016.9.12 10:17</span>
+                                            <span class="person">item.disposeUserName</span>
+                                            <span class="handle">item.disposeTypeName</span>
+                                            <span class="date">item.disposeTime</span>
                                         </div>
                                         <div class="dispose">
-                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
+                                            item.disposeContent
                                         </div>
                                     </div>
 
                                 </div>
-                            </div>
-                            <div class="line">
-                                <div class="line_title">
-                                    <span class="person">张三子</span>
-                                    <span>任务号：</span>
-                                    <span>201609087897</span>
-                                </div>
-                                <div class="sub_wrap">
-                                    <div class="icon record">
-
-                                    </div>
-                                    <div class="mybtn">
-                                        处置
-                                    </div>
-                                    <div class="content">
-                                        <div class="desc">
-                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
-                                        </div>
-                                        <div class="dis_title">
-                                            <span class="person">李明飞</span>
-                                            <span class="handle">填写了处置信息</span>
-                                            <span class="date">2016.9.12 10:17</span>
-                                        </div>
-                                        <div class="dispose">
-                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                     <!--事件图表-->
                     <div class="col-lg-5 mainbox">
-                        <div class="title">本周事件 <span>2016.02.17-2016.02.24</span></div>
-                        <div id="eventChart" class="chart">这是图表</div>
+                        <div class="title">本周事件 <span class="thisWeek"></span></div>
+                        <div id="eventChart" class="chart"></div>
                         <div class="sub_title">
                             <div class="line">
                                 <div class="ceil">
                                     <div class="ceil_box e_all">
                                         <span>总巡线事件</span>
-                                        <span>（<span>100</span>起）</span>
+                                        <span>（<span id="eventChart_all">--</span> 起）</span>
                                     </div>
                                 </div>
                                 <div class="ceil">
                                     <div class="ceil_box e_nature">
                                         <span>自然灾害</span>
-                                        <span><span>30</span>起</span>
+                                        <span class="numBtn"><span id="disasterCount">--</span> 起</span>
                                     </div>
                                 </div>
                             </div>
@@ -184,13 +155,13 @@
                                 <div class="ceil">
                                     <div class="ceil_box e_other">
                                         <span>第三方施工</span>
-                                        <span><span>30</span>起</span>
+                                        <span class="numBtn"><span id="constructionCount">--</span> 起</span>
                                     </div>
                                 </div>
                                 <div class="ceil">
                                     <div class="ceil_box e_self">
-                                        <span>管线设备</span>
-                                        <span><span>30</span>起</span>
+                                        <span>管道设施</span>
+                                        <span class="numBtn"><span id="pipeEquipmentCount">--</span> 起</span>
                                     </div>
                                 </div>
                             </div>
@@ -308,6 +279,8 @@
         </div>
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
     <script src="/lib/js/echarts.js"></script>
+
+    <script src="/src/js/common/common.js"></script>
     <script src="/src/js/index.js"></script>
     </body>
 </html>

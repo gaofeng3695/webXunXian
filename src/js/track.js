@@ -2,7 +2,7 @@ var trackObj = {
     $items: $('.top .item'), //搜索条件dom
     $searchInput: $('#searchInput'), //搜索关键词dom
 
-    selectedIdsArr : [], //存放已被选中的轨迹ID
+    tracksIdsArr: [], //存放已被选中的轨迹ID
     defaultObj: { //默认搜索条件
         "status": "1,0", //1:有事件，0：无事件，1,0:全部
         "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
@@ -27,12 +27,11 @@ var trackObj = {
     },
     init: function () {
         var that = this;
-        console.log(that.$items);
+        //console.log(that.$items);
         that.renderActive();
         that.bindEvent();
         that.bindDateDiyEvent();
         that.initTable();
-        //debugger;
     },
     renderActive: function (obj) {
         var that = this;
@@ -87,12 +86,19 @@ var trackObj = {
                 $('.more_item_wrapper').slideDown();
             }
         });
-
+        /* 清空搜索条件 */
         $('#gf_reset_Btn').click(function () {
             //请求数据还原到初始话
             Object.assign(that.querryObj, that.defaultObj);
             that.renderActive();
             that.refreshTable();
+        });
+        /* 导出数据 */
+        $('#export_all').click(function(){
+            that.requestOutput(0);
+        });
+        $('#export_choice').click(function(){
+            that.requestOutput(2);
         });
     },
     bindDateDiyEvent: function () {
@@ -136,8 +142,6 @@ var trackObj = {
             })
             that.refreshTable();
         });
-
-
     },
     setDate: function (value) {
         var that = this;
@@ -162,13 +166,25 @@ var trackObj = {
                 that.querryObj.endDate = '';
         }
     },
+    setTracksIdsArr: function (row) { //传入单条obj，或多条obj的数组
+        var that = this;
+        if (row instanceof Array) {
+            that.tracksIdsArr = row.map(function (item) {
+                return item.objectId;
+            })
+        } else {
+            var s = row.objectId;
+            var index = that.tracksIdsArr.indexOf(s);
+            if (index === -1) {
+                that.tracksIdsArr.push(s);
+            } else {
+                that.tracksIdsArr.splice(index, 1);
+            }
+        }
+    },
     refreshTable: function () {
         var that = this;
         that.$searchInput.val(that.querryObj.keyword);
-        /*console.log(that.querryObj.startDate)
-        console.log(that.querryObj.endDate)
-        console.log(that.querryObj.status)
-        console.log(that.querryObj.keyword)*/
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/inspectionRecord/web/v1/getPageList?token=98059ddb-2f44-4c5c-890c-eba343f6b104",
@@ -176,11 +192,93 @@ var trackObj = {
             data: JSON.stringify(that.querryObj),
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
+                if (data.success != 1) {
+                    alert('网络连接出错！code:-1')
+                    return;
+                }
                 $('#gf_table').bootstrapTable('load', data)
+            },
+            statusCode: {
+                404: function () {
+                    alert('网络连接出错！code:404');
+                }
             }
         });
     },
+    requestDetails : function(sId){
+        var that = this;
+        $.ajax({
+            type: "GET",
+            url: "/cloudlink-inspection-event/eventInfo/web/v1/get",
+            contentType: "application/json",
+            data: {
+                token : '98059ddb-2f44-4c5c-890c-eba343f6b104',
+                inspRecordId : sId
+            },
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data.success != 1) {
+                    alert('网络连接出错！code:-1')
+                    return;
+                }
+                that.showModal();
+
+            },
+            statusCode: {
+                404: function () {
+                    alert('网络连接出错！code:404');
+                }
+            }
+        });
+    },
+    requestOutput: function (flag,sId) {
+        //flag :
+        // 0 : all
+        // 1 : 单条
+        // 2 ： 使用数组
+        var that = this;
+        var obj = {};
+        Object.assign(obj, that.querryObj);
+        delete obj.pageSize;
+        delete obj.pageNum;
+        obj.ids = "";
+        if (  flag == 1){
+            obj.ids = sId;
+        }
+        if (flag == 2) {
+            if( that.tracksIdsArr.length ===  0 ){
+                alert('请勾选信息');
+                return;
+            }
+            obj.ids = that.tracksIdsArr.join(',');
+        }
+        console.log(obj);
+        $.ajax({
+            type: "POST",
+            url: "/cloudlink-inspection-event/inspectionRecord/export?token=98059ddb-2f44-4c5c-890c-eba343f6b104",
+            contentType: "application/json",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            success: function (data, status) {
+                //console.log(data)
+                if (data.success != 1) {
+                    alert('网络连接出错！code:-1')
+                    return;
+                }
+            },
+            complete: function (xhr, txt) {
+                //console.log(xhr);
+            },
+            statusCode: {
+                404: function () {
+                    alert('网络连接出错！code:404');
+                }
+            }
+        });
+    },
+
     initTable: function () {
         var that = this;
         $('#gf_table').bootstrapTable({
@@ -200,8 +298,7 @@ var trackObj = {
             search: false, //显示搜索框
             searchOnEnterKey: false,
             sortable: false,
-            queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
-            // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
+            queryParamsType: '',
             queryParams: function (params) {
                 that.querryObj.pageSize = params.pageSize;
                 that.querryObj.pageNum = params.pageNumber;
@@ -245,14 +342,6 @@ var trackObj = {
                 width: '15%',
                 editable: true,
             }, {
-                field: 'inspectorId', //域值
-                title: '巡线人ID', //内容
-                align: 'center',
-                visible: false, //false表示不显示
-                sortable: false, //启用排序
-                width: '10%',
-                // editable: true,
-            }, {
                 field: 'inspectorName', //域值
                 title: '巡线人', //内容
                 align: 'center',
@@ -288,25 +377,30 @@ var trackObj = {
                 field: 'operate',
                 title: '操作',
                 align: 'center',
-                events: that.tabelEventObj,
+                events: that.tabelEventObj(),
                 width: '10%',
                 formatter: that.table_operateFormatter
             }]
         });
         that.table_bindEvent();
     },
-    tabelEventObj: {
-        //定位功能
-        'click .see': function (e, value, row, index) {
-            console.log(row.objectId)
+    tabelEventObj: function(){
+        var that = this;
+        return {
+            //查看详情
+            'click .see': function (e, value, row, index) {
+                //console.log(row.objectId)
                 //$(this).css("color", "red");
-            return false;
-        },
-        //查看详情
-        'click .out': function (e, value, row, index) {
-            console.log(row.objectId)
-            $("#details").modal(); //打开详情模态框
-            return false;
+                that.requestDetails(row.objectId)
+                //that.showModal();
+                return false;
+            },
+            //导出word
+            'click .out': function (e, value, row, index) {
+                //console.log(row.objectId)
+                that.requestOutput(1,row.objectId);
+                return false;
+            }
         }
     },
     table_operateFormatter: function (value, row, index) {
@@ -320,23 +414,38 @@ var trackObj = {
         ].join('');
     },
     table_bindEvent: function () {
+        var that = this;
         $('#gf_table')
-            .on('check.bs.table', function (e, row) {//单选一行
-                console.log(row);
+            .on('check.bs.table', function (e, row) { //单选一行
+                //console.log(row.objectId);
+                that.setTracksIdsArr(row);
+                //console.log(that.tracksIdsArr);
+                //console.log('选中'+that.tracksIdsArr.indexOf(row.objectId));
             })
-            .on('uncheck.bs.table', function (e, row) {//取消单选一行
-                console.log(row);
+            .on('uncheck.bs.table', function (e, row) { //取消单选一行
+                //console.log(row.objectId);
+                that.setTracksIdsArr(row);
+                //console.log(that.tracksIdsArr);
+                //console.log('取消'+that.tracksIdsArr.indexOf(row.objectId));
             })
-            .on('check-all.bs.table', function (e,row) {//全选
-                console.log(row);
+            .on('check-all.bs.table', function (e, rows) { //全选
+                that.setTracksIdsArr(rows);
+                //console.log(that.tracksIdsArr);
             })
-            .on('uncheck-all.bs.table', function (e,row) {//取消全选
-                console.log(row);
+            .on('uncheck-all.bs.table', function (e, rows) { //取消全选
+                that.tracksIdsArr = [];
+                //console.log(that.tracksIdsArr);
             })
-            .on('post-body.bs.table', function (e,row) {//取消全选
-                console.log(row);
+            .on('post-body.bs.table', function () { //取消全选
+                that.tracksIdsArr = [];
+                //console.log(that.tracksIdsArr);
             })
 
+    },
+    showModal : function(){
+        var that = this;
+        console.log('123')
+        $('#gf_detail').modal({});
     }
 };
 trackObj.init();

@@ -9,6 +9,7 @@
     <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
+    <link href="/src/css/track.css" rel="stylesheet">
 </head>
 
 <body>
@@ -116,6 +117,54 @@
                 </div>
                 <table id="gf_table" data-url="event.json"></table>
             </div>
+        </div>
+    </div>
+    <div id="gf_detail" class="modal fade in" data-backdrop="static">
+        <div class="modal-header">
+            <h3>巡检详情<a class="close" data-dismiss="modal">×</a></h3>
+        </div>
+        <div class="modal-body">
+            <div class="details_main">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">事件编号</div>
+                        <div class="col-md-4 col-sm-4 details_text eventCode"></div>
+                        <div class="col-md-2 col-sm-2 text-right details_title">事件时间</div>
+                        <div class="col-md-4 col-sm-4 details_text occurrenceTime"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">事件类型</div>
+                        <div class="col-md-4  col-sm-4 details_text fullTypeName"></div>
+                        <div class="col-md-2 col-sm-2 text-right details_title">上报人</div>
+                        <div class="col-md-4  col-sm-4 details_text inspectorName"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">地理位置</div>
+                        <div class="col-md-10  col-sm-10 details_text">
+                            <p class="address"></p>
+                            <div id="details_address_map"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">事件描述</div>
+                        <div class="col-md-10  col-sm-10 details_text description"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">语音描述</div>
+                        <div class="col-md-10 details_text  col-sm-10">
+                            <audio controls class="event_audio" src=""></audio>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2 text-right details_title">照片</div>
+                        <div class="col-md-10 details_text  col-sm-10 event_pic">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal">关闭</button>
         </div>
     </div>
     <script src="/lib/js/jquery-1.12.4.min.js"></script>

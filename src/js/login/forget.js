@@ -3,6 +3,41 @@ var d = false,
     g = false,
     f = false;
 $(".btn1").click(function() {
+    var mobileNum = $('.phone').val().trim();
+    if (mobileNum == '' || mobileNum == null) {
+        $('.phoneMeg').css({
+            display: 'block'
+        });
+        $('.phoneMeg span').text('手机号码不能为空');
+        e = false;
+        return;
+    }
+    var val = $('.imgCode').val().trim();
+    if (val == '' || val == null) {
+        $('.imgMeg').css({
+            display: 'block'
+        });
+        $('.imgMeg span').text('图片验证码不能为空');
+        f = false;
+        return;
+    }
+    $('.phone').blur();
+    if (!e) {
+        return;
+    }
+    $('.imgCode').blur();
+    if (!f) {
+        return;
+    }
+    var SMScodeval = $('.SMScode').val().trim();
+    if (SMScodeval == "" || SMScodeval == null) {
+        $('.SMScodeMsg').css({
+            display: 'block'
+        });
+        $('.SMScodeMsg span').text('短信验证码不能为空');
+        d = false;
+        return;
+    }
     $('.phone').blur();
     if (!e) {
         return;
@@ -28,8 +63,8 @@ $(".btn1").click(function() {
         })
     }
     // 短信验证码校验接口调用开始
-    var number = $('.phone').val();
-    var verifyCode = $('.SMScode').val();
+    var number = $('.phone').val().trim();
+    var verifyCode = $('.SMScode').val().trim();
     var _data = { "sendNum": number, "sendMode": 1, "verifyCode": verifyCode };
     $.ajax({
         type: "GET",
@@ -54,6 +89,10 @@ $(".btn1").click(function() {
                 $('.bottom2').css({
                     display: "block"
                 })
+                e = false;
+                f = false;
+                d = false;
+                g = false;
             } else {
                 $('.SMScodeMsg').css({
                     display: 'block'
@@ -67,6 +106,27 @@ $(".btn1").click(function() {
 
 })
 $(".btn2").click(function() {
+    var mobileNum = $('.phone').val().trim();
+    var password1 = MD5($('.pw1').val().trim());
+    var password2 = MD5($('.pw2').val().trim());
+    var verifyCode = $('.SMScode').val().trim();
+
+    if (password1 == '' || password1 == null) {
+        $('.pswMsg1').css({
+            display: 'block'
+        });
+        $('.pswMsg1 span').text('密码不能为空');
+        f = false;
+        return
+    } else if (password2 == '' || password2 == null) {
+        $('.pswMsg2').css({
+            display: 'block'
+        });
+        $('.pswMsg2 span').text('请再次输入密码');
+        g = false;
+        return
+    }
+
     $('.pw1').blur();
     if (!e) {
         return;
@@ -77,11 +137,9 @@ $(".btn2").click(function() {
     }
 
     //重置密码
-    var mobileNum = $('.phone').val();
-    var password = MD5($('.pw1').val());
-    var verifyCode = $('.SMScode').val();
 
-    var _data = { "mobileNum": mobileNum, "password": password, "verifyCode": verifyCode }
+
+    var _data = { "mobileNum": mobileNum, "password": password1, "verifyCode": verifyCode }
     $.ajax({
         url: "/cloudlink-core-framework/login/resetPassword",
         type: "POST",
@@ -124,12 +182,12 @@ $('.code').click(function() {
     //手机号验证
 $('.phone').blur(function() {
         var val = $(this).val().trim();
-        var phoneReg = /^1[3|4|5|7|8][0-9]\d{8}$/;
+        var phoneReg = /^1\d{10}$/;
         if (val == '' || val == null) {
-            $('.phoneMeg').css({
-                display: 'block'
-            });
-            $('.phoneMeg span').text('手机号码不能为空');
+            // $('.phoneMeg').css({
+            //     display: 'block'
+            // });
+            // $('.phoneMeg span').text('手机号码不能为空');
             e = false;
             return;
         } else if (!phoneReg.test(val)) {
@@ -140,7 +198,7 @@ $('.phone').blur(function() {
             e = false;
             return false;
         } else {
-            e = true;
+
             $('.phoneMeg').css({
                 display: 'none'
             });
@@ -158,6 +216,7 @@ $('.phone').blur(function() {
                         $('.phoneMeg').css({
                             display: 'none'
                         });
+                        e = true;
                     } else {
                         $('.phoneMeg').css({
                             display: 'block'
@@ -172,13 +231,13 @@ $('.phone').blur(function() {
     })
     //图片验证
 $('.imgCode').blur(function() {
-        var val = $(this).val();
+        var val = $(this).val().trim();
         var imgReg = new RegExp(imgStr, "i");
         if (val == '' || val == null) {
-            $('.imgMeg').css({
-                display: 'block'
-            });
-            $('.imgMeg span').text('图片验证码不能为空');
+            // $('.imgMeg').css({
+            //     display: 'block'
+            // });
+            // $('.imgMeg span').text('图片验证码不能为空');
             f = false;
             return;
         } else if (!imgReg.test(val)) {
@@ -203,12 +262,12 @@ $('.imgCode').blur(function() {
     })
     //短信验证码验证
 $('.SMScode').blur(function() {
-        var val = $(this).val();
+        var val = $(this).val().trim();
         if (val == "" || val == null) {
-            $('.SMScodeMsg').css({
-                display: 'block'
-            });
-            $('.SMScodeMsg span').text('短信验证码不能为空');
+            // $('.SMScodeMsg').css({
+            //     display: 'block'
+            // });
+            // $('.SMScodeMsg span').text('短信验证码不能为空');
             d = false;
             return;
         } else {
@@ -220,6 +279,22 @@ $('.SMScode').blur(function() {
     })
     //点击获取短信验证码事件
 $('.styles').click(function() {
+        var mobileNum = $('.phone').val().trim();
+        if (mobileNum == '' || mobileNum == null) {
+            $('.phoneMeg').css({
+                display: 'block'
+            });
+            $('.phoneMeg span').text('手机号码不能为空');
+            return;
+        }
+        var val = $('.imgCode').val().trim();
+        if (val == '' || val == null) {
+            $('.imgMeg').css({
+                display: 'block'
+            });
+            $('.imgMeg span').text('图片验证码不能为空');
+            return;
+        }
         $('.phone').blur();
         $('.imgCode').blur();
         console.log(e, g, f)
@@ -234,7 +309,7 @@ $('.styles').click(function() {
         })
         f = false;
         //ajax发送手机号，接受验证码
-        var number = $('.phone').val();
+        var number = $('.phone').val().trim();
         var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
         $.ajax({
             url: "/cloudlink-core-framework/login/getVerifyCode",
@@ -273,19 +348,18 @@ function times() {
             })
             clearInterval(t);
             f = true;
-            g = false;
         }
     }, 1000)
 }
 //重置密码验证
 $('.pw1').blur(function() {
-        var val = $(this).val();
+        var val = $(this).val().trim();
         var pwReg = /^[\dA-z]{6,12}$/;
         if (val == '' || val == null) {
-            $('.pswMsg1').css({
-                display: 'block'
-            });
-            $('.pswMsg1 span').text('密码不能为空');
+            // $('.pswMsg1').css({
+            //     display: 'block'
+            // });
+            // $('.pswMsg1 span').text('密码不能为空');
             e = false;
             return
         } else if (!pwReg.test(val)) {
@@ -304,13 +378,13 @@ $('.pw1').blur(function() {
     })
     //再次确认密码验证
 $('.pw2').blur(function() {
-    var val1 = $('.pw1').val();
-    var val2 = $('.pw2').val();
+    var val1 = $('.pw1').val().trim();
+    var val2 = $('.pw2').val().trim();
     if (val2 == "" || val2 == null) {
-        $('.pswMsg2').css({
-            display: 'block'
-        });
-        $('.pswMsg2 span').text('请再次输入密码');
+        // $('.pswMsg2').css({
+        //     display: 'block'
+        // });
+        // $('.pswMsg2 span').text('请再次输入密码');
         f = false;
         return
     } else if (val1 != val2) {

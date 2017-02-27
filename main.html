@@ -5,10 +5,10 @@
     <title></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="lib/css/bootstrap.css" rel="stylesheet">
-    <link href="lib/css/font-awesome.min.css" rel="stylesheet">
-    <link href="src/css/jasxxws.css" rel="stylesheet">
-    <link href="src/css/topnav.css" rel="stylesheet">
+    <link href="/lib/css/bootstrap.css" rel="stylesheet">
+    <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/src/css/jasxxws.css" rel="stylesheet">
+    <link href="/src/css/topnav.css" rel="stylesheet">
 </head>
 
 <body>
@@ -22,29 +22,39 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="index.html">
-                    <img src="src/images/main/icon_logo.png">
+                    <img src="/src/images/main/icon_logo.png">
                     <span>巡线卫士</span>
-                    <img src="src/images/main/logo_desc.png">
+                    <img src="/src/images/main/logo_desc.png">
+                    <span class="new_company" id="new_company">
+                        
+                    </span>
                 </a>
             </div>
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle photoImg" data-toggle="dropdown"><img src="/src/images/main/photo.png" alt=""> 张三丰</a>
-                    <ul class="dropdown-menu alert-dropdown" style="width: 106px;min-width: 106px">
-                        <li>
-                            <a href="/src/html/personal.html">个人资料</a>
+                    <a href="#" class="dropdown-toggle photoImg" data-toggle="dropdown"><img class="person-img" src="/src/images/main/photo.png" alt="">
+                        <span class="userName">张三丰</span>
+                    </a>
+                    <ul class="dropdown-menu alert-dropdown" style="width: 100%;min-width: 20px;text-align:center;">
+                        <li menuid="personal">
+                            <a href="#">个人资料</a>
                         </li>
-                        <li>
-                            <a href="/src/html/forgetPassword.html">修改密码</span></a>
+                        <li menuid="updatepass">
+                            <a href="#">修改密码</span></a>
+                        </li>
+                        <li menuid="setLogin">
+                            <a href="#">登录设置</span></a>
                         </li>
                     </ul>
                 </li>
-                <li class="news">
+                <!--<li class="news">
                     <div>3</div>
+                </li>-->
+                <li class="help" menuId="help">
+
                 </li>
-                <li class="help">
-                </li>
-                <li class="signOut">
+                <li class="signOut" menuId="signOut">
+
                 </li>
 
             </ul>
@@ -53,7 +63,7 @@
                     <li class="active" menuid="index">
                         <a href="#"><i class="fa fa-fw fa-home"></i> 首页</a>
                     </li>
-                    <li menuid="event"> 
+                    <li menuid="event">
                         <a href="#"><i class="fa fa-fw fa-list-ul"></i> 事件管理</a>
                     </li>
                     <li menuid="task">
@@ -92,10 +102,10 @@
         <!--<div id="page-wrapper">
         </div>-->
         <!--暂时采用iframe进行数据加载-->
-       <iframe id="page-wrapper" frameborder=0 src="/src/html/index.html"></iframe>
+        <iframe id="page-wrapper" frameborder=0 src="/src/html/index.html"></iframe>
     </div>
-    <script src="lib/js/jquery-1.12.4.min.js"></script>
-    <script src="lib/js/bootstrap.min.js"></script>
+    <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/bootstrap.min.js"></script>
     <script src="src/js/common/html5-storage.js"></script>
     <script src="src/js/main.js"></script>
 </body>

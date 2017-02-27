@@ -259,6 +259,7 @@ html,body{
                                 width: 320px;
                                 .peo_selected{
                                     @include hidd;
+                                    padding-left: 10px;
                                     float: left;
                                     width: 280px;
                                     height: 30px;
@@ -278,7 +279,7 @@ html,body{
                             .clear{
                                 color: #999;
                                 cursor: pointer;
-                                margin-left: -10px;
+                                margin-left: 10px;
                                 &:hover{
                                     color: $blue;
                                 }
@@ -311,4 +312,5 @@ html,body{
     //font-size: 40px;
     text-align: center;
     //line-height: 400px;
+    padding-bottom: 15px;
 }

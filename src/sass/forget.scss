@@ -21,7 +21,7 @@
             margin: 0 auto;
             margin-bottom: 50px;
             background: #fff;
-            background: url(../images/forgetImg/Fabulous.png) no-repeat 0 80px;
+            background: url(/src/images/forgetImg/Fabulous.png) no-repeat 0 80px;
         }
         .success {
             width: 300px;
@@ -48,6 +48,7 @@
             outline: none;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
         }
     }
     .btnhid {
@@ -63,5 +64,6 @@
         outline: none;
         border: none;
         border-radius: 5px;
+        cursor: pointer;
     }
 }

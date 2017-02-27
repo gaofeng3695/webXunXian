@@ -63,6 +63,12 @@
                 color: #5ab5fc;
             }
         }
+        .tip{
+            display: none;
+            text-align: center;
+            line-height: 300px;
+            font-size: 16px;
+        }
         /*任务图表*/
         &:nth-of-type(1){
             .sub_title{
@@ -257,8 +263,14 @@
                         height: 70px;
                         width: 60px;
                         float:left;
-                        &.record{
-                            background: url(/src/images/index/t_record.png) no-repeat 5px 4px;
+                        &.other{
+                            background: url(/src/images/index/e_other.png) no-repeat 5px 4px;
+                        }
+                        &.nature{
+                            background: url(/src/images/index/e_nature.png) no-repeat 5px 4px;
+                        }
+                        &.self{
+                            background: url(/src/images/index/e_self.png) no-repeat 5px 4px;
                         }
                     }
                     .content{

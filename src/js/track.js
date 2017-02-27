@@ -1,8 +1,12 @@
 var trackObj = {
     $items: $('.top .item'), //搜索条件dom
     $searchInput: $('#searchInput'), //搜索关键词dom
+    $peopleInput : $('#peopleInput'),
 
     tracksIdsArr: [], //存放已被选中的轨迹ID
+    aPeopleId : [],
+    aPeopleName : [],
+    sCurrentTrackId : '',
     defaultObj: { //默认搜索条件
         "status": "1,0", //1:有事件，0：无事件，1,0:全部
         "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
@@ -27,11 +31,14 @@ var trackObj = {
     },
     init: function () {
         var that = this;
-        //console.log(that.$items);
+        ////console.log(that.$items);
         that.renderActive();
         that.bindEvent();
         that.bindDateDiyEvent();
+        that.bindPeopleEvent();
         that.initTable();
+        /*$('#gf_people').modal({});*/
+
     },
     renderActive: function (obj) {
         var that = this;
@@ -55,9 +62,11 @@ var trackObj = {
         var that = this;
         /* 选择条件 */
         that.$items.click(function () {
-            var key = $(this).parent()[0].dataset.class;
-            var value = this.dataset.value;
-
+            /*var key = $(this).parent()[0].dataset.class;*/
+            var key = $(this).parent().attr("data-class");
+            ////console.log(key)
+            var value = $(this).attr("data-value");
+            ////console.log(value)
             if (key === 'date') {
                 that.setDate(value);
             } else {
@@ -69,7 +78,6 @@ var trackObj = {
             that.refreshTable();
 
         });
-
         /* 搜索关键词 */
         $('#gf_Btn').click(function () {
             var s = $(this).parent().find('input').val();
@@ -89,16 +97,47 @@ var trackObj = {
         /* 清空搜索条件 */
         $('#gf_reset_Btn').click(function () {
             //请求数据还原到初始话
-            Object.assign(that.querryObj, that.defaultObj);
+            /*Object.assign(that.querryObj, that.defaultObj);*/
+            $.extend(that.querryObj,that.defaultObj);
+            that.initPeopleList();
             that.renderActive();
             that.refreshTable();
         });
         /* 导出数据 */
-        $('#export_all').click(function(){
+        $('#export_all').click(function () {
             that.requestOutput(0);
         });
-        $('#export_choice').click(function(){
+        $('#export_choice').click(function () {
             that.requestOutput(2);
+        });
+        /* 模态框导出数据 */
+        $('#modal_output').click(function () {
+            that.requestOutput(1, that.sCurrentTrackId);
+        });
+    },
+    bindPeopleEvent : function(){
+        var that = this;
+        /* 显示人员模态框 */
+        that.$peopleInput.parent().click(function(){
+            that.requestPeopleTree();
+            $('#gf_people').modal({});
+        });
+        /* 确定选中的人员 */
+        $('#btn_selectPeople').click(function(){
+            that.setSelectedPerson();
+            that.querryObj.userIds = that.aPeopleId.join(',');
+            //console.log(that.querryObj);
+            that.refreshTable();
+        });
+        /* 按人员搜索 */
+        /*$('#serach_by_peo').click(function(){
+            that.querryObj.userIds = that.$peopleInput.val();
+            that.refreshTable();
+        });*/
+        /* 清空搜索条件 */
+        $('#clear_people').click(function(){
+            that.initPeopleList();
+            that.refreshTable();
         });
     },
     bindDateDiyEvent: function () {
@@ -185,46 +224,39 @@ var trackObj = {
     refreshTable: function () {
         var that = this;
         that.$searchInput.val(that.querryObj.keyword);
-        $.ajax({
-            type: "POST",
-            url: "/cloudlink-inspection-event/inspectionRecord/web/v1/getPageList?token=98059ddb-2f44-4c5c-890c-eba343f6b104",
-            contentType: "application/json",
-            data: JSON.stringify(that.querryObj),
-            dataType: "json",
-            success: function (data) {
-                //console.log(data);
-                if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
-                    return;
-                }
-                $('#gf_table').bootstrapTable('load', data)
-            },
-            statusCode: {
-                404: function () {
-                    alert('网络连接出错！code:404');
-                }
+        that.querryObj.pageNum = '1';
+        $('#gf_table').bootstrapTable('refreshOptions', {
+            pageNumber: +that.querryObj.pageNum,
+            pageSize: +that.querryObj.pageSize,
+            queryParams: function (params) {
+                that.querryObj.pageSize = params.pageSize;
+                that.querryObj.pageNum = params.pageNumber;
+                return that.querryObj;
             }
         });
     },
-    requestDetails : function(sId){
+    requestDetails: function (sId) {
         var that = this;
+        that.initDetails();
+        $('#gf_detail').modal({});
         $.ajax({
             type: "GET",
-            url: "/cloudlink-inspection-event/eventInfo/web/v1/get",
+            url: "/cloudlink-inspection-event/inspectionRecord/web/v1/get",
             contentType: "application/json",
             data: {
-                token : '98059ddb-2f44-4c5c-890c-eba343f6b104',
-                inspRecordId : sId
+                token: lsObj.getLocalStorage('token'),
+                id: sId
             },
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                ////console.log(data);
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
                     return;
                 }
-                that.showModal();
-
+                $('#gf_detail').modal({});
+                $('#gf_detail .modal-body').scrollTop(0);
+                that.renderDetails(data.rows[0]);
             },
             statusCode: {
                 404: function () {
@@ -233,34 +265,86 @@ var trackObj = {
             }
         });
     },
-    requestOutput: function (flag,sId) {
+    renderDetails: function (obj) {
+        ////console.log(obj);
+        var sDate = obj.beginTime.slice(0, 11);
+        var aDate = sDate.split('-');
+        var date = new Date(aDate[0], (+aDate[1]) - 1, aDate[2]);
+        var cDay = date.getChinaDay();
+        var sBeginTime = date.Format('yyyy年MM月dd日') + '&nbsp;&nbsp;&nbsp;' + '星期' + cDay;
+        $('#gf_detail .beginTime_title').html(sBeginTime)
+        $('#gf_detail .orgName').html(obj.orgName)
+        $('#gf_detail .inspectorName').html(obj.inspectorName)
+        $('#gf_detail .eventCount').html(obj.eventCount)
+        $('#gf_detail .beginTime').html(obj.beginTime)
+        $('#gf_detail .endTime').html(obj.endTime)
+        $('#gf_detail .wholeTime').html(obj.wholeTime)
+        $('#gf_detail .distance').html(obj.distance)
+        var aHappen = $('#gf_detail .happen');
+        var aNone = $('#gf_detail .none');
+        var aDesc = $('#gf_detail .event_desc');
+        obj.eventContent.forEach(function (item, index) {
+            var count = +item.eventcount;
+            if (count > 0) {
+                var index = item.parentId - 1;
+                aNone[index].innerHTML = '';
+                aHappen[index].innerHTML = '√';
+                aDesc[index].innerHTML = item.eventTypeDesc;
+            }
+        });
+        //$('#gf_detail .else_desc').html();
+
+    },
+    initDetails: function () {
+        var that = this;
+
+        $('#gf_detail .beginTime_title').html('--');
+        $('#gf_detail .orgName').html('--');
+        $('#gf_detail .inspectorName').html('--');
+        $('#gf_detail .eventCount').html('--');
+        $('#gf_detail .beginTime').html('--');
+        $('#gf_detail .endTime').html('--');
+        $('#gf_detail .wholeTime').html('--');
+        $('#gf_detail .distance').html('--');
+        $('#gf_detail .happen').html('');
+        $('#gf_detail .none').html('√');
+        $('#gf_detail .event_desc').html('');
+        //$('#gf_detail').modal('handleUpdate');
+    },
+    requestOutput: function (flag, sId) {
         //flag :
         // 0 : all
         // 1 : 单条
         // 2 ： 使用数组
         var that = this;
         var obj = {};
-        Object.assign(obj, that.querryObj);
+        /*Object.assign(obj, that.querryObj);*/
+        $.extend(obj,that.querryObj);
         delete obj.pageSize;
         delete obj.pageNum;
         obj.ids = "";
-        if (  flag == 1){
+        if (flag == 1) {
             obj.ids = sId;
         }
         if (flag == 2) {
-            if( that.tracksIdsArr.length ===  0 ){
+            if (that.tracksIdsArr.length === 0) {
                 alert('请勾选信息');
                 return;
             }
             obj.ids = that.tracksIdsArr.join(',');
         }
-        console.log(obj);
-        $.ajax({
+        //console.log(obj);
+        commonObj.downloadFile({
+            url:"/cloudlink-inspection-event/inspectionRecord/exportWord?token="+lsObj.getLocalStorage('token'),
+            data:obj,
+            method:'post'
+        });
+        /*$.ajax({
             type: "POST",
-            url: "/cloudlink-inspection-event/inspectionRecord/export?token=98059ddb-2f44-4c5c-890c-eba343f6b104",
+            url: "/cloudlink-inspection-event/inspectionRecord/exportWord?token="+lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: JSON.stringify(obj),
-            dataType: "json",
+            //dataType: "json",
             success: function (data, status) {
                 //console.log(data)
                 if (data.success != 1) {
@@ -269,7 +353,37 @@ var trackObj = {
                 }
             },
             complete: function (xhr, txt) {
-                //console.log(xhr);
+                ////console.log(xhr);
+            },
+            statusCode: {
+                404: function () {
+                    alert('网络连接出错！code:404');
+                }
+            }
+        });*/
+    },
+    requestPeopleTree : function(){
+        var that = this;
+        if(that.aAllPeople){
+            //that.renderPeopleTree(that.aAllPeople);
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/cloudlink-core-framework/user/getOrgUserTree",
+            contentType: "application/json",
+            data: {
+                token: lsObj.getLocalStorage('token')
+            },
+            dataType: "json",
+            success: function (data) {
+                //console.log(data);
+                if (data.success != 1) {
+                    alert('网络连接出错！code:-1')
+                    return;
+                }
+                that.aAllPeople = data.rows;
+                that.renderPeopleTree(that.aAllPeople);
             },
             statusCode: {
                 404: function () {
@@ -278,11 +392,10 @@ var trackObj = {
             }
         });
     },
-
     initTable: function () {
         var that = this;
         $('#gf_table').bootstrapTable({
-            url: "/cloudlink-inspection-event/inspectionRecord/web/v1/getPageList?token=98059ddb-2f44-4c5c-890c-eba343f6b104", //请求数据url
+            url: "/cloudlink-inspection-event/inspectionRecord/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
             method: 'post',
             toolbar: "#toolbar",
             toolbarAlign: "left",
@@ -292,8 +405,8 @@ var trackObj = {
             showRefresh: true,
             pagination: true, //分页
             sidePagination: 'server', //分页方式：client客户端分页，server服务端分页（*）
-            pageNumber: 1,
-            pageSize: 10,
+            pageNumber: that.querryObj.pageNum,
+            pageSize: that.querryObj.pageSize,
             pageList: [10, 20, 50], //分页步进值
             search: false, //显示搜索框
             searchOnEnterKey: false,
@@ -302,11 +415,11 @@ var trackObj = {
             queryParams: function (params) {
                 that.querryObj.pageSize = params.pageSize;
                 that.querryObj.pageNum = params.pageNumber;
-                //console.log(that.querryObj)
+                ////console.log(that.querryObj)
                 return that.querryObj;
             },
             /*responseHandler : function(res){
-                console.log(res);
+                //console.log(res);
             },*/
             //表格的列
             columns: [{
@@ -351,7 +464,7 @@ var trackObj = {
                 editable: true,
             }, {
                 field: 'wholeTime', //域值
-                title: '选线总时长', //内容
+                title: '巡线总时长', //内容
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: true, //启用排序
@@ -384,21 +497,22 @@ var trackObj = {
         });
         that.table_bindEvent();
     },
-    tabelEventObj: function(){
+    tabelEventObj: function () {
         var that = this;
         return {
             //查看详情
             'click .see': function (e, value, row, index) {
-                //console.log(row.objectId)
+                ////console.log(row.objectId)
                 //$(this).css("color", "red");
-                that.requestDetails(row.objectId)
-                //that.showModal();
+                that.requestDetails(row.objectId);
+                that.sCurrentTrackId = row.objectId;
+                    //that.showModal();
                 return false;
             },
             //导出word
             'click .out': function (e, value, row, index) {
-                //console.log(row.objectId)
-                that.requestOutput(1,row.objectId);
+                ////console.log(row.objectId)
+                that.requestOutput(1, row.objectId);
                 return false;
             }
         }
@@ -417,35 +531,75 @@ var trackObj = {
         var that = this;
         $('#gf_table')
             .on('check.bs.table', function (e, row) { //单选一行
-                //console.log(row.objectId);
                 that.setTracksIdsArr(row);
-                //console.log(that.tracksIdsArr);
-                //console.log('选中'+that.tracksIdsArr.indexOf(row.objectId));
             })
             .on('uncheck.bs.table', function (e, row) { //取消单选一行
-                //console.log(row.objectId);
                 that.setTracksIdsArr(row);
-                //console.log(that.tracksIdsArr);
-                //console.log('取消'+that.tracksIdsArr.indexOf(row.objectId));
             })
             .on('check-all.bs.table', function (e, rows) { //全选
                 that.setTracksIdsArr(rows);
-                //console.log(that.tracksIdsArr);
             })
             .on('uncheck-all.bs.table', function (e, rows) { //取消全选
                 that.tracksIdsArr = [];
-                //console.log(that.tracksIdsArr);
             })
             .on('post-body.bs.table', function () { //取消全选
                 that.tracksIdsArr = [];
-                //console.log(that.tracksIdsArr);
             })
-
     },
-    showModal : function(){
+    renderPeopleTree : function(data){
         var that = this;
-        console.log('123')
-        $('#gf_detail').modal({});
+        //data = '';
+        ////console.log(data)
+        ////console.log(JSON.stringify(data))
+        var setting = {
+			view: {
+				showLine: true
+			},
+			data: {
+                key : {
+                    name : 'treenodename'
+                },
+				simpleData: {
+					enable: true,
+                    pIdKey : 'pid'
+				}
+			},
+            check : {
+                enable : true,
+                chkStyle : "checkbox",
+            }
+
+		};
+        that.zTree = $.fn.zTree.init($("#people_list"), setting, data);
+        that.zTree.expandAll(true);
+    },
+    setSelectedPerson : function(){
+        var that = this;
+        that.aPeopleId = [];
+        that.aPeopleName = [];
+        var arr = that.zTree.getCheckedNodes(true);
+        arr.forEach(function(item,index){
+            if(item.isParent){
+                return;
+            }
+            that.aPeopleId.push(item.id);
+            that.aPeopleName.push(item.treenodename);
+        })
+        that.$peopleInput.val(that.aPeopleName.join('，'));
+        $('#gf_people').modal('hide');
+        //console.log(that.aPeopleId);
+        //console.log(that.aPeopleName);
+    },
+    initPeopleList : function(){
+        var that = this;
+        that.aPeopleId = [];
+        that.aPeopleName = [];
+        that.$peopleInput.val('');
+        that.querryObj.userIds = '';
+        if(that.zTree){
+            that.zTree.checkAllNodes(false);
+        }
     }
 };
 trackObj.init();
+

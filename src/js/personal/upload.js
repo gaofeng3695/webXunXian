@@ -42,12 +42,18 @@ function handleFiles(obj) {
             document.selection.empty();
             path = nfile;
             img.onload = function() {
-                //alert(nfile + "," + img.fileSize + " bytes");
+
             };
             //fileList.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='image',src='"+nfile+"')";
         }
-        document.getElementById("userImg").src = path;
-
-
+        var imagesL =
+            '<img src="' + path + '" alt=""/>' +
+            '<input type="file" style="display:none" id="hid" name="file" value=' + obj.value + '/>';
+        document.getElementById("view_persoanl").innerHTML = ''; //上传照片之前进行页面内容删除
+        $(".view_persoanl").append(imagesL);
+        $(".persoanl_add").css('display', 'none');
+        $("#Imgnote").text("");
+        document.getElementById('hid').files = files;
+        // document.getElementById("userImg").src = path;
     }
 }

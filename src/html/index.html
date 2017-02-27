@@ -68,39 +68,14 @@
                     </div>
                     <!--任务列表-->
                     <div class="col-lg-7 mainbox">
-                        <div class="title">任务待办（ <span id="eventList_total">5</span> ）
+                        <div class="title">任务待办（ <span id="taskList_total">--</span> ）
                             <a class="more" href="/index.html">更多 ></a>
                         </div>
+                            <div id="task_tip" class="tip">
+                                暂无任务信息
+                            </div>
                         <div id="taskList_wrapper" class="wrapper">
-                            <!--<div class="line">
-                                <div class="line_title">
-                                    <span class="person">张三子</span>
-                                    <span>任务号：</span>
-                                    <span>201609087897</span>
-                                </div>
-                                <div class="sub_wrap">
-                                    <div class="icon record">
 
-                                    </div>
-                                    <div class="mybtn">
-                                        处置
-                                    </div>
-                                    <div class="content">
-                                        <div class="desc">
-                                            成武卢斯科拉奇偶的阿萨德阿萨德阿萨德阿萨德阿萨德马赛克，打个比方你吗，阿打算家门口，阿萨德发马赛克，阿萨德房间卡士大夫监控阿斯蒂芬加速度
-                                        </div>
-                                        <div class="dis_title">
-                                            <span class="person">李明飞</span>
-                                            <span class="handle">填写了处置信息</span>
-                                            <span class="date">2016.9.12 10:17</span>
-                                        </div>
-                                        <div class="dispose">
-                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>-->
                             <!--<div class="line">
                                 <div class="line_title">
                                     <span class="person">item.createUserName</span>
@@ -153,60 +128,29 @@
                             </div>
                             <div class="line">
                                 <div class="ceil">
-                                    <div class="ceil_box e_other">
-                                        <span>第三方施工</span>
-                                        <span class="numBtn"><span id="constructionCount">--</span> 起</span>
-                                    </div>
-                                </div>
-                                <div class="ceil">
                                     <div class="ceil_box e_self">
                                         <span>管道设施</span>
                                         <span class="numBtn"><span id="pipeEquipmentCount">--</span> 起</span>
+                                    </div>
+                                </div>
+                                <div class="ceil">
+                                    <div class="ceil_box e_other">
+                                        <span>第三方施工</span>
+                                        <span class="numBtn"><span id="constructionCount">--</span> 起</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!--事件列表-->
-                    <div class="col-lg-7 mainbox">
-                        <div class="title">事件描述（ <span>5</span> ）
+                    <div id="eventList_wrapper" class="col-lg-7 mainbox">
+                        <div class="title">事件描述（ <span id="eventList_total">--</span> ）
                             <a class="more" href="/index.html">更多 ></a>
                         </div>
-                        <div class="line">
-                            <div class="line_title">
-                                <span class="perosn">张擅自</span>
-                                <span>事件号：</span>
-                                <span>201609087897</span>
-                            </div>
-                            <div class="sub_wrap">
-                                <div class="icon record">
-
-                                </div>
-
-                                <div class="content">
-                                    <div class="con_title">
-                                        <span class="date">2016.12.12 12:14</span>
-                                        <span class="type">第三方施工——道路返修</span>
-                                        <span class="scope">所属范围内</span>
-                                    </div>
-                                    <div class="des_wrap">
-                                        <div class="mybtn">
-                                            查看
-                                        </div>
-                                        <div class="desc">
-                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
-                                        </div>
-                                        <div class="dist">
-                                            北京市海淀区科大天工大厦A座13层
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
+                        <div id="event_tip" class="tip">
+                            暂无事件信息
                         </div>
-                        <div class="line">
+                        <!--<div class="line">
                             <div class="line_title">
                                 <span>事件号：</span>
                                 <span>201609087897</span>
@@ -238,40 +182,7 @@
                                 </div>
 
                             </div>
-                        </div>
-                        <div class="line">
-                            <div class="line_title">
-                                <span>事件号：</span>
-                                <span>201609087897</span>
-                            </div>
-                            <div class="sub_wrap">
-                                <div class="icon record">
-
-                                </div>
-
-                                <div class="content">
-                                    <div class="con_title">
-                                        <span class="date">2016.12.12 12:14</span>
-                                        <span class="type">第三方施工——道路返修</span>
-                                        <span class="scope">所属范围内</span>
-                                    </div>
-                                    <div class="des_wrap">
-                                        <div class="mybtn">
-                                            查看
-                                        </div>
-                                        <div class="desc">
-                                            八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。八方路桃李园小区思琪童安格会受到进口，啊实打实的。
-                                        </div>
-                                        <div class="dist">
-                                            北京市海淀区科大天工大厦A座13层
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
                 <!-- /.row -->
@@ -281,6 +192,7 @@
     <script src="/lib/js/echarts.js"></script>
 
     <script src="/src/js/common/common.js"></script>
+    <script src="/src/js/common/html5-storage.js"></script>
     <script src="/src/js/index.js"></script>
     </body>
 </html>

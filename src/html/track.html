@@ -8,6 +8,7 @@
     <link href="/lib/css/bootstrap.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="/lib/css/zTreeStyle.css"  rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
     <link href="/src/css/track.css" rel="stylesheet">
 </head>
@@ -87,11 +88,11 @@
                                     <div class="item1">
                                         <span class="peo_wrapper" data-class="userIds">
                                                 <span class="peo_border">
-                                                    <input class="peo_selected" readonly>
+                                                    <input id="peopleInput"class="peo_selected" readonly>
                                                     <span class="mybtn"></span>
                                         </span>
-                                        <span class="itemBtn" data-value="user">确定</span>
-                                        <span class="clear">清空人员</span>
+                                        <!--<span id="serach_by_peo" class="itemBtn" data-value="user">确定</span>-->
+                                        <span id="clear_people" class="clear">清空人员</span>
                                         </span>
                                     </div>
                                 </div>
@@ -119,61 +120,121 @@
             </div>
         </div>
     </div>
-    <div id="gf_detail" class="modal fade in" data-backdrop="static">
-        <div class="modal-header">
-            <h3>巡检详情<a class="close" data-dismiss="modal">×</a></h3>
-        </div>
-        <div class="modal-body">
-            <div class="details_main">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">事件编号</div>
-                        <div class="col-md-4 col-sm-4 details_text eventCode"></div>
-                        <div class="col-md-2 col-sm-2 text-right details_title">事件时间</div>
-                        <div class="col-md-4 col-sm-4 details_text occurrenceTime"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">事件类型</div>
-                        <div class="col-md-4  col-sm-4 details_text fullTypeName"></div>
-                        <div class="col-md-2 col-sm-2 text-right details_title">上报人</div>
-                        <div class="col-md-4  col-sm-4 details_text inspectorName"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">地理位置</div>
-                        <div class="col-md-10  col-sm-10 details_text">
-                            <p class="address"></p>
-                            <div id="details_address_map"></div>
+    <!--details begin-->
+    <div id="gf_detail" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="gridSystemModalLabel">巡检详情</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="sub_wrapper">
+                        <div class="title">
+                            <span class="date beginTime_title">--</span>
+                            <span class="dept">部门：<span class="orgName">--</span></span>
                         </div>
+                        <table>
+                            <tr>
+                                <td class="key bg">巡线人员</td>
+                                <td class="value inspectorName">--</td>
+                                <td class="key bg">事件上报数</td>
+                                <td class="value eventCount">--</td>
+                            </tr>
+                            <tr>
+                                <td class="key bg ">起始时间</td>
+                                <td class="value beginTime">--</td>
+                                <td class="key bg ">结束时间</td>
+                                <td class="value endTime">--</td>
+                            </tr>
+                            <tr>
+                                <td class="key bg">巡线总时(小时)</td>
+                                <td class="value wholeTime">--</td>
+                                <td class="key bg">巡线里程(km)</td>
+                                <td class="value distance">--</td>
+                            </tr>
+                        </table>
+                        <table class="middle">
+                            <tr>
+                                <td class="key bg center" rowspan="2">序号</td>
+                                <td class="value bg center" rowspan="2">管线巡线内容</td>
+                                <td class="key bg noPadding center " colspan="2">有无问题</td>
+                                <td class="value bg center" rowspan="2">详细记录</td>
+                            </tr>
+                            <tr>
+                                <td class="noPadding bg center newkey">有</td>
+                                <td class="noPadding bg center newkey">无</td>
+                            </tr>
+                            <tr>
+                                <td class="center">1</td>
+                                <td>是否有施工、占压等等第三方活动</td>
+                                <td class="center happen "></td>
+                                <td class="center none">√</td>
+                                <td class="event_desc"></td>
+                            </tr>
+                            <tr>
+                                <td class="center">2</td>
+                                <td>是否有塌陷、水淹、滑坡等自然灾害</td>
+                                <td class="center happen"></td>
+                                <td class="center none">√</td>
+                                <td class="event_desc"></td>
+                            </tr>
+                            <tr>
+                                <td class="center">3</td>
+                                <td>管体、管线设施及管道配套设施是否完善</td>
+                                <td class="center happen"></td>
+                                <td class="center none">√</td>
+                                <td class="event_desc"></td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr class="height">
+                                <td class="key02 bg center">补充说明</td>
+                                <td class="else_desc"></td>
+                            </tr>
+                        </table>
+
                     </div>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">事件描述</div>
-                        <div class="col-md-10  col-sm-10 details_text description"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">语音描述</div>
-                        <div class="col-md-10 details_text  col-sm-10">
-                            <audio controls class="event_audio" src=""></audio>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2 text-right details_title">照片</div>
-                        <div class="col-md-10 details_text  col-sm-10 event_pic">
-                        </div>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="modal_output" type="button" class="btn modal_active btn-primary">导出</button>
+                    <button type="button" class="btn modal_close btn-default" data-dismiss="modal">关闭</button>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal">关闭</button>
+    </div><!--details end-->
+
+    <div id="gf_people" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="gridSystemModalLabel">人员添加</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="sub_wrapper">
+                        <ul id="people_list" class="ztree"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn_selectPeople" type="button" class="btn modal_active btn-primary">确定</button>
+                    <button type="button" class="btn modal_close btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
         </div>
     </div>
+
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/jquery.ztree.all.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
     <script src="/lib/js/bootstrap-table.min.js"></script>
     <script src="/lib/js/bootstrap-table-zh-CN.min.js"></script>
     <script src="/lib/js/bootstrap-datetimepicker.min.js"></script>
     <script src="/src/js/common/common.js"></script>
+    <script src="/src/js/common/html5-storage.js"></script>
     <script src="/src/js/track.js"></script>
+
+
 </body>
 
 </html>

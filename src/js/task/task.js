@@ -1,63 +1,49 @@
 $(function() {
-
     mapObj.init();
-    taskObj.init();
+    // taskObj.init(); //填写处置信息
     initTable();
     searchObj.init(); //搜索条件
 
-    taskDetailsObj.init();
+    taskDetailsObj.init(); //任务详情
 
-    /*上传图片*/
-    $(".addImg").click(function() {
-        var imgNum = $(".feedback_img_list").find(".feedback_images").length;
-        if (imgNum <= 4) {
-            $("#upload").trigger("click");
-        } else {
-            alert("最多上传五张图片");
-        }
+    tableOperationObj.init(); //表格上面的操作按钮
+    drafting('task_map', 'drafting_down'); //启动拖拽
 
-    });
-
-    /*删除图片*/
-    function closeImg(e) {
-        $(e).closest(".feedback_images").remove();
-    }
-
-    $("#map_choice").click(function() {
-        // 获取已选的信息
-        var tex = $('#table').bootstrapTable('getSelections');
-        mapObj.addMark(tex);
-        // console.log(JSON.stringify(tex));
-    });
 });
 
 // 地图的显示隐藏
 
 var mapObj = {
-    $token: lsObj.getLocalStorage('token'),
     $user: JSON.parse(lsObj.getLocalStorage("userBo")),
     $mapBtn: $(".bottom_btn span"),
-    $mapO: $("#event_map"),
-    $mapEvent: new BMap.Map("event_map"), // 创建Map实例
-    init: function() {
-        console.log(this.$token)
+    $mapO: $("#task_map"), //百度地图DIV容器
+    $bdMap: new BMap.Map("task_map"), //创建百度地图实例
+    $zoom: ["50", "100", "200", "500", "1000", "2000", "5000", "10000", "20000", "25000", "50000", "100000", "20000", "25000", "50000", "100000", "200000", "500000", "1000000", "2000000"],
+    aCurrentPoints: [],
+    init: function() { //地图初始化方法
         var _this = this;
-        //百度地图API功能
-        var point = new BMap.Point(116.404, 38.915);
-        this.$mapEvent.centerAndZoom(point, 12);
-        this.$mapEvent.enableScrollWheelZoom(); //启用滚轮放大缩小
-
-        var top_right_navigation = new BMap.NavigationControl({
+        this.$bdMap.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
+        this.$bdMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        //声明-比例尺控件（左下角）
+        var bottom_left_ScaleControl = new BMap.ScaleControl({
+            anchor: BMAP_ANCHOR_BOTTOM_LEFT
+        });
+        //声明-平移和缩放按钮控件（右下角）
+        var bottom_right_navigation = new BMap.NavigationControl({
             anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
             type: BMAP_NAVIGATION_CONTROL_SMALL
-        }); //右上角，仅包含平移和缩放按钮
-        this.$mapEvent.addControl(top_right_navigation);
-        //点击收缩地图
-        this.$mapBtn.click(function() {
-            _this.control();
+        });
+        //地图加载控件
+        this.$bdMap.addControl(bottom_left_ScaleControl);
+        this.$bdMap.addControl(bottom_right_navigation);
+        this.$bdMap.addControl(new BMap.MapTypeControl());
+
+        //地图的展开和收缩-点击事件
+        $(".bottom_btn span").click(function() {
+            _this.mapSwitch();
         });
     },
-    control: function() {
+    mapSwitch: function() { //地图展开、收缩的开关
         if (this.$mapO.is(":hidden")) {
             this.show();
         } else {
@@ -73,65 +59,163 @@ var mapObj = {
         this.$mapBtn.attr("class", "map_up");
         this.iconHide();
     },
-    setMark: function(data) {
+    //地图打点并计算中心点及缩放等级
+    setPointsMarkerWithCenterPointAndZoomLevel: function(data) {
+        this.$bdMap.clearOverlays(); //清除地图上已经标注的点
+        var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
+        // alert(JSON.stringify(maxPointAndMinPointObj));
+        var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
+        this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
+        this.setPointsMarker(data);
+    },
+    //地图打点(多个点)
+    setPointsMarker: function(data) {
+        //this.$bdMap.clearOverlays(); //清除地图上已经标注的点
         var txts = null;
         var myIcons = null;
         var markers = null;
         var point = null;
-        var label = null;
+        this.aCurrentPoints = [];
         for (var i = 0; i < data.length; i++) {
             txts = '<div><p>事件类型：' + data[i].fullTypeName + '</p>' +
-                '<p>任务状态：' + data[i].taskStatusDesc + '</p>' +
+                '<p>事件状态：' + data[i].taskStatusDesc + '</p>' +
                 '<p>上报人：' + data[i].taskCreateUserName + '</p></div>';
 
             point = new BMap.Point(data[i].bdLon, data[i].bdLat);
-            label = new BMap.Label("" + data[i].eventId, { offset: new BMap.Size(20, -10) });
-            label.setStyle({ 'display': 'none' });
             if (data[i].parentTypeId == 1) {
-                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+                if (data[i].taskStatus == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+                }
             } else if (data[i].parentTypeId == 2) {
-                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+                if (data[i].taskStatus == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+                }
             } else if (data[i].parentTypeId == 3) {
-                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+                if (data[i].taskStatus == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+                }
             }
-            markers = new BMap.Marker(point, { icon: myIcons });
-            markers.setLabel(label);
-            this.$mapEvent.addOverlay(markers);
-            this.addClickHandler(txts, markers)
+            markers = new BMap.Marker(point, {
+                icon: myIcons
+            });
+            this.$bdMap.addOverlay(markers);
+            //将当前地图上的坐标点 赋值全局变量
+            this.aCurrentPoints.push({
+                'key': data[i].taskId,
+                'value': markers
+            });
+            this.addClickHandler(txts, markers);
         }
     },
-    addMark: function(data) { //加载事件标注点
-        this.$mapEvent.clearOverlays(); //清除所以的点
-        this.$mapEvent.centerAndZoom(new BMap.Point(data[0].bdLon, data[0].bdLat), 12); //设置中心点
-        this.setMark(data);
+    ///获取max坐标和min坐标
+    getMaxPointAndMinPoint: function(_data) {
+        var _maxLon = 0,
+            _maxLat = 0,
+            _minLon = 999,
+            _minLat = 999;
+        var _length = _data.length;
+        for (var i = 0; i < _length; i++) {
+
+            if (_maxLon < _data[i].bdLon) {
+                _maxLon = _data[i].bdLon;
+            }
+            if (_minLon > _data[i].bdLon) {
+                _minLon = _data[i].bdLon;
+            }
+            if (_maxLat < _data[i].bdLat) {
+                _maxLat = _data[i].bdLat;
+            }
+            if (_minLat > _data[i].bdLat) {
+                _minLat = _data[i].bdLat;
+            }
+        }
+        var _obj = {
+            maxLon: _maxLon,
+            maxLat: _maxLat,
+            minLon: _minLon,
+            minLat: _minLat
+        };
+        return _obj;　　　　
     },
-    getMark: function(data) {
-        var allOverlay = this.$mapEvent.getOverlays();
-        var numMark = 0;
-        var markerNew = null;
-        var point = new BMap.Point(data.bdLon, data.bdLat);
-        // alert(allOverlay.length);
-        for (var i = 0; i < allOverlay.length; i++) {
-            if (allOverlay[i].getLabel().content == data.eventId) {
-                allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-                numMark++;
+    //获取中心点及zoom级别
+    getCenterPointAndZoomLevel: function(maxLon, maxLat, minLon, minLat) {
+        var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A  
+        var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B  
+        var distance = this.$bdMap.getDistance(pointA, pointB).toFixed(1); //获取两点距离,保留小数点后两位
+        //alert(distance);
+        var _obj = {
+            zoomlevel: 0,
+            centerPoint: null
+        }; //返回的对象
+        for (var i = 0, zoomLen = this.$zoom.length; i < zoomLen; i++) {
+            if (this.$zoom[i] - distance > 0) {
+                _obj.zoomlevel = (18 - i + 3); //之所以会多3，是因为地图范围常常是比例尺距离的10倍以上。所以级别会增加3
+                break;
+            }
+        };
+        var _centerpoint = new BMap.Point((maxLon + minLon) / 2, (maxLat + minLat) / 2);
+        _obj.centerPoint = _centerpoint;
+        return _obj;
+    },
+    singlePointLocation: function(selectedItem) {
+        var isExist = 0;
+        this.$bdMap.centerAndZoom(new BMap.Point(selectedItem.bdLon, selectedItem.bdLat), 18); //中心点跳转
+
+        for (var i = 0; i < this.aCurrentPoints.length; i++) {
+            if (this.aCurrentPoints[i].key == selectedItem.taskId) {
+                isExist++;
+                this.aCurrentPoints[i].value.setAnimation(BMAP_ANIMATION_BOUNCE);
+
             } else {
-                allOverlay[i].setAnimation();
+                this.aCurrentPoints[i].value.setAnimation();
             }
         }
-        if (numMark == 0) {
-            this.setMark(data);
-            // markerNew = new BMap.Marker(point); // 创建标注
-            // this.$mapEvent.addOverlay(markerNew); // 将标注添加到地图中
-            // markerNew.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-        } else {
-            this.$mapEvent.removeOverlay(markerNew);
+        if (isExist > 0) return;
+        var _point = new BMap.Point(selectedItem.bdLon, selectedItem.bdLat);
+        var _marker = new BMap.Marker(_point); // 创建标注
+
+        var txts = null;
+        var myIcons = null;
+        txts = '<div><p>事件类型：' + selectedItem.fullTypeName + '</p>' +
+            '<p>事件状态：' + selectedItem.taskStatusDesc + '</p>' +
+            '<p>上报人：' + selectedItem.taskCreateUserName + '</p></div>';
+
+        if (selectedItem.parentTypeId == 1) {
+            if (selectedItem.taskStatus == 20) {
+                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+            }
+        } else if (selectedItem.parentTypeId == 2) {
+            if (selectedItem.taskStatus == 20) {
+                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+            }
+        } else if (selectedItem.parentTypeId == 3) {
+            if (selectedItem.taskStatus == 20) {
+                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+            }
         }
-        this.$mapEvent.panTo(point); //中心点跳转
-    },
-    iconHide: function() { //隐藏百度图标与文字
-        $(".BMap_cpyCtrl.BMap_noprint.anchorBL,.anchorBL").hide();
-        $(".anchorBL a").hide();
+        _marker = new BMap.Marker(_point, {
+            icon: myIcons
+        });
+
+        this.$bdMap.addOverlay(_marker); // 将标注添加到地图中 
+        _marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+        this.aCurrentPoints.push({
+            key: selectedItem.taskId,
+            value: _marker
+        });
+        this.addClickHandler(txts, _marker);
     },
     addClickHandler: function(content, marker) {
         var _this = this;
@@ -149,139 +233,15 @@ var mapObj = {
         var p = e.target;
         var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
         var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象 
-        mapObj.$mapEvent.openInfoWindow(infoWindow, point); //开启信息窗口
+        mapObj.$bdMap.openInfoWindow(infoWindow, point); //开启信息窗口
+    },
+    iconHide: function() { //隐藏百度图标与文字
+        $(".BMap_cpyCtrl.BMap_noprint.anchorBL,.anchorBL").hide();
+        $(".anchorBL a").hide();
     }
 };
 
-//任务对象，根据任务来操作
-var taskObj = {
-    $submit: $(".submit"),
-    $taskM: $("#dispose"),
-    $datatime: $("#datetime"),
-    $objectId: null,
-    $taskId: null,
-    $flg: true,
-    init: function() {
-        var _this = this;
-        this.$submit.click(function() { //事件上报
-            _this.submit();
-        });
-    },
-    eventOpen: function(e) { //打开摸态窗口
-        this.$taskM.modal();
-        var time = (new Date()).Format("yyyy-MM-dd HH:mm");
-        this.$datatime.val(time);
-        this.$taskId = e.taskId;
-    },
-    submit: function() { //提交表单
-        this.$objectId = baseOperation.createuuid();
-
-        var content = $("#event_description").val().trim();
-        var type = $("input[name='taskType']:checked").val();
-        var receiveUser = $("input[name='receiveUser']").val();
-
-        if (this.$flg == true) {
-            this.$flg = false;
-            if (content == "") {
-                alert("请描述处置的信息!");
-                this.again();
-                return false;
-            } else if (type == "20") {
-                if (receiveUser == '') {
-                    alert("请选择【请示】消息的接收人！");
-                    this.again();
-                    return false;
-                }
-            } else {
-                this.uploadFile();
-            }
-        }
-
-    },
-    uploadFile: function() {
-        var nImgHasBeenSendSuccess = 0;
-        var _this = this;
-        var files = $(".feedback_img_list").find("input[name=file]");
-        if (files.length > 0) {
-            for (i = 0; i < files.length; i++) {
-                var picId = files.eq(i).attr("id");
-                $.ajaxFileUpload({
-                    url: "/cloudlink-core-file/attachment/save?businessId=" + _this.$objectId + "&bizType=pic&token=" + mapObj.$token,
-                    /*这是处理文件上传的servlet*/
-                    secureuri: false,
-                    fileElementId: picId, //上传input的id
-                    dataType: "json",
-                    type: "POST",
-                    async: false,
-                    success: function(data, status) {
-                        console.log(data);
-                        console.log(data.success);
-                        var statu = data.success;
-                        if (statu == 1) {
-                            nImgHasBeenSendSuccess++;
-                            if (nImgHasBeenSendSuccess == files.length) {
-                                //上传表单
-                                console.log("dd")
-                                _this.uploadData();
-                            }
-                        } else {
-                            alert("当前网络不稳定");
-                            _this.again();
-                        }
-                    }
-                });
-            }
-        } else {
-            console.log("weism")
-                //上传表单
-            _this.uploadData();
-        }
-    },
-    uploadData: function() {
-        var _this = this;
-        var eventData = this.formData();
-        console.log(JSON.stringify(eventData));
-        $.ajax({
-            type: 'POST',
-            url: "/cloudlink-inspection-task/dispose/save?token=" + mapObj.$token,
-            contentType: "application/json",
-            data: JSON.stringify(eventData),
-            dataType: "json",
-            success: function(data, status) {
-                console.log("返回" + JSON.stringify(data));
-                if (data.success == 1) {
-                    _this.$taskM.modal('hide');
-                    window.location.reload();
-                } else {
-                    alert("当前网络不稳定");
-                    _this.again();
-                }
-            }
-        })
-    },
-    formData: function() {
-        var _this = this;
-        var createTime = $("#datetime").val();
-        var content = $("#event_description").val().trim();
-        console.log(_this.$taskId)
-        var dataMsg = {
-            "objectId": this.$objectId,
-            "type": $("input[name='taskType']:checked").val(),
-            "content": content,
-            "createTime": createTime,
-            "taskId": _this.$taskId,
-            "receiveUserIds": [{
-                "userId": "714849be-15ce-4358-a668-f06f940d1b6f",
-                "userName": "谢测试"
-            }]
-        }
-        return dataMsg;
-    },
-    again: function() {
-        this.$flg = true;
-    }
-};
-
+//高级搜索相关的对象与方法
 var searchObj = {
     $items: $('.top .item'), //搜索条件dom
     $searchInput: $('#searchInput'), //搜索关键词dom
@@ -298,7 +258,7 @@ var searchObj = {
         "pageSize": 10 //每页记录数
     },
     querryObj: { //请求的搜索条件
-        "status": "20,21",
+        "status": "20",
         "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
         "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
         "keyword": "", //巡线人，巡线编号
@@ -334,13 +294,19 @@ var searchObj = {
             }
             if (key === 'typeParent') {
                 if (obj[key] == '1') {
-                    that.renderActive({ "type": "4,5,6,7,8,9,10" });
+                    that.renderActive({
+                        "type": "4,5,6,7,8,9,10"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else if (obj[key] == '2') {
-                    that.renderActive({ "type": "11,12,13,14,15,16,17" });
+                    that.renderActive({
+                        "type": "11,12,13,14,15,16,17"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else if (obj[key] == '3') {
-                    that.renderActive({ "type": "18,19" });
+                    that.renderActive({
+                        "type": "18,19"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else {
                     $(".item2_id").hide();
@@ -367,7 +333,7 @@ var searchObj = {
             obj[key] = value;
             that.renderActive(obj);
             that.refreshTable();
-            console.log(that.querryObj);
+            // console.log(that.querryObj);
         });
 
         /* 搜索关键词 */
@@ -389,16 +355,10 @@ var searchObj = {
         /* 清空搜索条件 */
         $('#gf_reset_Btn').click(function() {
             //请求数据还原到初始话
-            Object.assign(that.querryObj, that.defaultObj);
+            $.extend(that.querryObj, that.defaultObj);
+            // Object.assign(that.querryObj, that.defaultObj);
             that.renderActive();
             that.refreshTable();
-        });
-        /* 导出数据 */
-        $('#export_all').click(function() {
-            // that.requestOutput(0);
-        });
-        $('#export_choice').click(function() {
-            // that.requestOutput(2);
         });
         //自定义时间
         $('#diyDateBtn').on('click', function() {
@@ -474,17 +434,6 @@ var searchObj = {
         });
     },
     bindDateDiyEvent: function() { //时间控件
-        $('#datetime').datetimepicker({
-            format: 'yyyy-mm-dd hh:ii',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            startDate: new Date()
-        });
         $("#datetimeStart").datetimepicker({
             format: 'yyyy-mm-dd',
             minView: 'month',
@@ -509,7 +458,7 @@ var searchObj = {
 
 function initTable() {
     $('#task_table').bootstrapTable({
-        url: "/cloudlink-inspection-task/task/getPageList?token=" + mapObj.$token, //请求数据url
+        url: "/cloudlink-inspection-task/task/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
         method: 'post',
         // data: "dataAll",
         toolbar: "#toolbar",
@@ -550,10 +499,11 @@ function initTable() {
             return res;
         },
         onLoadSuccess: function(data) {
-            // alert(JSON.stringify(data));
-            var dataAll = data.rows; //初始化的数据
-            if (dataAll.length == 0) {} else {
-                mapObj.addMark(dataAll);
+            // console.log(data);
+            if (data.rows.length > 0) {
+                mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
+            } else {
+                mapObj.$bdMap.clearOverlays();
             }
         },
         //表格的列
@@ -563,24 +513,17 @@ function initTable() {
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '4%',
+            width: '3%',
         }, {
             field: 'stakeholder', //域值
             title: '待办', //标题
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '4%',
-            cellStyle: function(value, row, index) {
-                return {
-                    css: {
-                        "color": "red",
-                    }
-                };
-            },
+            width: '6%',
             formatter: function(value, row, index) {
                 if (value == 1) {
-                    return "待办";
+                    return "<span class='dealtTask'>待办</span>";
                 } else {
                     return "";
                 }
@@ -604,8 +547,6 @@ function initTable() {
                 return {
                     css: {
                         "max-width": "300px",
-                        "word-wrap": "break-word",
-                        "word-break": "normal"
                     }
                 };
             }
@@ -623,7 +564,7 @@ function initTable() {
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '8%',
+            width: '11%',
             // editable: true,
         }, {
             field: 'disposeCreateTime', //域值
@@ -631,7 +572,7 @@ function initTable() {
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '15%',
+            width: '13%',
             editable: true, //可编辑
         }, {
             field: 'taskCreateUserName', //域值
@@ -646,12 +587,13 @@ function initTable() {
             title: '操作',
             align: 'center',
             events: operateEvents,
-            width: '15%',
+            width: '13%',
             formatter: operateFormatter
         }]
     });
 }
 
+//操作按钮的展现
 function operateFormatter(value, row, index) {
     var managementClass = null;
     var closedClass = null
@@ -691,429 +633,361 @@ window.operateEvents = {
         if ($(this).find('i').attr("class") == 'active') {} else {
             $(".location").find('i').attr("class", "");
             $(this).find('i').attr("class", "active");
-            mapObj.getMark(row);
+            mapObj.singlePointLocation(row);
         }
-        $('body,html').animate({ scrollTop: 0 }, 500);
+        $('body,html').animate({
+            scrollTop: 0
+        }, 500);
         return false;
     },
     //查看详情
     'click .check': function(e, value, row, index) {
-        if ($(this).find('i').attr("class") == 'active') {} else {
-            $(".check").find('i').attr("class", "");
-            $(this).find('i').attr("class", "active");
-        }
-        console.log(row);
-
+        // console.log(row)
         $("#details").modal(); //打开详情模态框
-        // setTimeout('taskDetailsObj.init(row)', 1000);
-        taskDetailsObj.loadDetails(row)
-            /*
-            var eventId = row.eventId;
-            var taskId = row.taskId;
-            // console.log();
-            var lon = row.bdLon;
-            var lat = row.bdLat;
-            $("#details").modal(); //打开详情模态框
-            $(".taskCode").text(row.taskCode);
-            //获取事件详情
-            $.ajax({
-                type: 'GET',
-                url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data, status) {
-                    var detailsMap = new BMap.Map("details_address_map");
-                    detailsMap.reset();
-                    detailsMap.enableScrollWheelZoom(true);
-                    var point = new BMap.Point(lon, lat);
-                    detailsMap.centerAndZoom(point, 15);
-                    var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
-                    var marker = new BMap.Marker(point, {
-                        icon: myIcon
-                    });
-                    detailsMap.clearOverlays();
-                    detailsMap.addOverlay(marker);
-                    mapObj.iconHide(); //隐藏百度图标
 
-                    var msg = data.rows;
-                    var images = msg[0].pic;
-                    $(".event_pic").html("");
-                    $(".eventCode").text(msg[0].eventCode);
-                    $(".occurrenceTime").text(msg[0].occurrenceTime);
-                    $(".fullTypeName").text(msg[0].fullTypeName);
-                    $(".inspectorName").text(msg[0].inspectorName);
-                    $(".address").text(msg[0].address);
-                    $(".description").text(msg[0].description);
-                    //$(".event_audio").attr("src", '/cloudlink-core-file/file/downLoad?fileId=' + msg[0].audio[0] + "&audioFileName" + 0.1 + ".amr");
+        if (row.stakeholder == 0) {
+            $(".disposeTask").hide();
+            $(".closeTask").hide();
+        } else {
+            $(".disposeTask").show();
+            $(".closeTask").show();
+        }
+        setTimeout(function() {
+            taskDetailsObj.loadDetails(row);
+        }, 1000);
 
-                    var pic_scr = "";
-                    for (var i = 0; i < images.length; i++) {
-                        pic_scr += '<div class="event_pic_list">' +
-                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                            '</div>';
-                    }
-                    $(".event_pic").append(pic_scr);
-                    $.ajax({
-                        type: 'GET',
-                        url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + msg[0].audio[0],
-                        contentType: "application/json",
-                        dataType: "json",
-                        success: function(data, status) {
-                            // console.log(data.rows[0].fileUrl);
-                            $(".event_audio").attr("src", '' + data.rows[0].fileUrl);
-                        }
-                    })
-                }
-            });
-            //获取处置信息
-            $.ajax({
-                type: 'GET',
-                url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + taskId,
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data, status) {
-                    var msgAll = data.rows;
-                    $(".dispose_content").html("");
-                    var txt = '';
-
-                    var tempArry = [];
-                    var temp = "";
-
-                    for (var i = 0; i < msgAll.length; i++) {
-                        if (temp != msgAll[i].modifyday) {
-                            tempArry.push(msgAll[i].modifyday);
-                            temp = msgAll[i].modifyday;
-                        }
-                    }
-                    for (var j = 0; j < tempArry.length; j++) {
-                        txt = '<div class="dispose_date" id="day_' + j + '">' +
-                            '<div class="dispose_day">' +
-                            '<div class="day_dian"></div>' +
-                            '<div class="day_time">' + tempArry[j] + '</div>' +
-                            '</div></div>';
-                        $(".dispose_content").append(txt);
-
-                        for (var x = 0; x < msgAll.length; x++) {
-                            var txtChild = '';
-                            if (msgAll[x].modifyday == tempArry[j]) {
-                                var recevieUser = msgAll[x].recevieUserName;
-                                if (recevieUser == null || recevieUser == '') {
-                                    recevieUser = '无';
-                                }
-                                txtChild = '<div class="dispose_main">' +
-                                    '<div class="dispose_main_l">' +
-                                    '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_main_r">' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
-                                    '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">信息描述：</span>' +
-                                    '<div class="info_r">' + msgAll[x].content + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">语音描述：</span>' +
-                                    '<div class="info_r">' + msgAll[x].audio[0] + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">接收人：</span>' +
-                                    '<div class="info_r">' + recevieUser + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">照片：</span>' +
-                                    '<div class="info_r taskImg_' + x + '"></div>' +
-                                    '</div></div></div>';
-                                $("#day_" + j).append(txtChild);
-
-                                var picAll = msgAll[x].pic;
-                                var pic_scr = "";
-                                for (var n = 0; n < picAll.length; n++) {
-                                    pic_scr += '<div class="task_pic_list">' +
-                                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                        '</div>';
-                                }
-                                $(".taskImg_" + x).append(pic_scr);
-                            }
-                        }
-                    }
-                }
-            })
-            */
         return false;
     },
     //填写处置信息
     'click .management': function(e, value, row, index) {
-        if ($(this).find('i').attr("class") == 'active') {} else {
-            $(".management").find('i').attr("class", "");
-            $(this).find('i').attr("class", "active");
-        }
-        taskObj.eventOpen(row);
+        taskObj.taskOpen(row.taskId);
         return false;
     },
     //关闭任务
     'click .closed': function(e, value, row, index) {
-
-        $(".closed").find('i').attr("class", "");
-        $(this).find('i').attr("class", "active");
-        taskObj.$taskId = row.taskId;
+        taskDetailsObj.closedWhether(row.taskId);
         return false;
     }
 };
 
 
 var taskDetailsObj = {
-        $detailsMap: new BMap.Map("details_address_map"),
-        $disposeTask: $(".disposeTask"),
-        $closeTask: $(".closeTask"),
-        _taskId: null,
-        init: function() {
-            var _this = this;
-            //this.$detailsMap = new BMap.Map("details_address_map");
-            // this.$detailsMap.reset();
-            this.$detailsMap.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
-            this.$detailsMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
-            //声明-比例尺控件（左下角）
-            var bottom_left_ScaleControl = new BMap.ScaleControl({
-                anchor: BMAP_ANCHOR_BOTTOM_LEFT
-            });
-            //声明-平移和缩放按钮控件（右下角）
-            var bottom_right_navigation = new BMap.NavigationControl({
-                anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
-                type: BMAP_NAVIGATION_CONTROL_SMALL
-            });
-            //地图加载控件
-            this.$detailsMap.addControl(bottom_left_ScaleControl);
-            this.$detailsMap.addControl(bottom_right_navigation);
-            this.$detailsMap.addControl(new BMap.MapTypeControl());
-
-            // this.loadDetails(_row);
-
-            this.$closeTask.click(function() {
-                console.log(_this._taskId);
-                console.log(_this.closedWhether(_this._taskId))
-                if (_this.closedWhether(_this._taskId) == true) {
-                    console.log("dd");
-                    _this.closedWhether(_this._taskId)
-                } else {
-                    console.log("cc");
-                }
-            })
-
-        },
-        loadDetails: function(row) {
-            $(".taskCode").text(row.taskCode);
-            var eventId = row.eventId;
-            this._taskId = row.taskId;
-            console.log(row);
-            var lon = row.bdLon;
-            var lat = row.bdLat;
-            this.setCenterZoom(lon, lat);
-            this.loadEventDetails(eventId);
-            this.loadTaskDetails(this._taskId);
-        },
-        setCenterZoom: function(lon, lat) {
-            console.log("1")
-            this.$detailsMap.clearOverlays();
-            var point = new BMap.Point(lon, lat);
-            var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
-            var marker = new BMap.Marker(point, {
-                icon: myIcon
-            });
-
-            this.$detailsMap.addOverlay(marker);
-            this.$detailsMap.centerAndZoom(point, 15);
-            mapObj.iconHide(); //隐藏百度图标
-        },
-        loadEventDetails: function(eventId) {
-            console.log("2")
-            $.ajax({
-                type: 'GET',
-                url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data, status) {
-                    var msg = data.rows;
-                    var images = msg[0].pic;
-                    $(".event_pic").html("");
-                    $(".eventCode").text(msg[0].eventCode);
-                    $(".occurrenceTime").text(msg[0].occurrenceTime);
-                    $(".fullTypeName").text(msg[0].fullTypeName);
-                    $(".inspectorName").text(msg[0].inspectorName);
-                    $(".address").text(msg[0].address);
-                    $(".description").text(msg[0].description);
-                    //$(".event_audio").attr("src", '/cloudlink-core-file/file/downLoad?fileId=' + msg[0].audio[0] + "&audioFileName" + 0.1 + ".amr");
-
-                    var pic_scr = "";
-                    for (var i = 0; i < images.length; i++) {
-                        pic_scr += '<div class="event_pic_list">' +
-                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                            '</div>';
-                    }
-                    $(".event_pic").append(pic_scr);
-                    $.ajax({
-                        type: 'GET',
-                        url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + msg[0].audio[0],
-                        contentType: "application/json",
-                        dataType: "json",
-                        success: function(data, status) {
-                            // console.log(data.rows[0].fileUrl);
-                            $(".event_audio").attr("src", '' + data.rows[0].fileUrl);
-                        }
-                    })
-                }
-            });
-        },
-        loadTaskDetails: function(taskId) {
-            console.log("3")
-                //获取处置信息
-            $.ajax({
-                type: 'GET',
-                url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + taskId,
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data, status) {
-                    var msgAll = data.rows;
-                    $(".dispose_content").html("");
-                    var txt = '';
-
-                    var tempArry = [];
-                    var temp = "";
-
-                    for (var i = 0; i < msgAll.length; i++) {
-                        if (temp != msgAll[i].modifyday) {
-                            tempArry.push(msgAll[i].modifyday);
-                            temp = msgAll[i].modifyday;
-                        }
-                    }
-                    for (var j = 0; j < tempArry.length; j++) {
-                        txt = '<div class="dispose_date" id="day_' + j + '">' +
-                            '<div class="dispose_day">' +
-                            '<div class="day_dian"></div>' +
-                            '<div class="day_time">' + tempArry[j] + '</div>' +
-                            '</div></div>';
-                        $(".dispose_content").append(txt);
-
-                        for (var x = 0; x < msgAll.length; x++) {
-                            var txtChild = '';
-                            if (msgAll[x].modifyday == tempArry[j]) {
-                                var recevieUser = msgAll[x].recevieUserName;
-                                //判断接收人
-                                if (recevieUser == null || recevieUser == '') {
-                                    recevieUser = '无';
-                                }
-                                txtChild = '<div class="dispose_main">' +
-                                    '<div class="dispose_main_l">' +
-                                    '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_main_r">' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
-                                    '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">信息描述：</span>' +
-                                    '<div class="info_r">' + msgAll[x].content + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">语音描述：</span>' +
-                                    '<div class="info_r">' + msgAll[x].audio[0] + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">接收人：</span>' +
-                                    '<div class="info_r">' + recevieUser + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">照片：</span>' +
-                                    '<div class="info_r taskImg_' + x + '"></div>' +
-                                    '</div></div></div>';
-                                $("#day_" + j).append(txtChild);
-
-                                var picAll = msgAll[x].pic;
-                                var pic_scr = "";
-                                for (var n = 0; n < picAll.length; n++) {
-                                    pic_scr += '<div class="task_pic_list">' +
-                                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                        '</div>';
-                                }
-                                $(".taskImg_" + x).append(pic_scr);
-                            }
-                        }
-                    }
-                }
-            })
-        },
-        closedWhether: function(taskId) {
-            $.ajax({
-                type: 'GET',
-                url: "/cloudlink-inspection-task/task/getTaskStatus?taskId=" + taskId,
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data, status) {
-                    if (data.success == 1) {
-                        var taskState = data.rows;
-                        if (taskState[0].status == 21) {
-                            alert("您好，该任务已经关闭！");
-                            window.location.reload();
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-                }
-            })
-        },
-        closedTask: function(taskId) {
-            var taskIds = [];
-            taskIds.push(taskId);
-            $.ajax({
-                type: 'POST',
-                url: "/cloudlink-inspection-task/task/close",
-                contentType: "application/json",
-                data: taskIds,
-                dataType: "json",
-                success: function(data, status) {
-                    if (data.success == 1) {
-                        alert("任务关闭成功！");
-                        window.location.reload();
-                    }
-                }
-            })
-        }
-    }
-    //导出文件
-var exportFileObj = {
-    $exportAll: $(".export_all"),
-    $exportChoice: $(".export_choice"),
+    $detailsMap: new BMap.Map("details_address_map"),
+    $disposeTask: $(".disposeTask"),
+    $closeTask: $(".closeTask"),
+    _taskId: null,
     init: function() {
+        var _this = this;
 
-
-        var bb = {
-            "status": "20", //处理状态，括号内为注释
-            "type": "1,2,3,4", //事件类型,
-            "startDate": "", //开始日期
-            "endDate": "", //结束日期
-            "keyword": ""
-        }
-
-        this.$exportAll.click(function() {
-
+        this.$detailsMap.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
+        this.$detailsMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        //声明-比例尺控件（左下角）
+        var bottom_left_ScaleControl = new BMap.ScaleControl({
+            anchor: BMAP_ANCHOR_BOTTOM_LEFT
         });
-        this.$exportAll.click(function() {
+        //声明-平移和缩放按钮控件（右下角）
+        var bottom_right_navigation = new BMap.NavigationControl({
+            anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
+            type: BMAP_NAVIGATION_CONTROL_SMALL
+        });
+        //地图加载控件
+        this.$detailsMap.addControl(bottom_left_ScaleControl);
+        this.$detailsMap.addControl(bottom_right_navigation);
+        this.$detailsMap.addControl(new BMap.MapTypeControl());
 
+        //关闭任务按钮
+        this.$closeTask.click(function() {
+            _this.closedWhether(_this._taskId);
+        });
+        //填写处置信息按钮
+        this.$disposeTask.click(function() {
+            $("#details").modal('hide'); //关闭详情模态框
+            taskObj.taskOpen(_this._taskId);
+        });
+
+    },
+    loadDetails: function(row) {
+        $(".taskCode").text(row.taskCode);
+        var eventId = row.eventId;
+        this._taskId = row.taskId;
+        // console.log(row);
+        var lon = row.bdLon;
+        var lat = row.bdLat;
+        this.loadEventDetails(eventId);
+        this.loadTaskDetails(this._taskId);
+    },
+    setCenterZoom: function(lon, lat) {
+        // debugger;
+        var _this = this;
+        this.$detailsMap.clearOverlays();
+        var point = new BMap.Point(lon, lat);
+        var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
+        var marker = new BMap.Marker(point, {
+            icon: myIcon
+        });
+
+        this.$detailsMap.addOverlay(marker);
+        this.$detailsMap.centerAndZoom(point, 15);
+        mapObj.iconHide(); //隐藏百度图标
+    },
+    loadEventDetails: function(eventId) {
+        var _this = this;
+        $.ajax({
+            type: 'GET',
+            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data, status) {
+                var msg = data.rows;
+                var images = msg[0].pic;
+                $(".event_pic").html("");
+                $(".eventCode").text(msg[0].eventCode);
+                $(".occurrenceTime").text(msg[0].occurrenceTime);
+                $(".fullTypeName").text(msg[0].fullTypeName);
+                $(".inspectorName").text(msg[0].inspectorName);
+                $(".address").text(msg[0].address);
+                $(".description").text(msg[0].description);
+
+                if (msg[0].audio.length == 0) {
+                    $(".event_audio").html("无");
+                } else {
+                    var audioMain = '<button class="audioPlay" onclick="playAmrAudio(\'' + msg[0].audio[0] + '\',this)"></button>';
+                    $(".event_audio").html(audioMain);
+                }
+
+                var pic_scr = "";
+                for (var i = 0; i < images.length; i++) {
+                    pic_scr += '<div class="event_pic_list">' +
+                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                        '</div>';
+                }
+                $(".event_pic").append(pic_scr);
+
+                //打开地图中心点
+                var lon = msg[0].bdLon;
+                var lat = msg[0].bdLat;
+                _this.setCenterZoom(lon, lat);
+            }
         });
     },
-    expoerData: function(date) {
+    loadTaskDetails: function(taskId) {
+        //获取处置信息
+        $.ajax({
+            type: 'GET',
+            url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + taskId,
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data, status) {
+                var msgAll = data.rows;
+                $(".dispose_content").html("");
+                var txt = '';
+
+                var tempArry = [];
+                var temp = "";
+
+                for (var i = 0; i < msgAll.length; i++) {
+                    if (temp != msgAll[i].modifyday) {
+                        tempArry.push(msgAll[i].modifyday);
+                        temp = msgAll[i].modifyday;
+                    }
+                }
+                for (var j = 0; j < tempArry.length; j++) {
+                    txt = '<div class="dispose_date" id="day_' + j + '">' +
+                        '<div class="dispose_day">' +
+                        '<div class="day_dian"></div>' +
+                        '<div class="day_time">' + tempArry[j] + '</div>' +
+                        '</div></div>';
+                    $(".dispose_content").append(txt);
+
+                    for (var x = 0; x < msgAll.length; x++) {
+                        var txtChild = '';
+                        if (msgAll[x].modifyday == tempArry[j]) {
+                            var recevieUser = msgAll[x].recevieUserName;
+                            //判断接收人
+                            if (recevieUser == null || recevieUser == '') {
+                                recevieUser = '无';
+                            }
+                            txtChild = '<div class="dispose_main">' +
+                                '<div class="dispose_main_l">' +
+                                '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
+                                '</div>' +
+                                '<div class="dispose_main_r">' +
+                                '<div class="dispose_info">' +
+                                '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
+                                '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
+                                '</div>' +
+                                '<div class="dispose_info">' +
+                                '<span class="info_l text-right">信息描述：</span>' +
+                                '<div class="info_r">' + msgAll[x].content + '</div>' +
+                                '</div>' +
+                                '<div class="dispose_info">' +
+                                '<span class="info_l text-right">语音描述：</span>' +
+                                '<div class="info_r task_audio_' + x + '"></div>' +
+                                '</div>' +
+                                '<div class="dispose_info">' +
+                                '<span class="info_l text-right">接收人：</span>' +
+                                '<div class="info_r">' + recevieUser + '</div>' +
+                                '</div>' +
+                                '<div class="dispose_info">' +
+                                '<span class="info_l text-right">照片：</span>' +
+                                '<div class="info_r taskImg_' + x + '"></div>' +
+                                '</div></div></div>';
+                            $("#day_" + j).append(txtChild);
+                            //添加录音文件
+                            if (msgAll[x].audio.length == 0) {
+                                $(".task_audio_" + x).html("无");
+                            } else {
+                                var audioMain = '<button  class="audioPlay" onclick="playAmrAudio(\'' + msgAll[x].audio[0] + '\',this)"></button>';
+                                $(".task_audio_" + x).html(audioMain);
+                            }
+                            var picAll = msgAll[x].pic;
+                            var pic_scr = "";
+                            for (var n = 0; n < picAll.length; n++) {
+                                pic_scr += '<div class="task_pic_list">' +
+                                    '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
+                                    '</div>';
+                            }
+                            $(".taskImg_" + x).append(pic_scr);
+                        }
+                    }
+                }
+            }
+        })
+    },
+    closedWhether: function(taskId) {
+        var _this = this;
+        $.ajax({
+            type: 'GET',
+            url: "/cloudlink-inspection-task/task/getTaskStatus?taskId=" + taskId,
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data, status) {
+                console.log(data);
+                if (data.success == 1) {
+                    var taskState = data.rows;
+                    if (taskState[0].status == 21) {
+                        alert("您好，该任务已经关闭！");
+                        window.location.reload();
+                        return false;
+                    } else {
+                        _this.closedTask(taskId);
+                        return true;
+                    }
+                }
+            }
+        })
+    },
+    closedTask: function(taskId) {
+        var taskIds = [];
+        taskIds.push(taskId);
+        $.ajax({
+            type: 'POST',
+            url: "/cloudlink-inspection-task/task/close?token=" + lsObj.getLocalStorage('token'),
+            contentType: "application/json",
+            data: JSON.stringify(taskIds),
+            dataType: "json",
+            success: function(data, status) {
+                if (data.success == 1) {
+                    alert("任务关闭成功！");
+                    window.location.reload();
+                }
+            }
+        })
+    }
+}
+
+
+//录音文件的播放
+function playAmrAudio(_fileId, e) {
+    $.ajax({
+        type: 'GET',
+        url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + _fileId,
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data, status) {
+            var relativePath = data.rows[0].fileUrl.replace(/^.*?\:\/\/[^\/]+/, "");
+            fetchBlob('/audio' + relativePath, function(blob) {
+                playAmrBlob(blob);
+            });
+            $(e).attr("class", "audioPlayIn");
+
+            setTimeout(function() {
+                $(e).attr("class", "audioPlay");
+            }, 10000);
+        }
+    });
+}
+//表格上面的操作按钮
+var tableOperationObj = {
+    $exportAll: $("#export_all"),
+    $exportChoice: $("#export_choice"),
+    $mapChoice: $("#map_choice"),
+    expoerObj: {
+        "status": "", //处理状态，括号内为注释
+        "type": "", //事件类型,
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
+        "keyword": "",
+        "ids": ""
+    },
+    init: function() {
+        var _this = this;
+        //导出全部
+        this.$exportAll.click(function() {
+            _this.expoerObj.ids = '';
+            _this.expoerCondition();
+            console.log(_this.expoerObj)
+        });
+        //导出所选
+        this.$exportChoice.click(function() {
+            var selectionsData = $('#task_table').bootstrapTable('getSelections');
+            var taskIds = [];
+            if (selectionsData.length == 0) {
+                alert("请选择你需要导出的任务！");
+                return false;
+            } else {
+                for (var i = 0; i < selectionsData.length; i++) {
+                    taskIds.push(selectionsData[i].taskId);
+                }
+                _this.expoerObj.ids = taskIds.join(',');
+                _this.expoerCondition();
+
+                console.log(_this.expoerObj)
+            }
+        });
+        //在地图上显示所选点
+        this.$mapChoice.click(function() {
+            // 获取已选的信息
+            var selectedPointItems = $('#task_table').bootstrapTable('getSelections');
+            if (selectedPointItems.length > 0) {
+                mapObj.setPointsMarkerWithCenterPointAndZoomLevel(selectedPointItems);
+            } else {
+                alert("请选择地图展示的数据。");
+            }
+        });
+    },
+    expoerCondition: function() { //导出文件条件设置
+        var searchMsg = searchObj.querryObj;
+        this.expoerObj.status = searchObj.querryObj.status;
+        this.expoerObj.type = searchObj.querryObj.type;
+        this.expoerObj.startDate = searchObj.querryObj.startDate;
+        this.expoerObj.endDate = searchObj.querryObj.endDate;
+        this.expoerObj.keyword = searchObj.querryObj.keyword;
+
+        this.expoerData(this.expoerObj);
+    },
+    expoerData: function(date) { //导出url等
         var options = {
-            "url": '/cloudlink-inspection-event/taskInfo/exportExcel?token=' + mapObj.$token,
+            "url": '/cloudlink-inspection-task/task/exportExcel?token=' + lsObj.getLocalStorage('token'),
             "data": date,
             "method": 'post'
         }
-        DownLoadFile(options);
+        this.downLoadFile(options);
     },
-    DownLoadFile: function(options) {
-        var config = $.extend(true, { method: 'post' }, options);
+    downLoadFile: function(options) { //导出文件的方法
+        var config = $.extend(true, {
+            method: 'post'
+        }, options);
         var $iframe = $('<iframe id="down-file-iframe" />');
         var $form = $('<form target="down-file-iframe" method="' + config.method + '" />');
         $form.attr('action', config.url);

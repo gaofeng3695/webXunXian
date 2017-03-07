@@ -11,9 +11,11 @@
 
     <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
     <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
-
+    <link href="/lib/css/zTreeStyle.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
+
+    <link href="/src/css/dispose_common.css" rel="stylesheet">
     <link href="/src/css/task.css" rel="stylesheet">
 </head>
 
@@ -23,10 +25,11 @@
         <div class="container-fluid">
             <!--地图-->
             <div class="row">
-                <div class="event_map">
-                    <div id="event_map"></div>
+                <div class="task_map">
+                    <div id="task_map"></div>
                     <div class="bottom_btn text-center">
-                        <span class="map_down"></span>
+                        <div id="drafting_down"></div>
+                        <span class="map_up"></span>
                     </div>
                 </div>
             </div>
@@ -135,14 +138,14 @@
                                             <input size="16" type="text" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
                                             <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
                                             <input size="16" type="text" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
-                                            <span class="item" id="diyDateBtn">确定</span>
+                                            <span class="itemBtn" id="diyDateBtn" data-value="diy">确定</span>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="btn_wrapper">
-                                <span class="clear">清空筛选条件</span>
+                                <span class="clear" id="gf_reset_Btn">清空筛选条件</span>
                             </div>
                         </div>
                     </div>
@@ -167,95 +170,6 @@
                 </div>
             </div>
             <!--/表格-->
-        </div>
-    </div>
-    <!--处置填写-->
-    <div id="dispose" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>填写信息<a class="close" data-dismiss="modal">×</a></h3>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form_task">
-                            <div class="form_list">
-                                <div class="list_left text-right">
-                                    处置时间
-                                </div>
-                                <div class="list_right has-feedback">
-                                    <input type="text" class="form-control form_datetime" readonly id="datetime">
-                                    <span class="form-control-feedback" aria-hidden="true">
-                                            <img src="/src/images/event/time.png" alt="">
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="form_line"></div>
-                            <div class="form_list">
-                                <div class="form_part">
-                                    <div class="list_left text-right">
-                                        信息类型
-                                    </div>
-                                    <div class="list_right has-feedback radio">
-                                        <label>
-                                            <input type="radio" name="taskType" value="10" checked>
-                                            记录
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="taskType" value="20">
-                                            意见
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="taskType" value="30">
-                                            请示
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form_list">
-                                <div class="list_left text-right">
-                                    信息描述
-                                </div>
-                                <div class="list_right has-feedback">
-                                    <textarea id="event_description" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <div class="form_list">
-                                <div class="list_left text-right">
-                                    照片
-                                </div>
-                                <div class="list_right">
-                                    <div class="feedback_img">
-                                        <div class="feedback_img_list">
-                                        </div>
-                                        <div class="feedback_img_add">
-                                            <span class="addImg"><img src="/src/images/event/upload.png" alt=""></span>
-                                            <input type="file" onchange="handleFiles(this);" id="upload" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form_line"></div>
-                            <div class="form_list">
-                                <div class="list_left text-right">
-                                    报送人
-                                </div>
-                                <div class="list_right has-feedback">
-                                    <input type="text" class="form-control" name="receiveUser" placeholder="请选择报送人" readonly>
-                                    <span class="form-control-feedback" aria-hidden="true">
-                                        <img src="/src/images/event/slaff.png" alt="">
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn submit">提交</button>
-                    <button class="btn" data-dismiss="modal">取消</button>
-                </div>
-            </div>
         </div>
     </div>
     <!--查看详情-->
@@ -287,7 +201,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-2 col-sm-2 text-right details_title">地理位置</div>
-                                    <div class="col-md-10  col-sm-10 details_text">
+                                    <div class="col-md-10  col-sm-10 details_text details_map_main">
                                         <p class="address"></p>
                                         <div id="details_address_map"></div>
                                     </div>
@@ -298,8 +212,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-2 col-sm-2 text-right details_title">语音描述</div>
-                                    <div class="col-md-10 details_text  col-sm-10">
-                                        <audio controls class="event_audio" src=""></audio>
+                                    <div class="col-md-10 details_text col-sm-10 event_audio">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -326,52 +239,135 @@
             </div>
         </div>
     </div>
-    <!-- /#page-wrapper -->
+    <!--处置填写-->
+    <div id="dispose" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>填写信息<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form_task">
+                            <div class="form_list">
+                                <div class="list_left text-right">
+                                    处置时间
+                                </div>
+                                <div class="list_right has-feedback">
+                                    <p id="datetime"></p>
+                                </div>
+                            </div>
+                            <div class="form_line"></div>
+                            <div class="form_list">
+                                <div class="form_part">
+                                    <div class="list_left text-right">
+                                        信息类型
+                                    </div>
+                                    <div class="list_right has-feedback radio">
+                                        <label>
+                                            <input type="radio" name="taskType" value="10" checked>
+                                            记录
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="taskType" value="20">
+                                            请示
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="taskType" value="30">
+                                            意见
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form_list">
+                                <div class="list_left text-right">
+                                    信息描述
+                                </div>
+                                <div class="list_right textarea_text">
+                                    <textarea id="event_description" oninput="checkLen(this)" class="form-control"></textarea>
+                                    <span class="text_num">(160字)</span>
+                                </div>
+                            </div>
+                            <div class="form_list">
+                                <div class="list_left text-right">
+                                    照片
+                                </div>
+                                <div class="list_right">
+                                    <div class="feedback_img">
+                                        <div class="feedback_img_list">
+                                        </div>
+                                        <div class="feedback_img_file">
+                                            <input type="file" onchange="handleFiles(this);" class="upload_file" />
+                                        </div>
+                                        <div class="feedback_img_add">
+                                            <span class="addImg"><img src="/src/images/event/upload.png" alt=""></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form_line"></div>
+                            <div class="form_list">
+                                <div class="list_left text-right">
+                                    报送人
+                                </div>
+                                <div class="list_right has-feedback">
+                                    <input type="text" class="form-control" name="receiveUser" placeholder="请选择报送人" readonly>
+                                    <span class="form-control-feedback" aria-hidden="true">
+                                        <img src="/src/images/event/slaff.png" alt="">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn submit">提交</button>
+                    <button class="btn" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--人员信息-->
+    <div id="stakeholder" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>人员添加<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="sub_wrapper">
+                        <ul id="people_list" class="ztree"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn_selectPeople" type="button" class="btn modal_active btn-primary">确定</button>
+                    <button type="button" class="btn modal_close btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/lib/js/amrnb.js"></script>
+    <script type="text/javascript" src="/lib/js/amrnb-play.js"></script>
     <script type="text/javascript" src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery.ztree.all.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap-table.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap-table-zh-CN.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap-datetimepicker.min.js"></script>
-    <!--<script type="text/javascript" src="/lib/js/bootstrap-modal.js"></script>-->
     <script type="text/javascript" src="/lib/js/common_base.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FaToVuVSNebaox7B0uLYEKhPH8Fpu7Rr"></script>
     <script type="text/javascript" src="/src/js/event/upload.js"></script>
     <script type="text/javascript" src="/src/js/event/ajaxFileUpload.js"></script>
     <script type="text/javascript" src="/src/js/common/html5-storage.js"></script>
-    <script type="text/javascript" src="/src/js/common/common.js"></script>
-    <script type="text/javascript" src="/src/js/task/task.js"></script>
 
-    <!--<script type="text/javascript">
-        $('#datetime').datetimepicker({
-            format: 'yyyy-mm-dd hh:ii',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            startDate: new Date()
-        });
-        $("#datetimeStart").datetimepicker({
-            format: 'yyyy-mm-dd',
-            minView: 'month',
-            language: 'zh-CN',
-            autoclose: true,
-            // startDate: new Date()
-        }).on("click", function() {
-            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
-        });
-        $("#datetimeEnd").datetimepicker({
-            format: 'yyyy-mm-dd',
-            minView: 'month',
-            language: 'zh-CN',
-            autoclose: true,
-            // startDate: new Date()
-        }).on("click", function() {
-            $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
-        });
-    </script>-->
+
+    <script type="text/javascript" src="/src/js/common/drafting.js"></script>
+    <script type="text/javascript" src="/src/js/common/common.js"></script>
+    <script type="text/javascript" src="/src/js/common/dispose_common.js"></script>
+    <script type="text/javascript" src="/src/js/task/task.js"></script>
 </body>
+<script>
+</script>
 
 </html>

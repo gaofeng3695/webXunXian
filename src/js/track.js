@@ -255,7 +255,7 @@ var trackObj = {
                     return;
                 }
                 $('#gf_detail').modal({});
-                $('#gf_detail .modal-body').scrollTop(0);
+
                 that.renderDetails(data.rows[0]);
             },
             statusCode: {
@@ -292,6 +292,11 @@ var trackObj = {
                 aDesc[index].innerHTML = item.eventTypeDesc;
             }
         });
+        setTimeout(function(){
+            console.log(123);
+            $('#details_content').scrollTop(0)
+        },1000)
+
         //$('#gf_detail .else_desc').html();
 
     },
@@ -373,7 +378,8 @@ var trackObj = {
             url: "/cloudlink-core-framework/user/getOrgUserTree",
             contentType: "application/json",
             data: {
-                token: lsObj.getLocalStorage('token')
+                token: lsObj.getLocalStorage('token'),
+                status : 1
             },
             dataType: "json",
             success: function (data) {

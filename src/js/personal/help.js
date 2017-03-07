@@ -1,21 +1,42 @@
 var numIndex = null;
 var uuid = "";
 var nImgHasBeenSendSuccess = 0;
-// tab切换
-$('.center').click(function() {
-        var index = $(this).parent().index();
-        $('.center').css({ borderBottom: 'none', color: '#000' })
-        $('.center .i').css({ display: 'none' })
-        $(this).css({ borderBottom: '1px solid #67BDF6', color: '#67BDF6' })
-        $(this).find('.i').css({ display: 'block' })
+
+function initBindSytleChange() {
+    $('.center').click(function() {
+        // console.log('事件是否触发');
+        var index = $(this).index();
+        $('.center').css({
+            borderBottom: '1px solid #ececec',
+            color: '#000'
+        });
+        $('.center .i').css({
+            display: 'none'
+        });
+        $(this).css({
+            borderBottom: '1px solid #67BDF6',
+            color: '#67BDF6'
+        });
+        var height = $(this).height();
+        $(this).find('.i').css({
+            display: 'block'
+        });
+        $(this).find('.i:eq(0)').css({
+            top: height + 'px'
+        });
+        $(this).find('.i:eq(1)').css({
+            top: height - 1 + 'px'
+        });
         $('.kuai>div').css({
             display: 'none'
-        })
+        });
         $('.kuai>div').eq(index).css({
             display: 'block'
-        })
-    })
-    // 意见反馈输入字数限制
+        });
+    });
+}
+
+// 意见反馈输入字数限制
 function lookNum(e) {
     var len = $(e).val().trim().length;
     if (len > 200) {
@@ -34,7 +55,6 @@ function GetQueryString(name) {
 }
 /*初始化页面*/
 $(function() {
-    uuid;
     numIndex = GetQueryString("num");
     if (numIndex != null) {
         selectIndex(numIndex);
@@ -43,21 +63,39 @@ $(function() {
     $(".addImg").click(function() {
         var imgNum = $(".feedback_img_list").find(".feedback_images").length;
         if (imgNum <= 2) {
-            $("#upload").trigger("click");
+            $(".upload_picture").trigger("click");
         } else {
             alert("最多上传三张图片");
         }
-    })
+    });
+    // tab切换
+    window.onresize = function() {
+        var height = $('.center').height();
+        $('.center').find('.i:eq(0)').css({
+            top: height + 'px'
+        });
+        $('.center').find('.i:eq(1)').css({
+            top: height - 1 + 'px'
+        });
+    }
+
+    initBindSytleChange();
+
+
 });
 /*删除图片*/
-function closeImg(e) {
-
+function closeImg(e) {;
     $(e).closest(".feedback_images").remove();
+    for (var i = 0; i < $(".feedback_img_file").find("input[name='file']").length; i++) {
+        if ($(".feedback_img_file").find("input").eq(i).attr("data-value") == $(e).attr("data-key")) {
+            $(".feedback_img_file").find("input").eq(i).remove();
+        }
+    }
+
 }
 /*判断建议图片提交*/
 function onSubmit() {
     uuid = creatuuid();
-    //alert(uuid)
     var textArea = $(".feedback_area").find("textarea").val().trim();
     var contactWay = $(".feedback_way").find("input").val().trim();
     if (textArea.length < 10) {
@@ -65,36 +103,31 @@ function onSubmit() {
         return false;
     } else {
         var imgNum = $(".feedback_img_list").find(".feedback_images").length;
-        //如果有图片就上传图片
         if (imgNum > 0) {
-            //图片数据
-            //var srcImg = [];
             for (var i = 0; i < $('.feedback_img_list .feedback_images').length; i++) {
-                var picid = $('.feedback_img_list .feedback_images').eq(i).find('input').attr('id');
-                //console.log(id)
-                // console.log(document.getElementById(picid));
-                //上传图片
-
-                $.ajaxFileUpload({ /*http://192.168.50.235:9901*/
-                    url: "/cloudlink-core-file/attachment/save?businessId=" + uuid + "&bizType=pic_suggestions&token=123456",
+                var picid = $('.feedback_img_file').find('input').eq(i).attr('id');
+                $.ajaxFileUpload({
+                    url: "/cloudlink-core-file/attachment/web/v1/save?businessId=" + uuid + "&bizType=pic_suggestions&token=" + lsObj.getLocalStorage("token"),
                     /*这是处理文件上传的servlet*/
                     secureuri: false,
                     fileElementId: picid, //上传input的id
-                    dataType: "JSON",
+                    dataType: "json",
                     type: "POST",
                     async: false,
                     success: function(data, status) {
-                        var statu = JSON.parse(data.split('>')[1]).success;
+                        console.log(data);
+                        var statu = data.success;
                         if (statu == 1) {
                             nImgHasBeenSendSuccess++;
-                            // console.log(nImgHasBeenSendSuccess);
-                            // console.log($('.feedback_img_list .feedback_images').length);
                             if (nImgHasBeenSendSuccess == $('.feedback_img_list .feedback_images').length) {
                                 postAdvise(textArea, contactWay, uuid);
                             }
                         } else {
                             alert("当前网络不稳定")
                         }
+                    },
+                    error: function(data) {
+                        console.log(data)
                     }
                 });
 
@@ -126,7 +159,6 @@ function postAdvise(textArea, contactWay, uuid) {
             'objectId': uuid //插入的主键id
         }),
         success: function(data) {
-            console.log(data);
             if (data.success == 1) {
                 $(".feedback_main").hide();
                 $(".feedback_success").show();

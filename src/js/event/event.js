@@ -1,115 +1,4 @@
 /*
- *初始化-日期选择器控件
- *alex 2017-2-23 modify
- */
-var eventDatePickerInit = function() {
-    //初始化-新建事件表单的DOM元素
-    $('#datetime').datetimepicker({
-        weekStart: 1,
-        todayBtn: 1,
-        autoclose: 1,
-        todayHighlight: 1,
-        startView: 2,
-        forceParse: 0,
-        showMeridian: 1
-    });
-    //初始化-高级搜索的DOM元素
-    $("#datetimeStart").datetimepicker({
-        format: 'yyyy-mm-dd',
-        minView: 'month',
-        language: 'zh-CN',
-        autoclose: true,
-        // startDate: new Date()
-    }).on("click", function() {
-        $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
-    });
-    //初始化-高级搜索的DOM元素
-    $("#datetimeEnd").datetimepicker({
-        format: 'yyyy-mm-dd',
-        minView: 'month',
-        language: 'zh-CN',
-        autoclose: true,
-        // startDate: new Date()
-    }).on("click", function() {
-        $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
-    });
-}
-
-/*
- *初始化-高级搜索的DOM元素
- *alex 2017-2-23 modify
- */
-var searchModelInit = function() {
-    //高级搜索-查询条件注册点击事件
-    $(".main_list").each(function() {
-        $(this).find("span").click(function() {
-            $(this).attr("class", "active").siblings("span").attr("class", "");
-            var index = $('.status_nav').find('.active').index();
-
-            //事件状态-高级查询的change-触发普通查询的联动
-            var status = $(".status_relation2").find('.active').index();
-            $(".status_relation1 label").eq(status).addClass("active").siblings("label").removeClass("active");
-
-            //时间状态-高级查询的change-触发普通查询的联动
-            var status = $(".status_relation4").find('.active').index();
-            $(".status_relation3 label").eq(status).addClass("active").siblings("label").removeClass("active");
-
-            if (index == 0) {
-                $(".status_list").hide();
-            } else {
-                $(".status_list").show();
-                $(".status_list li").eq(index - 1).show().siblings("li").hide();
-            }
-
-            refreshTableData();
-        });
-    });
-    // 事件状态-普通查询的change-触发高级查询的联动
-    $(".status_relation1 label").each(function(e) {
-        $(this).click(function() {
-            $(".status_relation2 span").eq(e).attr("class", "active").siblings("span").attr("class", "")
-        });
-    });
-    // 时间状态-普通查询的change-触发高级查询的联动
-    $(".status_relation3 label").each(function(e) {
-        $(this).click(function() {
-            $(".status_relation4 span").eq(e).attr("class", "active").siblings("span").attr("class", "")
-        });
-    });
-}
-
-/*
- *高级搜索（按钮）的封装对象
- *控制高级搜索的查询条件的展开和收缩
- *alex 2017-2-23 modify
- */
-var searchModelSwitchObj = {
-    $Btn: $(".btn_search"),
-    $main: $(".nav_main"),
-    init: function() {
-        var _this = this;
-        this.$Btn.click(function() {
-            _this.control();
-        });
-    },
-    control: function() {
-        if (this.$main.is(":hidden")) {
-            this.show();
-        } else {
-            this.hide();
-        }
-    },
-    hide: function() {
-        this.$main.slideUp();
-        this.$Btn.find("span").attr("class", "glyphicon glyphicon-menu-down");
-    },
-    show: function() {
-        this.$main.slideDown();
-        this.$Btn.find("span").attr("class", "glyphicon glyphicon glyphicon-menu-up");
-    }
-};
-
-/*
  *新增事件对象
  *alex 2017-2-23 modify
  */
@@ -121,6 +10,8 @@ var eventObj = {
     $lat: $("input[name=lat]"),
     $eventM: $("#addEvent"),
     $mapM: $("#event_address"),
+    $receiveUser: $("input[name=receiveUser]"),
+    receiveUserIdsArr: [],
     $eventId: null,
     $flg: true,
     init: function() {
@@ -134,13 +25,27 @@ var eventObj = {
         this.$submit.click(function() { //事件上报
             _this.submit();
         });
+        this.$receiveUser.click(function() {
+            $("#stakeholder").modal(); //打开人员模态框
+            _this.requestPeopleTree();
+        });
+        $('#btn_selectPeople').click(function() { //确定选择人员
+            _this.setSelectedPerson();
+            //console.log(that.querryObj);
+        });
         this.getType();
     },
     eventOpen: function() { //打开摸态窗口
+        var time = (new Date()).Format("yyyy-MM-dd HH:mm");
+        $("#datetime").val(time);
         this.$eventM.modal();
     },
     mapOpen: function() { //打开地图摸态窗口
         this.$mapM.modal();
+        setTimeout(function() {
+            // mapAddObj.init();
+        }, 1000)
+
         this.iconHide();
     },
     submit: function() { //提交表单
@@ -171,32 +76,25 @@ var eventObj = {
     uploadFile: function() {
         var nImgHasBeenSendSuccess = 0;
         var _this = this;
-        var files = $(".feedback_img_list").find("input[name=file]");
+        var files = $(".feedback_img_file").find("input[name=file]");
+        // var files = $(".feedback_img_list").find("input[name=file]");
         if (files.length > 0) {
             for (i = 0; i < files.length; i++) {
                 var picId = files.eq(i).attr("id");
                 $.ajaxFileUpload({
-                    url: "/cloudlink-core-file/attachment/save?businessId=" + _this.$eventId + "&bizType=pic&token=" + mapObj.$token,
+                    url: "/cloudlink-core-file/attachment/web/v1/save?businessId=" + _this.$eventId + "&bizType=pic&token=" + lsObj.getLocalStorage('token'),
                     /*这是处理文件上传的servlet*/
                     secureuri: false,
                     fileElementId: picId, //上传input的id
-                    dataType: "JSON",
+                    dataType: "json",
                     type: "POST",
                     async: false,
                     success: function(data, status) {
-                        console.log(data);
-                        // var reg = /<pre.+?>(.+)<\/pre>/g;
-                        // var result = data.match(reg);
-                        // data = RegExp.$1;
-                        // console.log(data);
-                        // console.log(result);
-                        var statu = JSON.parse(data).success;
-                        console.log(statu);
+                        var statu = data.success;
                         if (statu == 1) {
                             nImgHasBeenSendSuccess++;
                             if (nImgHasBeenSendSuccess == files.length) {
                                 //上传表单
-                                console.log("dd")
                                 _this.uploadData();
                             }
                         } else {
@@ -217,7 +115,7 @@ var eventObj = {
         console.log(JSON.stringify(eventData));
         $.ajax({
             type: 'POST',
-            url: "/cloudlink-inspection-event/eventInfo/saveBatch?token=" + mapObj.$token,
+            url: "/cloudlink-inspection-event/eventInfo/saveBatch?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: JSON.stringify(eventData),
             dataType: "json",
@@ -233,17 +131,20 @@ var eventObj = {
         })
     },
     formData: function() {
+        // debugger;
         var _this = this;
         var occurrenceTime = $("#datetime").val();
         var address = _this.$mapA.val();
         var description = $("#event_description").val().trim();
 
-        var status = $("input[name=state]").val();
-
+        var status = $("input[name=state]:checked").val();
         var eventCode = (new Date()).Format("yyyyMMddHHmmssS");
         var reportTime = (new Date()).Format("yyyy-MM-dd");
-
-        var user = mapObj.$user;
+        var user = {
+            "userId": mapObj.$user.objectId,
+            "userName": mapObj.$user.userName
+        }
+        _this.receiveUserIdsArr.push(user);
         var dataArr = [];
         var dataMsg = {
             "objectId": this.$eventId,
@@ -258,10 +159,7 @@ var eventObj = {
             "bdLat": _this.$lat.val(),
             "lon": "0",
             "lat": "0",
-            "taskUserMsg": [{
-                "userId": user.objectId,
-                "userName": user.userName
-            }]
+            "taskUserMsg": _this.receiveUserIdsArr
         }
         dataArr.push(dataMsg);
         return dataArr;
@@ -283,6 +181,104 @@ var eventObj = {
                 $("#eventType").append(txt);
             }
         })
+    },
+    requestPeopleTree: function() { //请求人员信息
+        var that = this;
+        if (that.aAllPeople) {
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/cloudlink-core-framework/user/getOrgUserTree",
+            contentType: "application/json",
+            data: {
+                token: lsObj.getLocalStorage('token'),
+                status: 1
+            },
+            dataType: "json",
+            success: function(data) {
+                // console.log(JSON.stringify(data));
+                var peopleAllArr = data.rows;
+                if (data.success != 1) {
+                    alert('网络连接出错！code:-1')
+                    return;
+                }
+
+                //数组中删除本人
+                for (var i = 0; i < peopleAllArr.length; i++) {
+                    if (peopleAllArr[i].id == mapObj.$user.objectId) {
+                        peopleAllArr.splice(i, 1);
+                    }
+                }
+                that.aAllPeople = peopleAllArr;
+                that.renderPeopleTree(that.aAllPeople);
+            },
+            statusCode: {
+                404: function() {
+                    alert('网络连接出错！code:404');
+                }
+            }
+        });
+    },
+    renderPeopleTree: function(data) { //遍历tree
+        var that = this;
+        //data = '';
+        // console.log(data)
+        ////console.log(JSON.stringify(data))
+        var setting = {
+            view: {
+                showLine: true
+            },
+            data: {
+                key: {
+                    name: 'treenodename'
+                },
+                simpleData: {
+                    enable: true,
+                    pIdKey: 'pid'
+                }
+            },
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
+            }
+        };
+        that.zTree = $.fn.zTree.init($("#people_list"), setting, data);
+        that.zTree.expandAll(true);
+    },
+    setSelectedPerson: function() { //获取选中的人员
+        var that = this;
+        // that.aPeopleId = [];
+        that.aPeopleName = [];
+        that.receiveUserIdsArr = []; //人员数组
+        var userObj = null;
+        var arr = that.zTree.getCheckedNodes(true);
+        arr.forEach(function(item, index) {
+            if (item.isParent) {
+                return;
+            }
+            userObj = {
+                "userId": item.id,
+                "userName": item.treenodename
+            }
+            that.receiveUserIdsArr.push(userObj);
+            // that.aPeopleId.push(item.id);
+            that.aPeopleName.push(item.treenodename);
+        });
+        that.$receiveUser.val(that.aPeopleName.join('，'));
+        $('#stakeholder').modal('hide');
+        // console.log(JSON.stringify(this.formData()));
+        // console.log(that.aPeopleName);
+        // receiveUserIdsArr
+    },
+    initPeopleList: function() { //清空人员信息
+        var that = this;
+        that.aPeopleName = [];
+        that.receiveUserIdsArr = [];
+        that.$receiveUser.val('');
+        if (that.zTree) {
+            that.zTree.checkAllNodes(false);
+        }
     },
     iconHide: function() { //隐藏百度图标与文字
         $(".BMap_cpyCtrl.BMap_noprint.anchorBL,.anchorBL").hide();
@@ -309,19 +305,40 @@ var mapAddObj = { //上报事件地图
     $point: null,
     $address: new BMap.Geocoder(),
     init: function() {
+        // debugger;
+        this.$map.centerAndZoom(new BMap.Point(116.404, 39.915), 9); // 初始化地图,设置中心点坐标和地图级别
+        this.$map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        //声明-比例尺控件（左下角）
+        var bottom_left_ScaleControl = new BMap.ScaleControl({
+            anchor: BMAP_ANCHOR_BOTTOM_LEFT
+        });
+        //声明-平移和缩放按钮控件（右下角）
+        var bottom_right_navigation = new BMap.NavigationControl({
+            anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
+            type: BMAP_NAVIGATION_CONTROL_SMALL
+        });
+        //地图加载控件
+        this.$map.addControl(bottom_left_ScaleControl);
+        this.$map.addControl(bottom_right_navigation);
+        this.$map.addControl(new BMap.MapTypeControl());
+
+
         var _this = this;
-        this.$lon = 116.404;
-        this.$lat = 38.915;
-        this.$point = new BMap.Point(this.$lon, this.$lat);
-        this.$map.centerAndZoom(this.$point, 15);
-        this.$map.enableScrollWheelZoom(); //启用滚轮放大缩小
-        this.$map.addEventListener("click", function(e) {
+        // this.$lon = 116.404;
+        // this.$lat = 39.915;
+        // this.$point = new BMap.Point(this.$lon, this.$lat);
+        // this.$map.centerAndZoom(this.$point, 11);
+        // this.$map.enableScrollWheelZoom(); //启用滚轮放大缩小
+
+        this.$map.addEventListener("click", function(e) { //添加选择点
             _this.$lon = e.point.lng;
             _this.$lat = e.point.lat;
             _this.remove();
             _this.add();
         });
-        this.$botton.click(function() {
+        this.$botton.click(function() { //地点搜索
+            // alert(_this.$val.val().trim())
+            // debugger;
             var local = new BMap.LocalSearch(_this.$map, {
                 renderOptions: {
                     map: _this.$map
@@ -329,7 +346,7 @@ var mapAddObj = { //上报事件地图
             });
             local.search(_this.$val.val().trim());
         });
-        this.$dataPass.click(function() {
+        this.$dataPass.click(function() { //地址传到上报页面
             if (_this.$text.val() == '') {
                 alert("请选择地理位置！")
             } else {
@@ -339,6 +356,9 @@ var mapAddObj = { //上报事件地图
                 eventObj.$mapM.modal('hide');
             }
         })
+    },
+    reload: function() { //重新加载地图
+
     },
     add: function() {
         this.$point = new BMap.Point(this.$lon, this.$lat);
@@ -376,7 +396,7 @@ var addListenEventHandle = function() {
         }
     });
 
-    //地图的展开和收缩-点击事件
+    // 地图的展开和收缩 - 点击事件
     $(".bottom_btn span").click(function() {
         mapObj.mapSwitch();
     });
@@ -386,7 +406,7 @@ var addListenEventHandle = function() {
     $(".addImg").click(function() {
         var imgNum = $(".feedback_img_list").find(".feedback_images").length;
         if (imgNum <= 4) {
-            $("#upload").trigger("click");
+            $(".upload_file").trigger("click");
         } else {
             alert("最多上传五张图片");
         }
@@ -417,7 +437,6 @@ var addListenEventHandle = function() {
  *alex 2017-2-23
  */
 var mapObj = {
-    $token: lsObj.getLocalStorage('token'),
     $user: JSON.parse(lsObj.getLocalStorage("userBo")),
     $mapBtn: $(".bottom_btn span"),
     $mapO: $("#event_map"), //百度地图DIV容器
@@ -457,42 +476,11 @@ var mapObj = {
         this.$mapBtn.attr("class", "map_up");
         eventObj.iconHide();
     },
-    setMark: function(data) {
-        var txts = null;
-        var myIcons = null;
-        var markers = null;
-        var point = null;
-        var label = null;
-        for (var i = 0; i < data.length; i++) {
-            txts = '<div><p>事件类型：' + data[i].fullTypeName + '</p>' +
-                '<p>事件状态：' + data[i].statusValue + '</p>' +
-                '<p>上报人：' + data[i].inspectorName + '</p></div>';
-
-            point = new BMap.Point(data[i].bdLon, data[i].bdLat);
-            label = new BMap.Label("" + data[i].objectId, {
-                offset: new BMap.Size(20, -10)
-            });
-            label.setStyle({
-                'display': 'none'
-            });
-            if (data[i].parentTypeId == 1) {
-                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
-            } else if (data[i].parentTypeId == 2) {
-                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
-            } else if (data[i].parentTypeId == 3) {
-                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
-            }
-            markers = new BMap.Marker(point, {
-                icon: myIcons
-            });
-            markers.setLabel(label);
-            this.$bdMap.addOverlay(markers);
-            this.addClickHandler(txts, markers)
-        }
-    },
     //地图打点并计算中心点及缩放等级
     setPointsMarkerWithCenterPointAndZoomLevel: function(data) {
         this.$bdMap.clearOverlays(); //清除地图上已经标注的点
+
+        this.aCurrentPoints = [];
         var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
         // alert(JSON.stringify(maxPointAndMinPointObj));
         var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
@@ -506,31 +494,34 @@ var mapObj = {
         var myIcons = null;
         var markers = null;
         var point = null;
-        var label = null;
-        this.aCurrentPoints = [];
         for (var i = 0; i < data.length; i++) {
             txts = '<div><p>事件类型：' + data[i].fullTypeName + '</p>' +
                 '<p>事件状态：' + data[i].statusValue + '</p>' +
                 '<p>上报人：' + data[i].inspectorName + '</p></div>';
 
             point = new BMap.Point(data[i].bdLon, data[i].bdLat);
-            label = new BMap.Label("" + data[i].objectId, {
-                offset: new BMap.Size(20, -10)
-            });
-            label.setStyle({
-                'display': 'none'
-            });
             if (data[i].parentTypeId == 1) {
-                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+                if (data[i].status == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+                }
             } else if (data[i].parentTypeId == 2) {
-                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+                if (data[i].status == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+                }
             } else if (data[i].parentTypeId == 3) {
-                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+                if (data[i].status == 20) {
+                    myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+                } else {
+                    myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+                }
             }
             markers = new BMap.Marker(point, {
                 icon: myIcons
             });
-            markers.setLabel(label);
             this.$bdMap.addOverlay(markers);
             //将当前地图上的坐标点 赋值全局变量
             this.aCurrentPoints.push({
@@ -607,12 +598,42 @@ var mapObj = {
         var _point = new BMap.Point(selectedItem.bdLon, selectedItem.bdLat);
         var _marker = new BMap.Marker(_point); // 创建标注
 
+        var txts = null;
+        var myIcons = null;
+        txts = '<div><p>事件类型：' + selectedItem.fullTypeName + '</p>' +
+            '<p>事件状态：' + selectedItem.statusValue + '</p>' +
+            '<p>上报人：' + selectedItem.inspectorName + '</p></div>';
+
+        if (selectedItem.parentTypeId == 1) {
+            if (selectedItem.status == 20) {
+                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+            }
+        } else if (selectedItem.parentTypeId == 2) {
+            if (selectedItem.status == 20) {
+                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+            }
+        } else if (selectedItem.parentTypeId == 3) {
+            if (selectedItem.status == 20) {
+                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+            }
+        }
+        _marker = new BMap.Marker(_point, {
+            icon: myIcons
+        });
+
         this.$bdMap.addOverlay(_marker); // 将标注添加到地图中 
         _marker.setAnimation(BMAP_ANIMATION_BOUNCE);
         this.aCurrentPoints.push({
             key: selectedItem.objectId,
             value: _marker
         });
+        this.addClickHandler(txts, _marker);
     },
     addClickHandler: function(content, marker) {
         var _this = this;
@@ -636,66 +657,234 @@ var mapObj = {
 
 /*删除图片*/
 function closeImg(e) {
+    var num = $(e).attr("data-key");
     $(e).closest(".feedback_images").remove();
+    $(".feedback_img_file input[name=file]").each(function() {
+        console.log($(this).attr("data-value"))
+        if ($(this).attr("data-value") == num) {
+            $(this).remove();
+        }
+    })
 }
 
-//点击查看详情地图
-var detailsMapObj = {
-    $btn: $(".address"),
-    $main: $("#details_address_map"),
-    // $detailsMap: null,
-    // init: function(lon, lat) {
-    //     console.log("Dddd")
-    //     var _this = this;
-    //     this.$detailsMap = new BMap.Map("details_address_map")
-    //     this.$detailsMap.enableScrollWheelZoom(true);
-    //     var point = new BMap.Point(lon, lat);
-    //     this.$detailsMap.centerAndZoom(point, 15);
-    //     var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
-    //     var marker = new BMap.Marker(point, {
-    //         icon: myIcon
-    //     });
-    //     this.$detailsMap.clearOverlays();
-    //     this.$detailsMap.addOverlay(marker);
 
-    //     this.$btn.click(function() {
-    //         console.log("bb")
-    //         _this.control();
-    //     })
-    // },
-    init: function() {
-        var _this = this;
-        this.$btn.click(function() {
-            _this.control();
-        })
+//高级搜索相关的对象与方法
+var searchObj = {
+    $items: $('.top .item'), //搜索条件dom
+    $searchInput: $('#searchInput'), //搜索关键词dom
+    $startDate: $("#datetimeStart"),
+    $endDate: $("#datetimeEnd"),
+    // tracksIdsArr: [], //存放已被选中的轨迹ID
+    defaultObj: { //默认搜索条件
+        "status": "20", //20:处理中，21：已完成，:全部
+        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
+        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "keyword": "", //高级搜索关键词
+        "type": "", //事件类型，逗号分隔的
+        "pageNum": 1, //第几页
+        "pageSize": 10 //每页记录数
     },
-    control: function() {
-        if (this.$main.is(":hidden")) {
-            this.show();
-        } else {
-            this.hide();
+    querryObj: { //请求的搜索条件
+        "status": "20",
+        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
+        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "keyword": "", //巡线人，巡线编号
+        "type": "",
+        "pageNum": 1, //第几页
+        "pageSize": 10 //每页记录数
+    },
+    activeObj: { //高亮默认搜索条件，用于渲染页面
+        "status": "20",
+        "date": "day",
+        "typeParent": '0'
+    },
+    init: function() {
+        this.renderActive(); //初始化显示被选中
+        this.bindEvent(); //监听事件
+        this.bindDateDiyEvent(); //时间控件初始化
+    },
+    renderActive: function(obj) { //被选中的样式
+        var that = this;
+        if (!obj) {
+            obj = that.activeObj;
+        }
+        for (var key in obj) {
+            var $parent = that.$items.parent('[data-class=' + key + ']');
+            $parent.find('.item').removeClass('active')
+            $parent.find('.item[data-value="' + obj[key] + '"]').addClass('active');
+            if (key === 'date') {
+                if (obj[key] === 'diy') {
+                    $('#item_diy').addClass('active');
+                } else {
+                    $('#item_diy').removeClass('active');
+                }
+            }
+            if (key === 'typeParent') {
+                if (obj[key] == '1') {
+                    that.renderActive({ "type": "4,5,6,7,8,9,10" });
+                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
+                } else if (obj[key] == '2') {
+                    that.renderActive({ "type": "11,12,13,14,15,16,17" });
+                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
+                } else if (obj[key] == '3') {
+                    that.renderActive({ "type": "18,19" });
+                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
+                } else {
+                    $(".item2_id").hide();
+                }
+            }
         }
     },
-    hide: function() {
-        this.$main.slideUp();
-    },
-    show: function() {
-        this.$main.slideDown();
-        eventObj.iconHide();
-    }
-}
+    bindEvent: function() {
+        var that = this;
+        /* 选择条件 */
+        that.$items.click(function() {
+            var key = $(this).parent().attr("data-class");
+            var value = $(this).attr("data-value");
 
-/*
- *初始化-查询条件-对象
- */
-var searchObject = {
-    "status": "20", //处理状态，括号内为注释
-    "type": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16", //事件类型,
-    "startDate": "2017-02-21", //开始日期
-    "endDate": "2017-02-23", //结束日期
-    "keyword": "", //关键词模糊搜索  任务编号，任务状态，事件类型，最新处置类型，任务发起人（createUser），
-    "pageNum": 1, //第几页
-    "pageSize": 10 //每页记录数
+            if (key === 'date') {
+                that.setDate(value);
+            } else if (key === 'typeParent') {
+                that.setType(value);
+            } else {
+                that.querryObj[key] = value;
+            }
+
+            var obj = {};
+            obj[key] = value;
+            that.renderActive(obj);
+            that.refreshTable();
+            console.log(that.querryObj);
+        });
+
+        /* 搜索关键词 */
+        $('#gf_Btn').click(function() {
+            var s = $(this).parent().find('input').val();
+            that.querryObj.keyword = s;
+            that.refreshTable();
+        });
+        /* 显示高级搜索 */
+        $('#search_more').click(function() {
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active');
+                $('.more_item_wrapper').slideUp();
+            } else {
+                $(this).addClass('active');
+                $('.more_item_wrapper').slideDown();
+            }
+        });
+        /* 清空搜索条件 */
+        $('#gf_reset_Btn').click(function() {
+            //请求数据还原到初始话
+            $.extend(that.querryObj, that.defaultObj);
+            // Object.assign(that.querryObj, that.defaultObj);
+            that.renderActive();
+            that.refreshTable();
+        });
+        //自定义时间
+        $('#diyDateBtn').on('click', function() {
+            var s = that.$startDate.val();
+            var e = that.$endDate.val();
+            if (!s) {
+                alert('请选择开始时间');
+                return;
+            }
+            if (!e) {
+                alert('请选择结束时间');
+                return;
+            }
+            that.querryObj.startDate = s;
+            that.querryObj.endDate = e;
+            that.renderActive({
+                'date': 'diy'
+            })
+            that.refreshTable();
+        });
+    },
+    setDate: function(value) {
+        var that = this;
+        switch (value) {
+            case 'day':
+                var date = new Date().Format('yyyy-MM-dd');
+                that.querryObj.startDate = date;
+                that.querryObj.endDate = date;
+                break;
+            case 'week':
+                var date = new Date();
+                that.querryObj.startDate = date.getWeekStartDate().Format('yyyy-MM-dd');
+                that.querryObj.endDate = date.getWeekEndDate().Format('yyyy-MM-dd');
+                break;
+            case 'month':
+                var date = new Date();
+                that.querryObj.startDate = date.getMonthStartDate().Format('yyyy-MM-dd');
+                that.querryObj.endDate = date.getMonthEndDate().Format('yyyy-MM-dd');
+                break;
+            default:
+                that.querryObj.startDate = '';
+                that.querryObj.endDate = '';
+        }
+    },
+    setType: function(e) {
+        var _this = this;
+        switch (e) {
+            case '0':
+                _this.querryObj.type = '';
+                break;
+            case '1':
+                _this.querryObj.type = '4,5,6,7,8,9,10';
+                break;
+            case '2':
+                _this.querryObj.type = '11,12,13,14,15,16,17';
+                break;
+            case '3':
+                _this.querryObj.type = '18,19';
+        }
+    },
+    refreshTable: function() {
+        var that = this;
+        that.$searchInput.val(that.querryObj.keyword);
+        that.querryObj.pageNum = '1';
+        $('#table').bootstrapTable('refreshOptions', {
+            pageNumber: +that.querryObj.pageNum,
+            pageSize: +that.querryObj.pageSize,
+            queryParams: function(params) {
+                that.querryObj.pageSize = params.pageSize;
+                that.querryObj.pageNum = params.pageNumber;
+                return that.querryObj;
+            }
+        });
+    },
+    bindDateDiyEvent: function() { //时间控件
+        $('#datetime').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            endDate: new Date()
+        });
+        $("#datetimeStart").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            // startDate: new Date()
+        }).on("click", function() {
+            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
+        });
+        $("#datetimeEnd").datetimepicker({
+            format: 'yyyy-mm-dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            // startDate: new Date()
+        }).on("click", function() {
+            $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
+        });
+    }
 }
 
 /*
@@ -703,7 +892,7 @@ var searchObject = {
  */
 function initTable() {
     $('#table').bootstrapTable({
-        url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + mapObj.$token, //请求数据url
+        url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
         method: 'post',
         // data: "dataAll",
         toolbar: "#toolbar",
@@ -723,9 +912,9 @@ function initTable() {
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
         queryParams: function(params) {
-            searchObject.pageSize = params.pageSize;
-            searchObject.pageNum = params.pageNumber;
-            return searchObject;
+            searchObj.defaultObj.pageSize = params.pageSize;
+            searchObj.defaultObj.pageNum = params.pageNumber;
+            return searchObj.defaultObj;
         },
         responseHandler: function(res) {
             return res;
@@ -734,6 +923,8 @@ function initTable() {
             // alert(data.rows.length);
             if (data.rows.length > 0) {
                 mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
+            } else {
+                mapObj.$bdMap.clearOverlays();
             }
         },
         //表格的列
@@ -743,13 +934,13 @@ function initTable() {
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '5%',
+            width: '3%',
         }, {
             field: 'occurrenceTime', //域值
             title: '事件发生时间',
             align: 'center',
             visible: true, //false表示不显示
-            sortable: true, //启用排序
+            sortable: false, //启用排序
             width: '15%',
             editable: true,
         }, {
@@ -757,15 +948,13 @@ function initTable() {
             title: '事件类型', //内容
             align: 'center',
             visible: true, //false表示不显示
-            sortable: true, //启用排序
-            width: '15%',
+            sortable: false, //启用排序
+            width: '17%',
             editable: true,
             cellStyle: function(value, row, index) {
                 return {
                     css: {
                         "max-width": "300px",
-                        "word-wrap": "break-word",
-                        "word-break": "normal"
                     }
                 };
             }
@@ -774,7 +963,7 @@ function initTable() {
             title: '事件状态', //内容
             align: 'center',
             visible: true, //false表示不显示
-            sortable: true, //启用排序
+            sortable: false, //启用排序
             width: '10%',
             editable: true,
         }, {
@@ -783,37 +972,27 @@ function initTable() {
             align: 'center',
             visible: true, //false表示不显示
             sortable: false, //启用排序
-            width: '25%',
+            width: '27%',
             // editable: true,
         }, {
             field: 'inspectorName', //域值
             title: '上报人', //内容
             align: 'center',
             visible: true, //false表示不显示
-            sortable: true, //启用排序
-            width: '10%',
+            sortable: false, //启用排序
+            width: '15%',
             editable: true,
         }, {
             field: 'operate',
             title: '操作',
             align: 'center',
             events: operateEvents,
-            width: '20%',
+            width: '13%',
             formatter: operateFormatter
         }]
     });
 }
 
-/*
- *点击查询条件-刷新bootstrap列表的数据
- */
-function refreshTableData() {
-    $('#table').bootstrapTable('refreshOptions', {
-        queryParams: function(params) {
-            return searchObject;
-        }
-    });
-}
 
 /*
  *表单的操作（html样式）
@@ -838,81 +1017,116 @@ window.operateEvents = {
             $(this).find('i').attr("class", "active");
             mapObj.singlePointLocation(row);
         }
+        $('body,html').animate({ scrollTop: 0 }, 500);
         return false;
     },
     //查看详情
     'click .check': function(e, value, row, index) {
-        if ($(this).find('i').attr("class") == 'active') {} else {
-            $(".check").find('i').attr("class", "");
-            $(this).find('i').attr("class", "active");
-        }
         var objId = row.objectId;
-        var lon = row.bdLon;
-        var lat = row.bdLat;
+
         $("#details").modal(); //打开详情模态框
-        $.ajax({
-            type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + objId,
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data, status) {
-
-                var detailsMap = new BMap.Map("details_address_map");
-                detailsMap.reset();
-                detailsMap.enableScrollWheelZoom(true);
-                var point = new BMap.Point(lon, lat);
-                detailsMap.centerAndZoom(point, 15);
-                var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
-                var marker = new BMap.Marker(point, {
-                    icon: myIcon
-                });
-                detailsMap.clearOverlays();
-                detailsMap.addOverlay(marker);
-                eventObj.iconHide(); //隐藏百度图标
-
-                console.log(JSON.stringify(data));
-                var msg = data.rows;
-                var images = msg[0].pic;
-                $(".event_pic").html("");
-                $(".eventCode").text(msg[0].eventCode);
-                $(".occurrenceTime").text(msg[0].occurrenceTime);
-                $(".fullTypeName").text(msg[0].fullTypeName);
-                $(".inspectorName").text(msg[0].inspectorName);
-                $(".address").text(msg[0].address);
-                $(".description").text(msg[0].description);
-                //$(".event_audio").attr("src", '/cloudlink-core-file/file/downLoad?fileId=' + msg[0].audio[0] + "&audioFileName" + 0.1 + ".amr");
-
-                var pic_scr = "";
-                for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<div class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</div>';
-                }
-                $(".event_pic").append(pic_scr);
-                $.ajax({
-                    type: 'GET',
-                    url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + msg[0].audio[0],
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: function(data, status) {
-                        console.log(data.rows[0].fileUrl);
-                        $(".event_audio").attr("src", '' + data.rows[0].fileUrl);
-                    }
-                })
-            }
-        })
+        setTimeout(function() {
+            detailsObj.loadEventDetails(objId);
+        }, 1000);
         return false;
     }
 };
 
 
 $(function() {
-    eventDatePickerInit(); //初始化-日期选择器控件
-    searchModelInit(); //初始化-高级搜索的DOM元素
-    searchModelSwitchObj.init(); //初始化-高级搜索按钮
     mapObj.init(); //地图初始化
     eventObj.init(); //初始化-事件上报
     mapAddObj.init(); //初始化-事件上报地图
     addListenEventHandle(); //注册事件
     initTable(); //初始化表格数据
+    searchObj.init(); //搜索条件
+    exportFileObj.init(); //初始化导出表格方法
+
+    drafting('event_map', 'drafting_down'); //启动拖拽
+
 });
+
+
+
+//导出文件
+var exportFileObj = {
+    $exportAll: $("#export_all"),
+    $exportChoice: $("#export_choice"),
+    expoerObj: {
+        "status": "", //处理状态，括号内为注释
+        "type": "", //事件类型,
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
+        "keyword": "",
+        "ids": ""
+    },
+    init: function() {
+        var _this = this;
+        this.$exportAll.click(function() {
+            _this.expoerObj.ids = '';
+            _this.expoerCondition();
+            console.log(_this.expoerObj)
+        });
+        this.$exportChoice.click(function() {
+            var selectionsData = $('#table').bootstrapTable('getSelections');
+            var objectIds = [];
+            if (selectionsData.length == 0) {
+                alert("请选择你需要导出的任务！");
+                return false;
+            } else {
+                for (var i = 0; i < selectionsData.length; i++) {
+                    objectIds.push(selectionsData[i].objectId);
+                }
+                _this.expoerObj.ids = objectIds.join(',');
+
+                _this.expoerCondition();
+
+                console.log(_this.expoerObj)
+            }
+        });
+    },
+    expoerCondition: function() {
+        var searchMsg = searchObj.querryObj;
+        this.expoerObj.status = searchObj.querryObj.status;
+        this.expoerObj.type = searchObj.querryObj.type;
+        this.expoerObj.startDate = searchObj.querryObj.startDate;
+        this.expoerObj.endDate = searchObj.querryObj.endDate;
+        this.expoerObj.keyword = searchObj.querryObj.keyword;
+
+        this.expoerData(this.expoerObj);
+    },
+    expoerData: function(date) {
+        var options = {
+            "url": '/cloudlink-inspection-event/eventInfo/exportExcel?token=' + lsObj.getLocalStorage('token'),
+            "data": date,
+            "method": 'post'
+        }
+        this.downLoadFile(options);
+    },
+    downLoadFile: function(options) {
+        var config = $.extend(true, { method: 'post' }, options);
+        var $iframe = $('<iframe id="down-file-iframe" />');
+        var $form = $('<form target="down-file-iframe" method="' + config.method + '" />');
+        $form.attr('action', config.url);
+        for (var key in config.data) {
+            $form.append('<input type="hidden" name="' + key + '" value="' + config.data[key] + '" />');
+        }
+        $iframe.append($form);
+        $(document.body).append($iframe);
+        $form[0].submit();
+        $iframe.remove();
+    }
+}
+
+//判断输入框文字的个数
+function checkLen(obj) {
+    var len = $(obj).val().length;
+    if (len > 159) {
+        $(obj).val($(obj).val().substring(0, 160));
+    }
+    var num = 160 - len;
+    if (num < 0) {
+        num = 0;
+    }
+    $(".text_num").text('(' + num + '字)');
+}

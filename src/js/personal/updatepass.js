@@ -52,11 +52,12 @@ $('.btn').click(function() {
             dataType: "json",
             success: function(data) {
                 if (data.success == 1) {
-                    alert("密码修改成功，并即将返回登录页面，请重新登录");
-                    lsObj.clearAll();
-                    top.location.href = '../../login.html';
+                    xxwsWindowObj.xxwsAlert("密码修改成功，并即将返回登录页面，请重新登录", '', '', function() {
+                        lsObj.clearAll();
+                        top.location.href = '../../login.html';
+                    });
                 } else {
-                    alert("密码修改失败");
+                    xxwsWindowObj.xxwsAlert("密码修改失败");
                 }
             },
 

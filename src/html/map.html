@@ -6,252 +6,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/lib/css/bootstrap.css" rel="stylesheet">
-    <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/src/css/jasxxws.css" rel="stylesheet">
     <link href="/src/css/map.css" rel="stylesheet">
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=FaToVuVSNebaox7B0uLYEKhPH8Fpu7Rr"></script>
 </head>
 
 <body>
-    <div id="wrapper">
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">
-                    <img src="src/images/main/icon_logo.png">
-                    <span>巡线卫士</span>
-                    <img src="src/images/main/logo_desc.png">
-                </a>
-            </div>
-            <ul class="nav navbar-right top-nav">
-                <li class="dropdown">
-                    <a href="#" class=" photoImg dropdown-toggle" data-toggle="dropdown"><img style="width:30px;height:30px;border-radius:50%;" src="/src/images/main/icon_logo.png" alt=""> 张三丰 </a>
-                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 张三丰 <b class="caret"></b></a>-->
-                    <ul class="dropdown-menu alert-dropdown">
-                        <li>
-                            <a href="#">个人资料</a>
-                        </li>
-                        <li>
-                            <a href="#">修改密码</span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
-                    <ul class="dropdown-menu alert-dropdown">
-                        <li>
-                            <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">View All</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
-                    <ul class="dropdown-menu alert-dropdown">
-                        <li>
-                            <a href="#">个人资料</a>
-                        </li>
-                        <li>
-                            <a href="#">修改密码</span></a>
-                        </li>
-                    </ul>
-                </li>
+    <div class="mdl_wrapper">
+        <div class="tab_wrapper">
+            <ul class="item_wrapper">
+                <li id="people_title" class="item" data-tab="people">人员信息</li>
+                <li class="border"></li>
+                <li id="event_title" class="item" data-tab="event">事件信息</li>
+                <li class="border"></li>
+                <li id="location_title" class="item" data-tab="location">地图搜索</li>
+                <li class="border"></li>
+                <li id="tool_title" class="item" data-tab="tool">工具</li>
             </ul>
-            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav side-nav">
-                    <li class="active">
-                        <a href="index.html"><i class="fa fa-fw fa-home"></i> 首页</a>
-                    </li>
-                    <li>
-                        <a href="charts.html"><i class="fa fa-fw fa-list-ul"></i> 事件管理</a>
-                    </li>
-                    <li>
-                        <a href="tables.html"><i class="fa fa-fw fa-file"></i> 任务管理</a>
-                    </li>
-                    <li>
-                        <a href="forms.html"><i class="fa fa-fw fa-map-marker"></i> 一张图</a>
-                    </li>
-                    <li>
-                        <a href="bootstrap-elements.html"><i class="fa fa-fw fa-wrench"></i> 设备管理</a>
-                    </li>
-                    <li>
-                        <a href="bootstrap-grid.html"><i class="fa fa-fw fa-bar-chart-o"></i> 统计分析</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-briefcase"></i> 企业管理 <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="demo" class="collapse">
-                            <li>
-                                <a href="#">Dropdown Item</a>
+            <div class="result_wrapper">
+                <div id="people" class=" hide sub_wrapper">
+                    <div class="title">
+                        <span>巡线人员<span class="num">20</span></span>
+                        <span>巡线中人员<span class="num">12</span></span>
+                        <span class="close_btn">X</span>
+                    </div>
+                    <div class="search_wrapper">
+                        <input class="" type="text" placeholder="搜索人员关键词">
+                        <span id="search_people" class=""></span>
+                    </div>
+                    <div class="people result">
+                        <ul>
+                            <li class="active">
+                                <span class="name">张三</span>
+                                <span class="dept">巡线一部</span>
+                                <span class="task">巡线工作人员</span>
                             </li>
                             <li>
-                                <a href="#">Dropdown Item</a>
+                                <span class="name">张三</span>
+                                <span class="dept">巡线一部</span>
+                                <span class="task">巡线工作人员</span>
+                            </li>
+                            <li>
+                                <span class="name">张三</span>
+                                <span class="dept">巡线一部</span>
+                                <span class="task">巡线工作人员</span>
                             </li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="blank-page.html"><i class="fa fa-fw fa-envelope"></i> 消息中心</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </nav>
-
-        <div id="page-wrapper">
-            <div class="mdl_wrapper">
-                <div class="tab_wrapper">
-                    <ul class="item_wrapper">
-                        <li id="people_title" class="item" data-tab="people">人员信息</li>
-                        <li class="border"></li>
-                        <li id="event_title" class="item" data-tab="event">事件信息</li>
-                        <li class="border"></li>
-                        <li id="location_title" class="item" data-tab="location">地图搜索</li>
-                        <li class="border"></li>
-                        <li id="tool_title" class="item" data-tab="tool">工具</li>
-                    </ul>
-                    <div class="result_wrapper">
-                        <div id="people" class=" hide sub_wrapper">
-                            <div class="title">
-                                <span>巡线人员<span class="num">20</span></span>
-                                <span>巡线中人员<span class="num">12</span></span>
-                                <span class="close_btn">X</span>
-                            </div>
-                            <div class="search_wrapper">
-                                <input class="" type="text" placeholder="搜索人员关键词">
-                                <span id="search_people" class=""></span>
-                            </div>
-                            <div class="people result">
-                                <ul>
-                                    <li class="active">
-                                        <span class="name">张三</span>
-                                        <span class="dept">巡线一部</span>
-                                        <span class="task">巡线工作人员</span>
-                                    </li>
-                                    <li>
-                                        <span class="name">张三</span>
-                                        <span class="dept">巡线一部</span>
-                                        <span class="task">巡线工作人员</span>
-                                    </li>
-                                    <li>
-                                        <span class="name">张三</span>
-                                        <span class="dept">巡线一部</span>
-                                        <span class="task">巡线工作人员</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="event" class="hide sub_wrapper">
-                            <div class="title">
-                                <span>处理中事件<span class="num">20</span></span>
-                                <span>本日新增事件<span class="num">12</span></span>
-                                <span class="close_btn">X</span>
-                            </div>
-                            <div class="search_wrapper">
-                                <input class="" type="text" placeholder="搜索事件关键词">
-                                <span class=""></span>
-                            </div>
-                            <div class="event result">
-                                <ul>
-                                    <li class="active">
-                                        <div class="line01">
-                                            <span class="type">自然灾害-泥石流</span>
-                                            <span class="name">张三丰</span>
-                                            <span class="date">20161022 14:30</span>
-                                        </div>
-                                        <div class="loca_desc">
-                                            北京市海淀区学院路33号北京科技大学西门
-                                        </div>
-                                    </li>
-                                    <li class="">
-                                        <div class="line01">
-                                            <span class="type">自然灾害-泥石流</span>
-                                            <span class="name">张三丰</span>
-                                            <span class="date">20161022 14:30</span>
-                                        </div>
-                                        <div class="loca_desc">
-                                            北京市海淀区学院路33号北京科技大学西门
-                                        </div>
-                                    </li>
-                                    <li class="">
-                                        <div class="line01">
-                                            <span class="type">自然灾害-泥石流</span>
-                                            <span class="name">张三丰</span>
-                                            <span class="date">20161022 14:30</span>
-                                        </div>
-                                        <div class="loca_desc">
-                                            北京市海淀区学院路33号北京科技大学西门
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="location" class="hide sub_wrapper">
-                            <div class="title">
-                                <span class="close_btn">X</span>
-                            </div>
-                            <div class="search_wrapper">
-                                <input class="" type="text" placeholder="搜索地名关键词">
-                                <span class=""></span>
-                            </div>
-                            <div class="location result">
-                                <ul>
-                                    <li class="active">
-                                        <div class="loca">北京科技大学</div>
-                                        <div class="loca_desc">
-                                            北京市海淀区学院路33号北京科技大学西门
-                                        </div>
-                                    </li>
-                                    <li class="">
-                                        <div class="loca">北京科技大学</div>
-                                        <div class="loca_desc">
-                                            北京市海淀区学院路33号北京科技大学西门
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="tool" class="hide tool_wrapper">
-                            <div class="distance">测距</div>
-                            <div class="area">测面</div>
-                            <div class="output">导出地图</div>
-                        </div>
                     </div>
-
                 </div>
-                <div id="container" class="map_wrapper">
-
+                <div id="event" class="hide sub_wrapper">
+                    <div class="title">
+                        <span>处理中事件<span class="num">20</span></span>
+                        <span>本日新增事件<span class="num">12</span></span>
+                        <span class="close_btn">X</span>
+                    </div>
+                    <div class="search_wrapper">
+                        <input class="" type="text" placeholder="搜索事件关键词">
+                        <span class=""></span>
+                    </div>
+                    <div class="event result">
+                        <ul>
+                            <li class="active">
+                                <div class="line01">
+                                    <span class="type">自然灾害-泥石流</span>
+                                    <span class="name">张三丰</span>
+                                    <span class="date">20161022 14:30</span>
+                                </div>
+                                <div class="loca_desc">
+                                    北京市海淀区学院路33号北京科技大学西门
+                                </div>
+                            </li>
+                            <li class="">
+                                <div class="line01">
+                                    <span class="type">自然灾害-泥石流</span>
+                                    <span class="name">张三丰</span>
+                                    <span class="date">20161022 14:30</span>
+                                </div>
+                                <div class="loca_desc">
+                                    北京市海淀区学院路33号北京科技大学西门
+                                </div>
+                            </li>
+                            <li class="">
+                                <div class="line01">
+                                    <span class="type">自然灾害-泥石流</span>
+                                    <span class="name">张三丰</span>
+                                    <span class="date">20161022 14:30</span>
+                                </div>
+                                <div class="loca_desc">
+                                    北京市海淀区学院路33号北京科技大学西门
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="location" class="hide sub_wrapper">
+                    <div class="title">
+                        <span class="close_btn">X</span>
+                    </div>
+                    <div class="search_wrapper">
+                        <input class="" type="text" placeholder="搜索地名关键词">
+                        <span class=""></span>
+                    </div>
+                    <div class="location result">
+                        <ul>
+                            <li class="active">
+                                <div class="loca">北京科技大学</div>
+                                <div class="loca_desc">
+                                    北京市海淀区学院路33号北京科技大学西门
+                                </div>
+                            </li>
+                            <li class="">
+                                <div class="loca">北京科技大学</div>
+                                <div class="loca_desc">
+                                    北京市海淀区学院路33号北京科技大学西门
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="tool" class="hide tool_wrapper">
+                    <div class="distance">测距</div>
+                    <div class="area">测面</div>
+                    <div class="output">导出地图</div>
                 </div>
             </div>
-
         </div>
-        <!-- /#page-wrapper -->
+        <div class="player_wrapper">
+            <div class="btn_close">x</div>
+            <div class="title">
+                <div class="date">
+                    -
+                </div>
+                <span class="time">
+                    <span class="now">1:23:23</span>
+                <span> / </span>
+                <span class="end">1:56:23</span>
+                </span>
+                <div class="speed">
+                    <span>播放速度：</span>
+                    <span class="item ">x&nbsp;1</span>
+                    <span class="item active">x&nbsp;30</span>
+                    <span class="item ">x&nbsp;60</span>
+                    <span class="item ">x&nbsp;120</span>
+                    <span class="item ">x&nbsp;240</span>
+                </div>
+            </div>
+            <div class="time_line">
+                <div class="btn_play active"></div>
+                <div class="border"></div>
+                <div class="line_wrapper">
+                    <div class="line_bar">
+                        <div class="line_bar_active"></div>
+                        <div class="stick_bar">
+                            <!--<div class="stick"></div>-->
+                        </div>
+                        <div class="time_mark">
+                            <div class="time">23:23:23</div>
+                        </div>
+                        <div class="move_bar"></div>
+                        <div class="time_now">13:15:12</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="container" class="map_wrapper">
+        </div>
     </div>
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/src/js/common/map.js"></script>
+    <script src="/src/js/common/common.js"></script>
     <script src="/src/js/map.js"></script>
-
 </body>
 
 </html>

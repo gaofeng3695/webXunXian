@@ -1,20 +1,21 @@
 var titleObj = {
     aDomObj: $('.dashboard .qtty .num'),
-    init: function () {
+    init: function() {
         var that = this;
         that.request();
     },
-    request: function () {
+    request: function() {
         var that = this;
         $.ajax({
             type: "GET",
             url: "/cloudlink-inspection-analysis/patrolStatistical/getPatrolStatisticsData",
             contentType: "application/json",
             data: {
-                token:lsObj.getLocalStorage('token')
+                token: lsObj.getLocalStorage('token'),
+                status: 1
             },
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
@@ -24,37 +25,37 @@ var titleObj = {
                 var rows = [obj.userCount, obj.patrollingCountToday, obj.eventCountToday, obj.taskCountToday];
                 that.render(rows);
             },
-            complete: function (xhr, txt) {
+            complete: function(xhr, txt) {
                 //console.log(xhr);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     //alert('page not found');
                 }
             }
         });
     },
-    render: function (arr) {
+    render: function(arr) {
         if (!arr instanceof Array || arr.length !== 4) {
             return;
         }
         var that = this;
-        that.aDomObj.each(function (i) {
+        that.aDomObj.each(function(i) {
             $(this).html(arr[i]);
         })
     }
 };
-titleObj.init();
+
 
 var taskChartObj = {
     myChart: echarts.init($('#taskChart')[0]),
     option: null,
-    init: function () {
+    init: function() {
         var that = this;
         that.request();
         that.renderWeek();
     },
-    resize: function () {
+    resize: function() {
         var that = this;
         if (!that.option) {
             return
@@ -62,24 +63,24 @@ var taskChartObj = {
         that.myChart.resize();
         that.myChart.setOption(that.option);
     },
-    renderWeek: function () {
+    renderWeek: function() {
         /* 此方法同时将事件图表也渲染了 */
         var that = this;
         var day1 = new Date().getWeekStartDate().Format('yyyy.MM.dd');
         var day2 = new Date().getWeekEndDate().Format('yyyy.MM.dd');
         $('.thisWeek').html(day1 + ' - ' + day2);
     },
-    request: function () {
+    request: function() {
         var that = this;
         $.ajax({
             type: "GET",
             url: "/cloudlink-inspection-task/task/getEnterpriseTasksCountForWeek",
             contentType: "application/json",
             data: {
-                token:lsObj.getLocalStorage('token')
+                token: lsObj.getLocalStorage('token')
             },
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
@@ -88,17 +89,17 @@ var taskChartObj = {
                 var obj = data.rows[0];
                 that.renderChart(obj.completedCount, obj.disposingCount);
             },
-            complete: function (xhr, txt) {
+            complete: function(xhr, txt) {
                 //console.log(xhr);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     alert('网络连接出错！code:404');
                 }
             }
         });
     },
-    renderChart: function (done, doing) {
+    renderChart: function(done, doing) {
         var that = this;
         done = +done;
         doing = +doing;
@@ -111,7 +112,7 @@ var taskChartObj = {
         var p_doing = all === 0 ? 0 : 100 - p_done;
         that.drawChart(p_all, p_done, p_doing);
     },
-    drawChart: function (p_all, p_done, p_doing) {
+    drawChart: function(p_all, p_done, p_doing) {
         var that = this;
         that.option = {
             color: ['#64bd63', '#59b6fc', '#ec7145'],
@@ -163,7 +164,7 @@ var taskChartObj = {
                 itemStyle: {
                     normal: {
                         index: 0,
-                        color: function (params) {
+                        color: function(params) {
                             var arr = ['#64bd63', '#59b6fc', '#ec7145'];
                             return arr[params.dataIndex];
                         }
@@ -187,16 +188,16 @@ var taskChartObj = {
 
     }
 };
-taskChartObj.init();
+
 
 var eventChartObj = {
     myChart: echarts.init($('#eventChart')[0]),
     option: null,
-    init: function () {
+    init: function() {
         var that = this;
         that.request();
     },
-    resize: function () {
+    resize: function() {
         var that = this;
         if (!that.option) {
             return
@@ -204,17 +205,17 @@ var eventChartObj = {
         that.myChart.resize();
         that.myChart.setOption(that.option);
     },
-    request: function () {
+    request: function() {
         var that = this;
         $.ajax({
             type: "GET",
             url: "/cloudlink-inspection-event/eventInfo/getEnterpriseEventsCountForWeek",
             contentType: "application/json",
             data: {
-                token:lsObj.getLocalStorage('token')
+                token: lsObj.getLocalStorage('token')
             },
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 //console.log('shiajin' +　data)
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
@@ -223,17 +224,17 @@ var eventChartObj = {
                 var obj = data.rows[0];
                 that.render(obj.pipeEquipmentCount, obj.disasterCount, obj.constructionCount);
             },
-            complete: function (xhr, txt) {
+            complete: function(xhr, txt) {
                 //console.log(xhr);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     alert('网络连接出错！code:404');
                 }
             }
         });
     },
-    render: function (pipe, nature, other) {
+    render: function(pipe, nature, other) {
         var that = this;
         pipe = +pipe;
         nature = +nature;
@@ -247,7 +248,7 @@ var eventChartObj = {
 
         that.drawChart(pipe, nature, other);
     },
-    drawChart: function (pipe, nature, other) {
+    drawChart: function(pipe, nature, other) {
         var that = this;
         that.option = {
             color: ['#59b6fc', '#64bd63', '#9186e4'],
@@ -289,28 +290,27 @@ var eventChartObj = {
 
     }
 };
-eventChartObj.init();
-//
+
 
 var taskListObj = {
-    $tip : $('#task_tip'),
-    init: function () {
+    $tip: $('#task_tip'),
+    init: function() {
         var that = this;
         that.request();
     },
-    request: function () {
+    request: function() {
         var that = this;
         $.ajax({
             type: "GET",
             url: "/cloudlink-inspection-task/task/getMyUnDisposedTasks",
             contentType: "application/json",
             data: {
-                token:lsObj.getLocalStorage('token'),
+                token: lsObj.getLocalStorage('token'),
                 status: 　20, //20: 处理中    21: 已关闭
                 size: 3
             },
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
@@ -321,19 +321,26 @@ var taskListObj = {
                 var count = obj.total;
                 var arr = obj.list;
                 that.render(count, arr);
+                that.bindEvent();
 
             },
-            complete: function (xhr, txt) {
+            complete: function(xhr, txt) {
                 //console.log(xhr);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     alert('网络连接出错！code:404');
                 }
             }
         });
     },
-    render: function (count, arr) {
+
+    bindEvent: function() {
+        $('#taskList_wrapper .mybtn').click(function() {
+            taskObj.taskOpen($(this).attr('data-id'));
+        });
+    },
+    render: function(count, arr) {
         var that = this;
         $('#taskList_total').html(count);
         var sHtml = '';
@@ -343,11 +350,11 @@ var taskListObj = {
             '20': 'ask',
             '30': 'advise'
         };
-        if( +count === 0){
-            that.$tip.css('display','block');
+        if (+count === 0) {
+            that.$tip.css('display', 'block');
             return;
         }
-        arr.forEach(function (item, index, arr) {
+        arr.forEach(function(item, index, arr) {
             sHtml = sHtml + '<div class="line">' +
                 '<div class="line_title">' +
                 '<span class="person">' + item.createUserName + '</span>' +
@@ -357,7 +364,7 @@ var taskListObj = {
                 '<div class="sub_wrap">' +
                 '<div class="icon ' + iconObj[item.disposeType] + '">' +
                 '</div>' +
-                '<div class="mybtn">' +
+                '<div class="mybtn" data-id="' + item.taskId + '">' +
                 '处置' +
                 '</div>' +
                 '<div class="content">' +
@@ -380,15 +387,24 @@ var taskListObj = {
         $('#taskList_wrapper').html(sHtml);
     }
 };
-taskListObj.init();
+
 
 var eventListObj = {
-    $tip : $('#event_tip'),
-    init: function () {
+    $tip: $('#event_tip'),
+    init: function() {
         var that = this;
         that.request();
     },
-    request: function () {
+    bindEvent: function() {
+        $('#eventList_wrapper .mybtn').click(function() {
+            var _this = this;
+            $("#details").modal(); //打开详情模态框
+            setTimeout(function() {
+                detailsObj.loadEventDetails($(_this).attr('data-id'));
+            }, 1000);
+        });
+    },
+    request: function() {
         var that = this;
         $.ajax({
             type: "GET",
@@ -400,7 +416,7 @@ var eventListObj = {
                 size: 3
             },
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
                     alert('网络连接出错！code:-1')
@@ -411,19 +427,19 @@ var eventListObj = {
                 var count = obj.total;
                 var arr = obj.list;
                 that.render(count, arr);
-
+                that.bindEvent();
             },
-            complete: function (xhr, txt) {
+            complete: function(xhr, txt) {
                 //console.log(xhr);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     alert('网络连接出错！code:404');
                 }
             }
         });
     },
-    render: function (count, arr) {
+    render: function(count, arr) {
         var that = this;
         var iconObj = {
             '1': 'other',
@@ -431,12 +447,12 @@ var eventListObj = {
             '3': 'self'
         };
         $('#eventList_total').html(count);
-        if( +count === 0){
-            that.$tip.css('display','block');
+        if (+count === 0) {
+            that.$tip.css('display', 'block');
             return;
         }
         var sHtml = '';
-        arr.forEach(function (item, index, arr) {
+        arr.forEach(function(item, index, arr) {
             var aHtml = ['<div class="line">',
                 '<div class="line_title">',
                 '<span class="perosn">',
@@ -465,7 +481,7 @@ var eventListObj = {
                 '</span>',
                 '</div>',
                 '<div class="des_wrap">',
-                '<div class="mybtn">查看</div>',
+                '<div class="mybtn" data-id="' + item.objectId + '">查看</div>',
                 '<div class="desc">',
                 item.description,
                 '</div>',
@@ -482,12 +498,24 @@ var eventListObj = {
         $('#eventList_wrapper').append(sHtml);
     }
 };
-eventListObj.init();
+
+
+
 
 /* 窗口大小改变时，图表随之改变 */
 (function resizeChart() {
-    window.onresize = function () {
+    window.onresize = function() {
         taskChartObj.resize();
         eventChartObj.resize();
     }
-})();
+})(taskChartObj,eventChartObj);
+
+$.ajaxSetup({
+  catch :false
+});
+
+titleObj.init();
+taskChartObj.init();
+eventChartObj.init();
+taskListObj.init();
+eventListObj.init();

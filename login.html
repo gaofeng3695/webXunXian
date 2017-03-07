@@ -6,37 +6,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-
     <link href="/src/css/login.css" rel="stylesheet">
 </head>
 
 <body>
-    <div id="bgcontent">
+    <div id="bgcontent" style="background-size: cover;filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/src/images/loginImg/loginbg.jpg',sizingMethod='scale');">
         <div class="loginContent">
-            <div class="posImg"></div>
             <div class="poskuai">
-                <div class="logoImg"></div>
-                <div class="info">
-                    <div class="name">
-                        <div class="nameImg bg"></div>
-                        <div class="common"><input type="text" placeholder="请输入账号"></div>
+                <div class="message">
+                    <div class="logoImg"></div>
+                    <div class="info">
+                        <div class="name">
+                            <div class="nameImg bg"></div>
+                            <div class="common"><input type="text" placeholder="请输入账号"></div>
+                        </div>
+                        <div class="hidkuai1"><span></span></div>
+                        <div class="password">
+                            <div class="passwordImg bg"></div>
+                            <div class="common"><input type="password" placeholder="请输入密码"></div>
+                        </div>
+                        <div class="hidkuai2"><span></span></div>
                     </div>
-                    <div class="hidkuai1"><span></span></div>
-                    <div class="password">
-                        <div class="passwordImg bg"></div>
-                        <div class="common"><input type="password" placeholder="请输入密码"></div>
+                    <button class="btn">登&nbsp;&nbsp;录</button>
+                    <div class="Twobtn">
+                        <a href="forget.html"><button class="forget">忘记密码</button></a>
+                        <a href="enroll.html"><button class="immediately">立即注册</button></a>
                     </div>
-                    <div class="hidkuai2"><span></span></div>
                 </div>
-                <button class="btn">登&nbsp;&nbsp;录</button>
-                <a class="ml60" href="forget.html"><button class="forget">忘记密码</button></a>
-                <a class="ml125" href="enroll.html"><button class="immediately">立即注册</button></a>
             </div>
         </div>
         <p class="words">北京中盈安信技术服务股份有限公司旗下网站：巡线卫士<span>©</span>2016 京 B2-20080224-16</p>
     </div>
-    <script src="/lib/js/jquery-1.12.4.min.js "></script>
-    <script src="/lib/js/bootstrap.min.js "></script>
+    <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/bootstrap.min.js"></script>
     <script src="/src/js/common/md5.js"></script>
     <script src="/src/js/common/html5-storage.js"></script>
     <script src="/src/js/login/login.js"></script>

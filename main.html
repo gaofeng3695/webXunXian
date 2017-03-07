@@ -5,6 +5,7 @@
     <title></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <link href="/lib/css/bootstrap.css" rel="stylesheet">
     <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
     <link href="/src/css/jasxxws.css" rel="stylesheet">
@@ -25,25 +26,25 @@
                     <img src="/src/images/main/icon_logo.png">
                     <span>巡线卫士</span>
                     <img src="/src/images/main/logo_desc.png">
-                    <span class="new_company" id="new_company">
-                        
-                    </span>
+                    <!--<span class="new_company" id="new_company">
+                    </span>-->
                 </a>
             </div>
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle photoImg" data-toggle="dropdown"><img class="person-img" src="/src/images/main/photo.png" alt="">
-                        <span class="userName">张三丰</span>
+                    <a href="#" class="dropdown-toggle photoImg" data-toggle="dropdown">
+                        <img class="person-img" src="/src/images/main/photo.png" alt="">
+                        <span class="userName">--</span>
                     </a>
                     <ul class="dropdown-menu alert-dropdown" style="width: 100%;min-width: 20px;text-align:center;">
                         <li menuid="personal">
-                            <a href="#">个人资料</a>
+                            <a href="#/personal">个人资料</a>
                         </li>
                         <li menuid="updatepass">
-                            <a href="#">修改密码</span></a>
+                            <a href="#/updatepass">修改密码</span></a>
                         </li>
                         <li menuid="setLogin">
-                            <a href="#">登录设置</span></a>
+                            <a href="#/setLogin">登录设置</span></a>
                         </li>
                     </ul>
                 </li>
@@ -51,38 +52,45 @@
                     <div>3</div>
                 </li>-->
                 <li class="help" menuId="help">
-
+                    <div class="leftLine"></div>
+                    <a href="#/help" title="帮助中心" style="height:50px;">
+                        <img src="/src/images/main/help.png">
+                        <h1>
+                    </a>
                 </li>
-                <li class="signOut" menuId="signOut">
-
+                <li class="help" menuId="signOut">
+                    <div class="leftLine"></div>
+                    <a href="#" title="注销登录" style="height:50px;">
+                        <img src="/src/images/main/signOut.png">
+                        <h1>
+                    </a>
                 </li>
-
             </ul>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
-                    <li class="active" menuid="index">
-                        <a href="#"><i class="fa fa-fw fa-home"></i> 首页</a>
+                    <li class="" menuid="index">
+                        <a href="#/index"><i class="fa fa-fw fa-home"></i> 首页</a>
                     </li>
                     <li menuid="event">
-                        <a href="#"><i class="fa fa-fw fa-list-ul"></i> 事件管理</a>
+                        <a href="#/event"><i class="fa fa-fw fa-list-ul"></i> 事件管理</a>
                     </li>
                     <li menuid="task">
-                        <a href="#"><i class="fa fa-fw fa-file"></i> 任务管理</a>
+                        <a href="#/task"><i class="fa fa-fw fa-file"></i> 任务管理</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-map-marker"></i> 一张图</a>
+                        <a href="#/map"><i class="fa fa-fw fa-map-marker"></i> 一张图</a>
                     </li>
                     <li menuid="insrecord">
-                        <a href="#"><i class="fa fa-fw fa-map-marker"></i> 巡线记录</a>
+                        <a href="#/track"><i class="fa fa-fw fa-pencil-square-o"></i> 巡线记录</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-wrench"></i> 设备管理</a>
+                        <a href="#/equipment"><i class="fa fa-fw fa-wrench"></i> 设备管理</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-bar-chart-o"></i> 统计分析</a>
+                        <a href="#/statistics"><i class="fa fa-fw fa-bar-chart-o"></i> 统计分析</a>
                     </li>
                     <li>
-                        <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-briefcase"></i> 企业管理 <i class="fa fa-fw fa-caret-down"></i></a>
+                        <a href="#/management" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-briefcase"></i> 企业管理 <i class="fa fa-fw fa-caret-down"></i></a>
                         <!--<ul id="demo" class="collapse">
                             <li>
                                 <a href="#">Dropdown Item</a>
@@ -93,18 +101,18 @@
                         </ul>-->
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-envelope"></i>消息中心</a>
+                        <a href="#/news"><i class="fa fa-fw fa-envelope"></i>消息中心</a>
                     </li>
                 </ul>
             </div>
         </nav>
-
         <!--<div id="page-wrapper">
         </div>-->
         <!--暂时采用iframe进行数据加载-->
-        <iframe id="page-wrapper" frameborder=0 src="/src/html/index.html"></iframe>
+        <iframe id="page-wrapper" frameborder=0 src=""></iframe>
     </div>
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
+    <script src="/lib/js/director.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
     <script src="src/js/common/html5-storage.js"></script>
     <script src="src/js/main.js"></script>

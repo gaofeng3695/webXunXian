@@ -2,6 +2,7 @@ $(document).ready(function() {
     resizeMain();
     menuListListener();
     initPersonal(); //首次登录进来，进行初始化个人的基本信息
+    routerObj.init()
 });
 var resizeMain = function() {
     document.getElementById("page-wrapper").style.height = document.documentElement.clientHeight - 55 + 'px';
@@ -10,50 +11,13 @@ window.onresize = function() {
     resizeMain();
 }
 var menuListListener = function() {
-    $(".nav.navbar-nav.side-nav>li").on("click", function() {
-        $('.nav.navbar-nav.side-nav').find('li').each(function() {
-            $(this).removeClass('active');
-        });
-        $(this).addClass("avtive");
-        var menuid = $(this).attr("menuid");
-        switch (menuid) {
-            case 'index':
-                loadRelativePage("/src/html/index.html");
-                break;
-            case 'event':
-                loadRelativePage("/src/html/event.html");
-                break;
-            case 'task':
-                loadRelativePage("/src/html/task.html");
-                break;
-            case 'insrecord':
-                loadRelativePage("/src/html/track.html");
-                break;
-            default:
-                loadRelativePage("/src/html/none.html");
-                break;
-        }
-    });
-    $(".dropdown-menu.alert-dropdown>li").on("click", function() {
-        var menuid = $(this).attr("menuid");
-        switch (menuid) {
-            case 'personal':
-                loadRelativePage("/src/html/personal.html");
-                break;
-            case 'updatepass':
-                loadRelativePage("/src/html/forgetPassword.html");
-                break;
-            case 'setLogin':
-                loadRelativePage("/src/html/setLogin.html");
-                break;
-        }
-    });
     $(".nav.navbar-right.top-nav>li").on("click", function() {
         var menuid = $(this).attr("menuid");
         switch (menuid) {
-            case 'help':
-                loadRelativePage("/src/html/help.html");
-                break;
+            /*case 'help':
+                lsObj.clearAll();
+                location.hash = '#/help';
+                break;*/
             case 'signOut':
                 lsObj.clearAll();
                 location.href = 'login.html';
@@ -61,16 +25,27 @@ var menuListListener = function() {
         }
     });
 }
+
 var loadRelativePage = function(_url) {
         document.getElementById("page-wrapper").src = _url;
+        var $domArr = $('.side-nav li a');
+        $domArr.removeClass('active');
+        for(var i = 0; i < $domArr.length; i++){
+            var _this = $domArr[i];
+            if(_this.hash === location.hash){
+                //console.log($(_this))
+                $(_this).addClass('active');
+                return;
+            }
+        }
     }
     /*进行个人信息初始化 */
 var initPersonal = function() {
     var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
     $(".userName").text(userBo.userName);
-    $(".new_company").html("");
-    var current = userBo.enterpriseName + '<img src="/src/images/main/refresh.png">';
-    $(".new_company").append(current);
+    // $(".new_company").html("");
+    // var current = userBo.enterpriseName + '<img src="/src/images/main/refresh.png">';
+    // $(".new_company").append(current);
     $.ajax({
         type: "GET",
         url: "/cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?token=" + lsObj.getLocalStorage('token') + "&businessId=" + userBo.objectId + "&bizType=pic",
@@ -88,3 +63,52 @@ var initPersonal = function() {
         }
     });
 }
+/* 前端路由模块 */
+var routerObj = {
+    router : null,
+    init : function(){
+        var that = this;
+        that.router = Router({
+            '/index': function(){
+                loadRelativePage("/src/html/index.html");
+            },
+            '/event': function(){
+                loadRelativePage("/src/html/event.html");
+            },
+            '/task': function(){
+                loadRelativePage("/src/html/task.html");
+            },
+            '/track': function(){
+                loadRelativePage("/src/html/track.html");
+            },
+            '/map': function(){
+                loadRelativePage("/src/html/none.html");
+            },
+            '/equipment': function(){
+                loadRelativePage("/src/html/none.html");
+            },
+            '/statistics': function(){
+                loadRelativePage("/src/html/none.html");
+            },
+            '/management': function(){
+                loadRelativePage("/src/html/none.html");
+            },
+            '/news': function(){
+                loadRelativePage("/src/html/none.html");
+            },
+            '/personal': function(){
+                loadRelativePage("/src/html/personal.html");
+            },
+            '/updatepass': function(){
+                loadRelativePage("/src/html/forgetPassword.html");
+            },
+            '/setLogin': function(){
+                loadRelativePage("/src/html/setLogin.html");
+            },
+            '/help': function(){
+                loadRelativePage("/src/html/help.html");
+            }
+        });
+        that.router.init('/index');
+    },
+};

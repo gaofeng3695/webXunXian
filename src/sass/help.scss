@@ -1,11 +1,10 @@
 #page-wrapper {
+    background: #edf1f2;
     .container-fluid {
-        background: #edf1f2;
-        // width: 100%;
-        // height: 100%;
+        width: 100%;
+        height: 100%;
     }
     .screening {
-        height: 760px;
         font-size: 14px;
         background: #fff;
         border-radius: 5px;
@@ -21,6 +20,7 @@
 
 .center {
     text-align: center;
+    border-bottom: 1px solid #ececec;
     line-height: 50px;
     font-size: 20px;
     cursor: pointer;
@@ -28,28 +28,28 @@
 
 .body,
 html {
-    width: 100%;
-    height: 100%;
     background: #edf1f2;
     // overflow-y: hidden;
 }
 
 .kuai1 {
-    height: 300px;
+    height: 100%;
 }
 
 .kuai2 {
-    height: 300px;
+    height: 100%;
     display: none;
 }
 
 .kuai3 {
-    height: 300px;
+    height: 100%;
     display: none;
 }
 
 .changeOne {
     width: 100%;
+    height: 100%;
+    padding-bottom: 20px;
 }
 
 .changeOne ul {
@@ -190,13 +190,17 @@ html {
     background: url("/src/images/help/add.png") no-repeat center 20px;
 }
 
-.feedback_img_add input {
+.feedback_img_file input {
     display: none;
+}
+
+.feedback_img_file {
+    float: left;
 }
 
 .feedback_btn {
     clear: both;
-    padding-top: 30px;
+    // padding-top: 30px;
     text-align: center;
     height: 50px;
 }
@@ -240,8 +244,8 @@ html {
 
 .limit {
     clear: both;
-    padding-top: 0.875em;
-    font-size: 1.3em;
+    padding-top: 10px;
+    font-size: 16px;
     color: #999;
 }
 

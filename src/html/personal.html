@@ -9,7 +9,7 @@
     <link href="/lib/css/bootstrap.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
     <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/src/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <!--<link href="/src/css/bootstrap-datetimepicker.min.css" rel="stylesheet">-->
     <!--<link href="/src/css/jasxxws.css" rel="stylesheet">-->
     <link href="/src/css/personal.css" rel="stylesheet">
 </head>
@@ -58,7 +58,8 @@
                                         </div>
                                         <div class="persoanl_add">
                                             <span class="uploadpicture"><img id="userImg" src="/src/images/event/upload.png" alt=""></span>
-                                            <input type="file" onchange="handleFiles(this);" id="upload" />
+                                            <input type="file" id="uploadfile" name="file" style="display:none" />
+
                                         </div>
                                         <p class="img-desc"> 建议上传图片尺寸为640*640，大小不超过1M</p>
                                     </div>
@@ -156,11 +157,10 @@
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
     <script src="/src/js/common/md5.js"></script>
-    <!--<script src="/src/js/main.js"></script>-->
+    <script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>
     <script src="/src/js/common/html5-storage.js"></script>
-    <script src="/src/js/personal/ajaxFileUpload.js"></script>
-    <script src="/src/js/personal/upload.js"></script>
-    <script src="/src/js/personal/personal.js"></script>
+    <script type="text/javascript" src="/src/js/personal/ajaxFileUpload.js"></script>
+    <script type="text/javascript" src="/src/js/personal/personal.js"></script>
 
 </body>
 

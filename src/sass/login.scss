@@ -7,20 +7,12 @@ body,
 html {
     background-color: #fff;
     width: 100%;
-    min-width: 1080px;
+    min-width: 939px;
     height: 100%;
-    min-height: 700px;
+    min-height: 600px;
     position: relative;
     overflow-x: hidden;
     overflow-y: hidden;
-}
-
-.ml60 {
-    margin-left: 60px;
-}
-
-.ml125 {
-    margin-left: 125px;
 }
 
 .common {
@@ -30,170 +22,164 @@ html {
     margin-top: 3px;
 }
 
-.loginContent {
-    width: 1300px;
-    height: 100%;
-    margin: 0 auto;
-}
-
 #bgcontent {
     width: 100%;
     height: 100%;
     background: url(/src/images/loginImg/loginbg.jpg);
     background-size: cover;
-    filter: progid: DXImageTransform.Microsoft.AlphaImageLoader(src='/src/images/loginImg/loginbg.jpg', sizingMethod='scale');
-    .posImg {
-        width: 559px;
-        height: 265px;
-        margin-top: 300px;
-        background: red;
-        margin-right: 200px;
-        float: left;
-        background: url(/src/images/loginImg/loginsg.png) no-repeat center center;
-    }
-    .poskuai {
-        width: 420px;
-        height: 480px;
-        background: #fff;
-        border-radius: 20px;
-        margin-top: 150px;
-        // margin-left: 60%;
-        display: inline-block;
-        .logoImg {
-            width: 265px;
-            height: 150px;
-            background: url(/src/images/loginImg/logo.png) no-repeat 155px 50px;
-        }
-        .info {
-            width: 300px;
-            margin-top: 45px;
-            margin-left: 60px;
-            .name {
-                width: 100%;
-                height: 35px;
-                border: 1px solid #BBBBBB;
-                border-radius: 5px;
-                .nameImg {
-                    width: 30px;
-                    height: 35px;
-                    float: left;
-                    background: url(/src/images/loginImg/nameImg1.png) no-repeat 8px 8px;
-                }
-                input {
-                    width: 260px;
-                    height: 20px;
-                    margin-top: 5px;
-                    padding-left: 5px;
-                    border: none;
-                    outline: none;
-                    font-size: 14px;
-                }
-            }
-            .hidkuai1 {
-                width: 300px;
-                height: 30px;
-                span {
-                    width: 100%;
-                    height: 100%;
-                    color: red;
-                    font-size: 14px;
-                    line-height: 30px;
-                    // display: none;
-                }
-            }
-            .hidkuai2 {
-                width: 300px;
-                height: 50px;
-                span {
-                    width: 100%;
-                    height: 100%;
-                    color: red;
-                    font-size: 14px;
-                    line-height: 30px;
-                    // display: none;
-                }
-            }
-            .password {
-                width: 100%;
-                height: 35px;
-                // margin-top: 30px;
-                border: 1px solid #BBBBBB;
-                border-radius: 5px;
-                .passwordImg {
-                    width: 30px;
-                    height: 35px;
-                    float: left;
-                    background: url(/src/images/loginImg/password.png) no-repeat 8px 8px;
-                }
-                input {
-                    width: 260px;
-                    height: 20px;
-                    margin-top: 5px;
-                    padding-left: 5px;
-                    border: none;
-                    outline: none;
-                    font-size: 14px;
-                }
-            }
-        }
-        .btn {
-            width: 300px;
-            margin-left: 60px;
-            border-radius: 5px;
-            height: 35px;
-            border: none;
-            background: #5EB6F9;
-            color: #fff;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .forget {
-            width: 80px;
-            margin-top: 20px;
-            border: none;
-            outline: none;
+    .loginContent {
+        width: 1040px;
+        height: 100%;
+        margin: 0 auto;
+        position: relative;
+        background: url(/src/images/loginImg/loginsg.png) no-repeat 0 center;
+        .poskuai {
+            width: 420px;
+            height: 480px;
             background: #fff;
-            color: #5EB6F9;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .immediately {
-            width: 100px;
-            margin-top: 20px;
-            border: none;
-            outline: none;
-            background: #fff;
-            color: #5EB6F9;
-            font-size: 16px;
-            cursor: pointer;
+            border-radius: 20px;
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            margin-top: -240px;
+            display: inline-block;
+            .message {
+                margin: 0 auto;
+                width: 310px;
+                height: 100%;
+                .logoImg {
+                    width: 112px;
+                    height: 96px;
+                    margin: 0 auto;
+                    margin-top: 50px;
+                    background: url(/src/images/loginImg/logo.png) no-repeat 0 0;
+                }
+                .info {
+                    width: 300px;
+                    margin: 0 auto;
+                    margin-top: 45px;
+                    .name {
+                        width: 100%;
+                        height: 35px;
+                        border: 1px solid #BBBBBB;
+                        border-radius: 5px;
+                        .nameImg {
+                            width: 30px;
+                            height: 35px;
+                            float: left;
+                            background: url(/src/images/loginImg/nameImg1.png) no-repeat 8px 8px;
+                        }
+                        input {
+                            width: 260px;
+                            height: 20px;
+                            margin-top: 5px;
+                            padding-left: 5px;
+                            border: none;
+                            outline: none;
+                            font-size: 14px;
+                        }
+                    }
+                    .hidkuai1 {
+                        width: 300px;
+                        height: 30px;
+                        span {
+                            width: 100%;
+                            height: 100%;
+                            color: red;
+                            font-size: 14px;
+                            line-height: 30px;
+                        }
+                    }
+                    .hidkuai2 {
+                        width: 300px;
+                        height: 50px;
+                        span {
+                            width: 100%;
+                            height: 100%;
+                            color: red;
+                            font-size: 14px;
+                            line-height: 30px;
+                        }
+                    }
+                    .password {
+                        width: 100%;
+                        height: 35px;
+                        border: 1px solid #BBBBBB;
+                        border-radius: 5px;
+                        .passwordImg {
+                            width: 30px;
+                            height: 35px;
+                            float: left;
+                            background: url(/src/images/loginImg/password.png) no-repeat 8px 8px;
+                        }
+                        input {
+                            width: 260px;
+                            height: 20px;
+                            margin-top: 5px;
+                            padding-left: 5px;
+                            border: none;
+                            outline: none;
+                            font-size: 14px;
+                        }
+                    }
+                }
+                .btn {
+                    width: 300px;
+                    height: 35px;
+                    margin: 0 auto;
+                    display: block;
+                    border-radius: 5px;
+                    border: none;
+                    background: #5EB6F9;
+                    color: #fff;
+                    font-size: 20px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+                .Twobtn {
+                    width: 300px;
+                    height: 30px;
+                    margin-top: 20px;
+                    .forget {
+                        width: 80px;
+                        height: 30px;
+                        margin-left: 10px;
+                        margin-right: 100px;
+                        border: none;
+                        outline: none;
+                        background: #fff;
+                        color: #5EB6F9;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                    .immediately {
+                        width: 100px;
+                        height: 30px;
+                        border: none;
+                        outline: none;
+                        background: #fff;
+                        color: #5EB6F9;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                }
+            }
         }
     }
-}
-
-.words {
-    // min-width: 500px;
-    text-align: center;
-    // background: red;
-    font-size: 14px;
-    color: #666;
-    position: absolute;
-    left: 50%;
-    bottom: 20px;
-    transform: translateX(-50%);
-    span {
-        vertical-align: middle;
-        font-size: 26px;
-        margin-left: 5px;
-        margin-right: 5px
+    .words {
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+        position: absolute;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        span {
+            vertical-align: middle;
+            font-size: 26px;
+            margin-left: 5px;
+            margin-right: 5px
+        }
     }
-}
-
-.loginContent {
-    width: 1180px;
-    height: 100%;
-    margin: 0 auto;
-    // position: absolute;
-    // top: 0;
-    // left: 250px;
 }

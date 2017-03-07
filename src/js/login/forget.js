@@ -1,6 +1,7 @@
 var d = false,
     e = false,
     g = false,
+    c = false,
     f = false;
 $(".btn1").click(function() {
     var mobileNum = $('.phone').val().trim();
@@ -51,7 +52,7 @@ $(".btn1").click(function() {
     if (!d) {
         return;
     }
-    if (!g) {
+    if (!c) {
         $('.SMScodeMsg span').text('请先获取验证码');
         $('.SMScodeMsg').css({
             display: 'block'
@@ -110,23 +111,21 @@ $(".btn2").click(function() {
     var password1 = MD5($('.pw1').val().trim());
     var password2 = MD5($('.pw2').val().trim());
     var verifyCode = $('.SMScode').val().trim();
-
     if (password1 == '' || password1 == null) {
         $('.pswMsg1').css({
             display: 'block'
         });
         $('.pswMsg1 span').text('密码不能为空');
-        f = false;
+        e = false;
         return
     } else if (password2 == '' || password2 == null) {
         $('.pswMsg2').css({
             display: 'block'
         });
         $('.pswMsg2 span').text('请再次输入密码');
-        g = false;
+        f = false;
         return
     }
-
     $('.pw1').blur();
     if (!e) {
         return;
@@ -135,10 +134,7 @@ $(".btn2").click(function() {
     if (!f) {
         return;
     }
-
     //重置密码
-
-
     var _data = { "mobileNum": mobileNum, "password": password1, "verifyCode": verifyCode }
     $.ajax({
         url: "/cloudlink-core-framework/login/resetPassword",
@@ -156,8 +152,6 @@ $(".btn2").click(function() {
             })
         }
     });
-
-
 })
 $(".btnhid").click(function() {
         location.href = "login.html"
@@ -184,10 +178,6 @@ $('.phone').blur(function() {
         var val = $(this).val().trim();
         var phoneReg = /^1\d{10}$/;
         if (val == '' || val == null) {
-            // $('.phoneMeg').css({
-            //     display: 'block'
-            // });
-            // $('.phoneMeg span').text('手机号码不能为空');
             e = false;
             return;
         } else if (!phoneReg.test(val)) {
@@ -234,10 +224,6 @@ $('.imgCode').blur(function() {
         var val = $(this).val().trim();
         var imgReg = new RegExp(imgStr, "i");
         if (val == '' || val == null) {
-            // $('.imgMeg').css({
-            //     display: 'block'
-            // });
-            // $('.imgMeg span').text('图片验证码不能为空');
             f = false;
             return;
         } else if (!imgReg.test(val)) {
@@ -264,10 +250,6 @@ $('.imgCode').blur(function() {
 $('.SMScode').blur(function() {
         var val = $(this).val().trim();
         if (val == "" || val == null) {
-            // $('.SMScodeMsg').css({
-            //     display: 'block'
-            // });
-            // $('.SMScodeMsg span').text('短信验证码不能为空');
             d = false;
             return;
         } else {
@@ -317,20 +299,7 @@ $('.styles').click(function() {
             contentType: "application/json",
             dataType: "json",
             data: _data,
-            success: function(data) {
-                // var res = data.rows.isExist;
-                // if (res == 1) {
-                //     $('.phoneMeg').css({
-                //         display: 'none'
-                //     });
-                // } else {
-                //     $('.phoneMeg').css({
-                //         display: 'block'
-                //     });
-                //     $('.phoneMeg span').text('手机号码未注册');
-                //     e = false;
-                // }
-            }
+            success: function(data) {}
         })
 
     })
@@ -338,6 +307,7 @@ $('.styles').click(function() {
 function times() {
     var a = 60;
     g = true;
+    c = true;
     var t = setInterval(function() {
         a--;
         $('.styles').text(a + '秒后再次获取');
@@ -348,6 +318,7 @@ function times() {
             })
             clearInterval(t);
             f = true;
+            g = false;
         }
     }, 1000)
 }
@@ -355,25 +326,18 @@ function times() {
 $('.pw1').blur(function() {
         var val = $(this).val().trim();
         var pwReg = /^[\dA-z]{6,12}$/;
-        if (val == '' || val == null) {
-            // $('.pswMsg1').css({
-            //     display: 'block'
-            // });
-            // $('.pswMsg1 span').text('密码不能为空');
-            e = false;
-            return
-        } else if (!pwReg.test(val)) {
-            $('.pswMsg1').css({
-                display: 'block'
-            });
-            $('.pswMsg1 span').text('密码格式错误');
-            e = false;
-            return;
-        } else {
+        if (pwReg.test(val)) {
             e = true;
             $('.pswMsg1').css({
                 display: 'none'
             });
+        } else {
+            $('.pswMsg1').css({
+                display: 'block'
+            });
+            $('.pswMsg1 span').text('请输入6-12位数字或字母');
+            e = false;
+            return;
         }
     })
     //再次确认密码验证
@@ -381,10 +345,6 @@ $('.pw2').blur(function() {
     var val1 = $('.pw1').val().trim();
     var val2 = $('.pw2').val().trim();
     if (val2 == "" || val2 == null) {
-        // $('.pswMsg2').css({
-        //     display: 'block'
-        // });
-        // $('.pswMsg2 span').text('请再次输入密码');
         f = false;
         return
     } else if (val1 != val2) {

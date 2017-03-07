@@ -13,17 +13,30 @@
     }
     .event_map {
         #event_map {
-            height: 600px;
+            height: 250px;
             // display: none;
             border-bottom: 1px solid #ddd;
+            position: relative;
+            top: 0;
+            left: 0;
         }
         .bottom_btn {
+            position: relative;
             height: 20px;
+            #drafting_down {
+                background: #344052;
+                height: 3px;
+                cursor: n-resize;
+            }
             span {
                 display: inline-block;
                 height: 14px;
                 width: 44px;
                 cursor: pointer;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                margin-left: -22px;
             }
             .map_up {
                 background: url(/src/images/event/map_up.png) no-repeat;
@@ -32,6 +45,9 @@
                 background: url(/src/images/event/map_down.png) no-repeat;
             }
         }
+    }
+    .wrapper-main {
+        padding: 0 15px;
     }
     .screening {
         background: #fff;
@@ -179,7 +195,7 @@
         background: #fff;
         border-radius: 5px;
         border: 1px solid #e1e5e6;
-        padding: 0px 10px;
+        padding: 0px 10px 12px 10px;
         box-shadow: 2px 1px #e1e5e6;
         font-size: 14px;
         margin-top: 15px;
@@ -190,6 +206,9 @@
                 height: 20px;
                 background: url(/src/images/event/map.png) no-repeat;
                 vertical-align: middle;
+                &:hover {
+                    background: url(/src/images/event/map_h.png) no-repeat;
+                }
             }
             .active {
                 background: url(/src/images/event/map_h.png) no-repeat;
@@ -202,16 +221,15 @@
                 height: 16px;
                 background: url(/src/images/event/look.png) no-repeat;
                 vertical-align: middle;
-            }
-            .active {
-                background: url(/src/images/event/look_h.png) no-repeat;
+                &:hover {
+                    background: url(/src/images/event/look_h.png) no-repeat;
+                }
             }
         }
     }
 }
 
-#details {
-    // background: #e7e8ec;
+#addEvent {
     top: 50%;
     left: 50%;
     width: 800px;
@@ -221,7 +239,6 @@
     border-radius: 8px;
     font-size: 14px;
     overflow: hidden;
-    display: none;
     .modal-lg {
         margin: 0;
         width: 100%;
@@ -252,95 +269,10 @@
                 padding: 20px 20px 0 20px;
                 overflow-y: auto;
                 height: 510px;
-                .details_main {
-                    background: #fff;
-                    min-height: 490px;
-                    border: 1px solid #fcfcfc;
-                    padding: 20px;
-                    .container-fluid {
-                        border: 1px solid #ddd;
-                        .row {
-                            border-bottom: 1px solid #ddd;
-                            background: #f7f7f7;
-                            &:last-child {
-                                border: none;
-                            }
-                            .details_title {
-                                line-height: 36px;
-                                padding-right: 10px;
-                                color: #666;
-                                border-left: 1px solid #ddd;
-                                &:first-child {
-                                    border-left: none;
-                                }
-                            }
-                            .details_text {
-                                line-height: 24px;
-                                padding: 6px 10px;
-                                background: #fff;
-                                min-height: 36px;
-                                border-left: 1px solid #ddd;
-                                p {
-                                    margin: 0;
-                                }
-                                #details_address_map {
-                                    height: 200px;
-                                    width: 100%;
-                                    margin: 0 -10px;
-                                    // display: none;
-                                }
-                            }
-                            .event_pic {
-                                overflow: hidden;
-                                .event_pic_list {
-                                    float: left;
-                                    border: 1px solid #f1f1f1;
-                                    background: #fff;
-                                    margin: 0 6px 10px 0;
-                                    cursor: pointer;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            .modal-footer {
-                text-align: center;
-                background: #344052;
-                height: 50px;
-                padding: 0;
-                margin: 0;
-                button {
-                    height: 36px;
-                    border: none;
-                    width: 120px;
-                    margin-top: 7px;
-                    font-size: 16px;
-                }
-            }
-        }
-    }
-}
-
-#addEvent {
-    @extend #details;
-    .modal-lg {
-        margin: 0;
-        width: 100%;
-        .modal-content {
-            width: 800px;
-            height: 600px;
-            .modal-body {
-                padding: 20px 20px 0 20px;
-                overflow-y: auto;
-                height: 510px;
-                textarea {
-                    resize: none;
-                }
                 .event_form {
                     background: #fff;
                     border-radius: 5px;
-                    padding: 20px;
+                    padding-bottom: 20px;
                     min-height: 490px;
                     color: #636363;
                     .form_part {
@@ -421,6 +353,20 @@
                                 }
                             }
                         }
+                        .textarea_text {
+                            position: relative;
+                            textarea {
+                                resize: none;
+                                height: 120px;
+                                position: relative
+                            }
+                            .text_num {
+                                color: #999;
+                                position: absolute;
+                                bottom: 2px;
+                                right: 30px;
+                            }
+                        }
                     }
                     .feedback_img {
                         padding-top: 10px;
@@ -452,6 +398,9 @@
                                 }
                             }
                         }
+                        .feedback_img_file {
+                            display: none;
+                        }
                         .feedback_img_add {
                             width: 104px;
                             height: 78px;
@@ -477,8 +426,17 @@
                 }
             }
             .modal-footer {
+                text-align: center;
+                background: #344052;
+                height: 50px;
+                padding: 0;
+                margin: 0;
                 button {
+                    height: 36px;
+                    border: none;
+                    width: 120px;
                     margin: 7px 30px 0 30px;
+                    font-size: 16px;
                 }
                 .submit {
                     background: #59b6fc;
@@ -490,7 +448,7 @@
 }
 
 #event_address {
-    @extend #details;
+    @extend #addEvent;
     width: 600px;
     height: 400px;
     margin-left: -300px;
@@ -586,6 +544,19 @@
                     color: #fff;
                 }
             }
+        }
+    }
+}
+
+#stakeholder {
+    @extend #addEvent;
+    width: 500px;
+    margin-left: -250px;
+    .modal-lg {
+        margin: 0;
+        width: 100%;
+        .modal-content {
+            width: 500px;
         }
     }
 }

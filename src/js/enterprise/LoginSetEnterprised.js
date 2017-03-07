@@ -27,13 +27,14 @@
            dataType: "json",
            success: function(data) {
                if (data.success == 1) {
+                   //    console.log(JSON.stringify(data));
                    var dataList = data.rows;
                    for (var i = 0; i < dataList.length; i++) {
                        /*被原企业移除，目前没有任何企业，需要重新创建才可以登录成功 
-                       根据获取到的status  设定不同状态 目前：未加入企业  0 已加入的是1 冻结-1 移除 -2  默认企业  其余的都是退出企业*/
-                       if (dataList[i].status == -2) {
+                       根据获取到的status  设定不同状态 目前：未加入企业  0 已加入的是1 冻结-1 移除 -2 退出改企业为-3 默认企业  其余的都是退出企业*/
+                       if (dataList[i].status == -3 || dataList[i].status == -2) {
                            removeEnterprised += '' + dataList[i].enterpriseName + '，'; //被移除的企业名称
-                       } else if (dataList[i].status == -1) {
+                       } else if (dataList[i].status == 2) {
                            forzenENterprised += '<div class="radio"><input type = "radio"  name = "optionEnterprise"   id = "foren' + i + '" value = "' + dataList[i].objectId + '" class ="fl wh20 radiobox " disabled><label for="foren"' + i + ' class="forzen" >' + dataList[i].enterpriseName + '（被冻结）</label></div>';;
                        } else if (dataList[i].status == 1) {
                            joinEnterprised += '<div class="radio "><input type = "radio" name = "optionEnterprise"   id = "join' + i + '" value = "' + dataList[i].objectId + '" class ="fl wh20 radiobox"><label for="join"' + i + '  >' + dataList[i].enterpriseName + '</label></div>';
@@ -95,7 +96,7 @@
            success: function(data) {
                if (data.success == 1) {
                    if (data.rows[0].isExist == 1) {
-                       alert("您好，该企业已注册！");
+                       xxwsWindowObj.xxwsAlert("您好，该企业已注册！");
                        $(".companyName").focus();
                    } else {
                        createNewEnterprise();
@@ -127,7 +128,7 @@
                    lsObj.setLocalStorage('token', data.token);
                    setDefaultEnterprise(); //创建成功后，将该企业设置为默认企业，并且登录进去
                } else {
-                   alert("企业创建失败");
+                   xxwsWindowObj.xxwsAlert("企业创建失败");
                }
            }
        });
@@ -140,7 +141,7 @@
        nojoin = $("input[name='optionEnterprise']:checked").attr("id");
        var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
        if (enterpriseId == null || enterpriseId == "") {
-           alert("请选择一个默认企业后，才可登录成功");
+           xxwsWindowObj.xxwsAlert("请选择一个默认企业后，才可登录成功");
        } else if (nojoin != "") {
            //当前需要设置为默认企业并且该企业未加入
            $.ajax({
@@ -154,7 +155,7 @@
                        //设置成默认企业之后，需要重新调用获取默认企业ID，然后进行加入该企业
                        getDefaultEnterpriseId(userBo.objectId);
                    } else {
-                       alert("默认企业设置失败，请重新登录进行设置");
+                       xxwsWindowObj.xxwsAlert("默认企业设置失败，请重新登录进行设置");
                    }
                }
            });
@@ -169,7 +170,7 @@
                    if (data.success == 1) {
                        getDefaultEnterpriseId(userBo.objectId);
                    } else {
-                       alert("默认企业设置失败，请重新登录进行设置");
+                       xxwsWindowObj.xxwsAlert("默认企业设置失败，请重新登录进行设置");
                    }
                }
            });

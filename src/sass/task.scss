@@ -12,19 +12,32 @@
     button {
         outline: none;
     }
-    .event_map {
-        #event_map {
-            height: 600px;
+    .task_map {
+        #task_map {
+            height: 250px;
             // display: none;
             border-bottom: 1px solid #ddd;
+            position: relative;
+            top: 0;
+            left: 0;
         }
         .bottom_btn {
+            position: relative;
             height: 20px;
+            #drafting_down {
+                background: #344052;
+                height: 3px;
+                cursor: n-resize;
+            }
             span {
                 display: inline-block;
                 height: 14px;
                 width: 44px;
                 cursor: pointer;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                margin-left: -22px;
             }
             .map_up {
                 background: url(/src/images/event/map_up.png) no-repeat;
@@ -41,10 +54,20 @@
         background: #fff;
         border-radius: 5px;
         border: 1px solid #e1e5e6;
-        padding: 12px 10px;
+        padding: 0px 10px 12px 10px;
         box-shadow: 2px 1px #e1e5e6;
         font-size: 14px;
         margin-top: 15px;
+        .dealtTask {
+            color: #ffffff;
+            background: #ffac28;
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
+            display: inline-block;
+            border-radius: 10px;
+            padding: 0 5px;
+        }
         .location {
             i {
                 display: inline-block;
@@ -52,6 +75,9 @@
                 height: 20px;
                 background: url(/src/images/event/map.png) no-repeat;
                 vertical-align: middle;
+                &:hover {
+                    background: url(/src/images/event/map_h.png) no-repeat;
+                }
             }
             .active {
                 background: url(/src/images/event/map_h.png) no-repeat;
@@ -64,9 +90,9 @@
                 height: 16px;
                 background: url(/src/images/event/look.png) no-repeat;
                 vertical-align: middle;
-            }
-            .active {
-                background: url(/src/images/event/look_h.png) no-repeat;
+                &:hover {
+                    background: url(/src/images/event/look_h.png) no-repeat;
+                }
             }
         }
         .management {
@@ -76,9 +102,9 @@
                 height: 21px;
                 background: url(/src/images/task/management.png) no-repeat;
                 vertical-align: middle;
-            }
-            .active {
-                background: url(/src/images/task/management_h.png) no-repeat;
+                &:hover {
+                    background: url(/src/images/task/management_h.png) no-repeat;
+                }
             }
         }
         .management_end {
@@ -98,9 +124,9 @@
                 height: 18px;
                 background: url(/src/images/task/closed.png) no-repeat;
                 vertical-align: middle;
-            }
-            .active {
-                background: url(/src/images/task/closed_h.png) no-repeat;
+                &:hover {
+                    background: url(/src/images/task/closed_h.png) no-repeat;
+                }
             }
         }
         .closed_end {
@@ -116,7 +142,7 @@
     }
 }
 
-#dispose {
+#details {
     top: 50%;
     left: 50%;
     width: 800px;
@@ -152,181 +178,6 @@
                     }
                 }
             }
-            .modal-body {
-                padding: 20px 20px 0 20px;
-                overflow-y: auto;
-                height: 510px;
-                textarea {
-                    resize: none;
-                }
-                .form_task {
-                    background: #fff;
-                    border-radius: 5px;
-                    padding: 20px;
-                    min-height: 490px;
-                    color: #636363;
-                    .form_part {
-                        width: 50%;
-                        float: left;
-                    }
-                    .has-feedback {
-                        .form-control {
-                            padding-right: 38px;
-                            background: #fff;
-                            cursor: pointer;
-                        }
-                        .form-control-feedback {
-                            right: 20px;
-                        }
-                    }
-                    .form_list {
-                        overflow: hidden;
-                        line-height: 30px;
-                        margin-top: 15px;
-                        .list_left {
-                            width: 80px;
-                            float: left;
-                        }
-                        .list_right {
-                            margin-left: 80px;
-                            width: auto;
-                            padding: 0 20px 0 10px;
-                            .form_radio {
-                                overflow: hidden;
-                                margin-bottom: 15px;
-                                .form_radio_l {
-                                    width: 80px;
-                                    float: left;
-                                    label {
-                                        cursor: pointer;
-                                    }
-                                    .pay_list_c1 {
-                                        width: 20px;
-                                        height: 20px;
-                                        cursor: pointer;
-                                        display: inline-block;
-                                        text-align: center;
-                                        background: url(/src/images/event/radio_n.png) no-repeat;
-                                        background-size: 100% 100%;
-                                        vertical-align: middle;
-                                        margin-right: 10px;
-                                    }
-                                    .on {
-                                        background: url(/src/images/event/radio.png) no-repeat;
-                                        background-size: 100% 100%;
-                                    }
-                                    .radioclass {
-                                        opacity: 0;
-                                        cursor: pointer;
-                                        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-                                        filter: alpha(opacity=0);
-                                        width: 100%;
-                                        height: 100%;
-                                        display: inline-block;
-                                    }
-                                }
-                                .form_radio_r {
-                                    margin-left: 80px;
-                                    width: auto;
-                                    p {
-                                        color: #979797;
-                                        padding-left: 10px;
-                                    }
-                                    .form-control-feedback {
-                                        right: 0;
-                                    }
-                                }
-                            }
-                            #eventType {
-                                option {
-                                    line-height: 30px;
-                                }
-                            }
-                        }
-                    }
-                    .feedback_img {
-                        padding-top: 10px;
-                        .feedback_img_list {
-                            float: left;
-                            .feedback_images {
-                                width: 104px;
-                                height: 78px;
-                                float: left;
-                                margin-right: 20px;
-                                position: relative;
-                                img {
-                                    width: 104px;
-                                    height: 78px;
-                                }
-                                span {
-                                    width: 28px;
-                                    height: 28px;
-                                    cursor: pointer;
-                                    background: url(/src/images/event/close.png) no-repeat;
-                                    display: inline-block;
-                                    *display: inline;
-                                    *zoom: 1;
-                                    position: absolute;
-                                    top: 0px;
-                                    right: 0px;
-                                    margin-right: -12px;
-                                    margin-top: -10px;
-                                }
-                            }
-                        }
-                        .feedback_img_add {
-                            width: 104px;
-                            height: 78px;
-                            float: left;
-                            span {
-                                width: 104px;
-                                height: 78px;
-                                display: inline-block;
-                                *display: inline;
-                                *zoom: 1;
-                                font-size: 16px;
-                                cursor: pointer;
-                            }
-                            input {
-                                display: none;
-                            }
-                        }
-                    }
-                }
-                .form_line {
-                    border-bottom: 1px solid #ddd;
-                    margin-top: 20px;
-                }
-            }
-            .modal-footer {
-                text-align: center;
-                background: #344052;
-                height: 50px;
-                padding: 0;
-                margin: 0;
-                button {
-                    height: 36px;
-                    border: none;
-                    width: 120px;
-                    margin-top: 7px;
-                    font-size: 16px;
-                    margin: 7px 30px 0 30px;
-                }
-                .submit {
-                    background: #59b6fc;
-                    color: #fff;
-                }
-            }
-        }
-    }
-}
-
-#details {
-    @extend #dispose;
-    .modal-lg {
-        margin: 0;
-        width: 100%;
-        .modal-content {
             .modal-body {
                 padding: 10px 20px 0 20px;
                 overflow-y: auto;
@@ -393,8 +244,29 @@
                                 #details_address_map {
                                     height: 200px;
                                     width: 100%;
-                                    margin: 0 -10px;
                                     // display: none;
+                                }
+                            }
+                            .audioPlay {
+                                background: url(/src/images/task/play.png) no-repeat;
+                                width: 82px;
+                                height: 26px;
+                                border: none;
+                                display: inline-block;
+                                outline: none;
+                            }
+                            .audioPlayIn {
+                                background: url(/src/images/task/playIn.gif) no-repeat;
+                                width: 82px;
+                                height: 26px;
+                                border: none;
+                                display: inline-block;
+                                outline: none;
+                            }
+                            .details_map_main {
+                                padding: 0;
+                                p {
+                                    padding: 6px 10px;
                                 }
                             }
                             .event_pic {
@@ -503,6 +375,20 @@
                                                 margin: 0 6px 10px 0;
                                                 cursor: pointer;
                                             }
+                                            .audioPlay {
+                                                background: url(/src/images/task/play.png) no-repeat;
+                                                width: 82px;
+                                                height: 26px;
+                                                border: none;
+                                                display: inline-block;
+                                            }
+                                            .audioPlayIn {
+                                                background: url(/src/images/task/playIn.gif) no-repeat;
+                                                width: 82px;
+                                                height: 26px;
+                                                border: none;
+                                                display: inline-block;
+                                            }
                                         }
                                     }
                                 }
@@ -512,6 +398,11 @@
                 }
             }
             .modal-footer {
+                text-align: center;
+                background: #344052;
+                height: 50px;
+                padding: 0;
+                margin: 0;
                 button {
                     height: 36px;
                     border: none;
@@ -519,6 +410,10 @@
                     margin-top: 7px;
                     font-size: 16px;
                     margin: 7px 20px 0 20px;
+                }
+                .submit {
+                    background: #59b6fc;
+                    color: #fff;
                 }
                 .disposeTask {
                     background: #59b6fc;
@@ -532,3 +427,16 @@
         }
     }
 }
+
+// #stakeholder {
+//     @extend #dispose;
+//     width: 500px;
+//     margin-left: -250px;
+//     .modal-lg {
+//         margin: 0;
+//         width: 100%;
+//         .modal-content {
+//             width: 500px;
+//         }
+//     }
+// }

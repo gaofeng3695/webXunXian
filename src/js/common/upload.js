@@ -49,12 +49,18 @@ function handleFiles(obj) {
         i++;
         var imagesL = '<div class="feedback_images">' +
             '<img src="' + path + '" alt=""/>' +
-            '<span onclick="closeImg(this);"></span>' +
-            '<input type="file" style="display:none" id="hid' + i + '" name="file" value=' + obj.value + ' />' +
+            '<span onclick="closeImg(this);" data-key="' + i + '"></span>' +
             '</div>';
         $(".feedback_img_list").append(imagesL);
-        document.getElementById('hid' + i).files = files;
-        //console.log(document.getElementById('hid'+i).files)
+        var file = {
+            "data-value": i,
+            "id": 'fileid' + i,
+            "name": "file"
+        }
+        $(".feedback_img_file").find("input").attr("class", ""); //清空所有的class，进行事件的
+        $(".feedback_img_file").find("input").last().attr(file);
+        var fileId = '<input type="file" onchange="handleFiles(this);"  class="upload_picture"/>';
+        $(".feedback_img_file").append(fileId);
 
     }
 }

@@ -45,52 +45,38 @@ function initUser() {
                     if (data.rows[0].fileId != null && data.rows[0].fileId != "") {
                         personalImg_fileId = data.rows[0].fileId;
                         var path = "/cloudlink-core-file/file/getImageBySize?fileId=" + personalImg_fileId + "&viewModel=fill&width=500&hight=500";
-                        var imagesL =
-                            '<img src="' + path + '" alt=""/>' +
-                            '<input type="file" style="display:none" id="view_hid" name="file"  onchange="handleFiles(this);"/>';
-                        $(".view_persoanl").append(imagesL);
-                        $(".persoanl_add").css('display', 'none');
+                        $('#userImg').attr('src', path);
+                        $('#userImg').attr('alt', '预览');
                     }
                 }
-
             }
         }
+    });
+    $('#uploadfile').change(function() {
+        var index = this.value.lastIndexOf('.');
+        var file = this.files[0];
+        var path;
+        if (window.URL) {
+            path = window.URL.createObjectURL(file); //创建一个object URL，并不是你的本地路径
+        }
+        var img = new Image();
+        img.src = path;
+        img.onload = function(e) {
+            $('#userImg').attr('src', path);
+            $('#userImg').removeAttr('alt');
+            window.URL.revokeObjectURL(this.src); //图片加载后，释放object URL
+        };
     });
 }
 /*上传图片*/
 $(".uploadpicture").click(function() {
-    $("#upload").trigger("click");
+    $("#uploadfile").trigger("click");
 });
-/*先进行个人头像的上传 */
-function upload_Img() {
-    user = JSON.parse(lsObj.getLocalStorage("userBo"));
-    var files = $(".view_persoanl").find("input[name=file]");
-    var picId = files.attr("id");
-    $.ajaxFileUpload({
-        type: "POST",
-        url: "/cloudlink-core-file/attachment/save?businessId=" + user.objectId + "&bizType=pic&token=" + lsObj.getLocalStorage('token'),
-        secureuri: false,
-        fileElementId: picId, //上传input的id
-        dataType: "JSON",
-        type: "POST",
-        async: false,
-        success: function(data, status) {
-            var reg = /<pre.+?>/g;
-            var result = data.match(reg);
-            data = data.replace(result, '');
-            var result = JSON.parse(data).success;
-            if (result == 1) {
-                base_personal();
-            } else {
-                alert("个人基本资料修改未成功");
-            }
-        }
-    });
-}
 $('.btn').click(function() {
-    /*进行头像重新上传之前，先进行图片的删除*/
-    var files = $(".photo").find("input[name=file]").attr("id");; //图像
-    if (files == "view_hid" || files == "" || files == null) {
+    var view_alt = $("#userImg").attr("alt"); //图像
+    var filesrc = $("#userImg").attr("src");
+    if (view_alt == 'undefined' || filesrc.indexOf("upload.png") > 1 || view_alt == '预览') {
+        //初始化的时候，只是预览没有进行图片的更改
         base_personal();
     } else if (personalImg_fileId == null || personalImg_fileId == "") {
         upload_Img();
@@ -98,26 +84,73 @@ $('.btn').click(function() {
         deleteAnduploadImg();
     }
 });
+/*先进行个人头像的上传 */
+function upload_Img() {
+    var user = JSON.parse(lsObj.getLocalStorage("userBo"));
+    var token = lsObj.getLocalStorage('token');
+    var fileId = $('input[type="file"]').attr('id');
+    $.ajaxFileUpload({
+        url: "/cloudlink-core-file/attachment/web/v1/save?businessId=" + user.objectId + "&bizType=pic&token=" + lsObj.getLocalStorage('token'),
+        secureuri: false,
+        fileElementId: fileId, //上传input的id
+        dataType: "json",
+        type: "POST",
+        async: false,
+        success: function(data, status) {
+            var result = data.success;
+            if (result == 1) {
+                base_personal();
+            } else {
+                xxwsWindowObj.xxwsAlert("当前网络不稳定，请稍候重试");
+            }
+        }
+    });
+}
 /*个人基本信息的上传 */
 function base_personal() {
+    var _updateUserBo = JSON.parse(lsObj.getLocalStorage("userBo"));
     nameVal = $("#name").val().trim(); //姓名
+    _updateUserBo.userName = nameVal;
     ageVal = $("#age").val().trim(); //年龄
     sexVal = $(".selectsex").val(); //性别
+    _updateUserBo.sex = sexVal;
     qqVal = $("#qq").val().trim(); //qq号
     weixinVal = $("#weixin").val().trim(); //微信
     emailVal = $("#email").val().trim(); //邮箱
+    var _data = {
+        "objectId": _updateUserBo.objectId,
+        "userName": nameVal,
+        "sex": sexVal
+    };
+    if (ageVal != "" && ageVal != null) {
+        _updateUserBo.age = ageVal;
+        _data.age = ageVal;
+        if (!checkage()) {
+            return;
+        }
+    }
+    if (qqVal != "" && qqVal != null) {
+        _updateUserBo.qq = qqVal;
+        _data.qq = qqVal;
+        if (!checkQQ()) {
+            return;
+        }
+    }
+    if (weixinVal != "" && weixinVal != null) {
+        _updateUserBo.wechat = weixinVal;
+        _data.wechat = weixinVal;
+    }
+    if (emailVal != "" && emailVal != null) {
+        _updateUserBo.email = emailVal;
+        _data.email = emailVal;
+        if (!checkemail()) {
+            return;
+        }
+    }
     /*点击进行个人资料信息的验证 */
     var falg = vialidForm();
+    var that = this;
     if (falg) {
-        var _data = {
-            "objectId": user.objectId,
-            "userName": nameVal,
-            "age": ageVal,
-            "sex": sexVal,
-            "qq": qqVal,
-            "wechat": weixinVal,
-            "email": emailVal
-        };
         $.ajax({
             type: "POST",
             url: "/cloudlink-core-framework/user/update?token=" + lsObj.getLocalStorage('token'),
@@ -127,18 +160,13 @@ function base_personal() {
             success: function(data) {
                 if (data.success == 1) {
                     /*此处针对BO进行重新存储*/
-                    var _updateUserBo = JSON.parse(lsObj.getLocalStorage("userBo"));
-                    _updateUserBo.userName = nameVal;
-                    _updateUserBo.age = ageVal;
-                    _updateUserBo.sex = sexVal;
-                    _updateUserBo.qq = qqVal;
-                    _updateUserBo.wechat = weixinVal;
-                    _updateUserBo.email = emailVal;
                     lsObj.setLocalStorage("userBo", JSON.stringify(_updateUserBo));
                     parent.initPersonal(); //调用父级方法，进行主页内容的修改
-                    alert("修改成功");
+                    xxwsWindowObj.xxwsAlert("修改成功", function() {
+                        location.reload();
+                    });
                 } else {
-                    alert("个人基本信息修改未成功");
+                    xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
                 }
             }
         });
@@ -162,29 +190,22 @@ function deleteAnduploadImg() {
             if (data.success == 1) {
                 upload_Img();
             } else {
-                alert("个人基本信息修改未成功");
+                xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
             }
         }
     });
 }
 
 function vialidForm() {
-    var files = $(".photo").find("input[name=file]").attr("id");; //图像
+    var filesrc = $("#userImg").attr("src"); //图像
     if (!checkName()) {
         return false;
-    } else if (!checkage()) {
-        return false;
-    } else if (files != "hid" && files != "view_hid") {
+    } else if (filesrc.indexOf("upload.png") > 1) {
         $("#Imgnote").text("请上传个人头像");
-        return false;
-    } else if (!checkQQ()) {
-        return false;
-    } else if (!checkemail()) {
         return false;
     } else {
         return true;
     }
-
 }
 
 $('#name').blur(function() {
@@ -221,8 +242,8 @@ function checkage() {
     var ageVal = $("#age").val().trim(); //年龄
     var reg = /^[0-9]*$/;
     if (ageVal == null || ageVal == "") {
-        $("#agenote").text("请输入年龄");
-        return false;
+        $("#agenote").text("");
+        return true;
     } else if (!reg.test(ageVal)) {
         $("#agenote").text('您输入格式不对');
         return false;
@@ -262,8 +283,8 @@ function checkQQ() {
     var qqVal = $('#qq').val().trim();
     var reg = /^[1-9][0-9]{4,9}$/;
     if (qqVal == null || qqVal == "") {
-        $("#qqnote").text("请输入QQ");
-        return false;
+        $("#qqnote").text('');
+        return true;
     } else if (!reg.test(qqVal)) {
         $("#qqnote").text('您输入的 QQ号码有误');
         return false;
@@ -273,20 +294,20 @@ function checkQQ() {
     }
 }
 /*微信验证 */
-$('#weixin').blur(function() {
-    checkweiixn();
-});
+// $('#weixin').blur(function() {
+//     checkweiixn();
+// });
 
-function checkweiixn() {
-    weixinVal = $("#weixin").val().trim(); //微信
-    if (weixinVal == null || weixinVal == "") {
-        $("#weixinnote").text("请输入微信");
-        return false;
-    } else {
-        $("#weixinnote").text("");
-        return true;
-    }
-}
+// function checkweiixn() {
+//     weixinVal = $("#weixin").val().trim(); //微信
+//     if (weixinVal == null || weixinVal == "") {
+//         $("#weixinnote").text("请输入微信");
+//         return false;
+//     } else {
+//         $("#weixinnote").text("");
+//         return true;
+//     }
+// }
 /*邮箱验证 */
 $('#email').blur(function() {
     checkemail();
@@ -296,8 +317,8 @@ function checkemail() {
     var emailVal = $("#email").val().trim(); //邮箱
     var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
     if (emailVal == null || emailVal == "") {
-        $("#emailnote").text("请输入邮箱");
-        return false;
+        $("#emailnote").text('');
+        return true;
     } else if (!reg.test(emailVal)) {
         $("#emailnote").text('您输入的邮箱地址有误');
         return false;

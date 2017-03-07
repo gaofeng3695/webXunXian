@@ -10,39 +10,20 @@
 </head>
 
 <body>
-    <button onclick="obj.showTips()">打开模态框</button>
-    <div class="modal fade  bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="padding:6px 15px;">
-                    <h4 class="modal-title" id="myModalLabel">小提示</h4>
-                </div>
-                <div class="modal-body">
-                    <div id="modal_tip"></div>
-                </div>
-                <div class="modal-footer" style="padding:6px 15px;">
-                    <button type="button" class="btn btn-primary btn_close" data-dismiss="modal">知道了</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <button onclick="showTip()">打开模态框</button>
+
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
+    <script src="/src/js/common/bootstrap.modal.alert.js"></script>
     <script>
-        var obj = {
-            showTips: function (s,fn) {
-                s = s? s : '这是小提示这是小提示这是小提示这是小提示这是小提示这是小提示这是小提示';
-                $('#modal_tip').html(s).css({'minHeight':'60px'});
-                $('#myModal').modal({backdrop: 'static', keyboard: false});
-                if($('#myModal .btn_close') > 0){
-                    $('#myModal .btn_close')[0].onclick = function(){
-                        if( typeof fn === 'function' ){
-                            fn();
-                        }
-                    }
-                }
-            }
 
+        //var myModal = new ModalTip('GF_MODAL1'); //每次new都会实例一个模态框
+        var s = '这里是要显示的内容！';
+        function callBack(){
+            alert('这是回调');
+        }
+        function showTip(){
+            xxwsWindowObj.xxwsAlert(s,callBack) //可以多次调用此方法
         }
     </script>
 </body>

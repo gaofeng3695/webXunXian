@@ -1,10 +1,10 @@
-  var d = false,
-      e = false,
-      h = false,
-      g = false,
-      b = false,
-      f = false;
-  var lsObj;
+  var d = false, //短信验证码
+      e = false, //手机号
+      h = false, //邮箱
+      g = false, //确认密码
+      b = false, //企业名称
+      f = false, //图片验证码、密码
+      c = false;
   $(".btn1").click(function() {
       var mobileNum = $('.phone').val().trim();
       if (mobileNum == '' || mobileNum == null) {
@@ -45,7 +45,7 @@
       if (!d) {
           return;
       }
-      if (!g) {
+      if (!c) {
           $('.SMScodeMsg span').text('请先获取验证码');
           $('.SMScodeMsg').css({
               display: 'block'
@@ -57,7 +57,6 @@
           })
       }
       // 短信验证码校验接口调用开始
-
       var _data = { "sendNum": mobileNum, "sendMode": 1, "verifyCode": SMScodeval };
       $.ajax({
           type: "GET",
@@ -66,6 +65,7 @@
           data: _data,
           dataType: "json",
           success: function(data, status) {
+              //   alert("人家好着呢")
               var success = data.success;
               if (success == 1) {
                   $('.top img').attr('src', 'src/images/enrollImg/2.png')
@@ -73,15 +73,8 @@
                       display: "none"
                   })
                   $('.bottom2').css({
-                          display: "block"
-                      })
-                      //   $('.top img').attr('src', 'src/images/forgetImg/2.png')
-                      //   $('.bottom1').css({
-                      //       display: "none"
-                      //   })
-                      //   $('.bottom2').css({
-                      //       display: "block"
-                      //   })
+                      display: "block"
+                  })
                   e = false;
                   d = false;
                   g = false;
@@ -96,7 +89,7 @@
           }
       });
       // 短信验证码校验接口调用结束
-  })
+  });
   $('.btn2').click(function() {
       var userName = $('.userName').val().trim();
       var password1 = $('.password1').val().trim();
@@ -131,7 +124,6 @@
       if (!f) {
           return;
       }
-
       $('.password2').blur();
       if (!g) {
           return;
@@ -151,13 +143,12 @@
       f = false;
       g = false;
       h = false;
-  })
+  });
   $('.btn3').click(function() {
       var mobileNum = $('.phone').val().trim();
       var userName = $('.userName').val().trim();
       var password = MD5($('.password1').val().trim());
       var enterpriseName = $('.companyName').val().trim();
-
       if (enterpriseName == "" || enterpriseName == null) {
           $('.companyMsg').css({
               display: 'block'
@@ -197,7 +188,7 @@
       }
       // 注册接口调用开始
       var _data = { "mobileNum": mobileNum, "userName": userName, "password": password, "enterpriseName": enterpriseName, "enterpriseScale": Scale, "roleIds": Role };
-      var _userBo = JSON.parse(lsObj.getLocalStorage('userBo'));
+      //var _userBo = JSON.parse(lsObj.getLocalStorage('userBo'));
       $.ajax({
           url: "/cloudlink-core-framework/login/registAndLogin",
           type: "POST",
@@ -213,9 +204,10 @@
                   var token = data.token;
                   lsObj.setLocalStorage('token', token);
                   lsObj.setLocalStorage('userBo', JSON.stringify(row[0]));
-                  lsObj.setLocalStorage('timeOut', new Date().getTime() + (0.1 * 60 * 60 * 1000));
+                  lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
               } else {
-                  alert('注册失败')
+                  xxwsWindowObj.xxwsAlert("注册失败");
+                      // xxwsWindowObj.xxwsAlert("注册失败");
               }
 
           }
@@ -230,65 +222,65 @@
       })
       jumpto();
       // 注册接口调用结束
-  })
+  });
   $('.btn4').click(function() {
-          location.href = "main.html";
-      })
-      //手机号验证
+      location.href = "main.html";
+  });
+  //手机号验证
   $('.phone').blur(function() {
-          var val = $(this).val().trim();
-          var phoneReg = /^1\d{10}$/;
-          if (val == '' || val == null) {
-              // $('.phoneMeg').css({
-              //     display: 'block'
-              // });
-              // $('.phoneMeg span').text('手机号码不能为空');
-              e = false;
-              return;
-          } else if (!phoneReg.test(val)) {
-              $('.phoneMeg').css({
-                  display: 'block'
-              });
-              $('.phoneMeg span').text('手机号码填写错误');
-              e = false;
-              return false;
-          } else {
-              $('.phoneMeg').css({
-                  display: 'none'
-              });
-              // 手机号是否注册过接口调用开始
-              var _data = { "registNum": val };
-              $.ajax({
-                  url: "/cloudlink-core-framework/login/isExist",
-                  type: "GET",
-                  contentType: "application/json",
-                  data: _data,
-                  dataType: "json",
-                  success: function(data, status) {
-                      //   console.log("ddd")
-                      var res = data.rows.isExist;
-                      if (res == 1) {
-                          //   console.log('cuowu')
-                          $('.phoneMeg').css({
-                              display: 'block'
-                          });
-                          $('.phoneMeg span').text('手机号码已注册');
-                          e = false;
-                      } else {
-                          $('.phoneMeg').css({
-                              display: 'none'
-                          });
-                          e = true;
-                      }
-                  },
-                  error: function() {
-                      //   console.log("ccc")
+      var val = $(this).val().trim();
+      var phoneReg = /^1\d{10}$/;
+      if (val == '' || val == null) {
+          // $('.phoneMeg').css({
+          //     display: 'block'
+          // });
+          // $('.phoneMeg span').text('手机号码不能为空');
+          e = false;
+          return;
+      } else if (!phoneReg.test(val)) {
+          $('.phoneMeg').css({
+              display: 'block'
+          });
+          $('.phoneMeg span').text('手机号码填写错误');
+          e = false;
+          return false;
+      } else {
+          $('.phoneMeg').css({
+              display: 'none'
+          });
+          // 手机号是否注册过接口调用开始
+          var _data = { "registNum": val };
+          $.ajax({
+              url: "/cloudlink-core-framework/login/isExist",
+              type: "GET",
+              contentType: "application/json",
+              data: _data,
+              dataType: "json",
+              success: function(data, status) {
+                  //   console.log("ddd")
+                  var res = data.rows.isExist;
+                  if (res == 1) {
+                      //   console.log('cuowu')
+                      $('.phoneMeg').css({
+                          display: 'block'
+                      });
+                      $('.phoneMeg span').text('手机号码已注册');
+                      e = false;
+                  } else {
+                      $('.phoneMeg').css({
+                          display: 'none'
+                      });
+                      e = true;
                   }
-              });
-              // 手机号是否注册过接口调用结束
-          }
-      })
-      //图片验证码
+              },
+              error: function() {
+                  //   console.log("ccc")
+              }
+          });
+          // 手机号是否注册过接口调用结束
+      }
+  });
+  //图片验证码
   var imgStr = '';
   code();
 
@@ -300,109 +292,107 @@
       var dom4 = parseInt(Math.random() * 10000 % 62);
 
       imgStr = az[dom1] + az[dom2] + az[dom3] + az[dom4];
-      $('.code i').text(imgStr)
-  }
+      $('.code i').text(imgStr);
+  };
   //刷新验证码
   $('.code').click(function() {
       code();
-  })
+  });
 
   //图片验证
   $('.imgCode').blur(function() {
-          var val = $(this).val().trim();
-          var imgReg = new RegExp(imgStr, "i");
-          if (val == '' || val == null) {
-              // $('.imgMeg').css({
-              //     display: 'block'
-              // });
-              // $('.imgMeg span').text('图片验证码不能为空');
-              f = false;
-              return;
-          } else if (!imgReg.test(val)) {
-              $('.imgMeg').css({
-                  display: 'block'
-              });
-              $('.imgMeg span').text('图片验证码填写错误');
-              f = false;
-              return;
-          } else {
-              $('.imgMeg').css({
-                  display: 'none'
-              });
-              if (!g) {
-                  $('.styles').css({
-                      background: '#49CB86'
-                  })
-              }
-
-              f = true;
-          }
-      })
-      //短信验证码验证
-  $('.SMScode').blur(function() {
-          var val = $(this).val().trim();
-          if (val == "" || val == null) {
-              // $('.SMScodeMsg').css({
-              //     display: 'block'
-              // });
-              // $('.SMScodeMsg span').text('短信验证码不能为空');
-              d = false;
-              return;
-          } else {
-              d = true;
-              $('.SMScodeMsg').css({
-                  display: 'none'
-              });
-          }
-      })
-      //点击获取短信验证码事件
-  $('.styles').click(function() {
-          var mobileNum = $('.phone').val().trim();
-          if (mobileNum == '' || mobileNum == null) {
-              $('.phoneMeg').css({
-                  display: 'block'
-              });
-              $('.phoneMeg span').text('手机号码不能为空');
-              return;
-          }
-          $('.phone').blur();
-          var val = $('.imgCode').val();
-          if (val == '' || val == null) {
-              $('.imgMeg').css({
-                  display: 'block'
-              });
-              $('.imgMeg span').text('图片验证码不能为空');
-              return;
-          }
-          $('.imgCode').blur();
-          //   console.log(e, g, f)
-          if (!f || g || !e) {
-              return;
-          }
-          times();
-          $('.styles').text('60秒后再次获取');
-          $('.styles').css({
-              background: '#ccc'
-          })
+      var val = $(this).val().trim();
+      var imgReg = new RegExp(imgStr, "i");
+      if (val == '' || val == null) {
+          // $('.imgMeg').css({
+          //     display: 'block'
+          // });
+          // $('.imgMeg span').text('图片验证码不能为空');
           f = false;
-          //ajax发送手机号，接受验证码
-          var number = $('.phone').val();
-          var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
-          $.ajax({
-              url: "/cloudlink-core-framework/login/getVerifyCode",
-              type: "GET",
-              contentType: "application/json",
-              dataType: "json",
-              data: _data,
-              success: function(data) {
-                  // var verifyCode = JSON.parse(data).rows.verifyCode;
-              }
-          })
-      })
-      //点击获取短信验证码倒计时事件
+          return;
+      } else if (!imgReg.test(val)) {
+          $('.imgMeg').css({
+              display: 'block'
+          });
+          $('.imgMeg span').text('图片验证码填写错误');
+          f = false;
+          return;
+      } else {
+          $('.imgMeg').css({
+              display: 'none'
+          });
+          if (!g) {
+              $('.styles').css({
+                  background: '#49CB86'
+              })
+          }
+
+          f = true;
+      }
+  });
+  //短信验证码验证
+  $('.SMScode').blur(function() {
+      var val = $(this).val().trim();
+      if (val == "" || val == null) {
+          // $('.SMScodeMsg').css({
+          //     display: 'block'
+          // });
+          // $('.SMScodeMsg span').text('短信验证码不能为空');
+          d = false;
+          return;
+      } else {
+          d = true;
+          $('.SMScodeMsg').css({
+              display: 'none'
+          });
+      }
+  });
+  //点击获取短信验证码事件
+  $('.styles').click(function() {
+      var mobileNum = $('.phone').val().trim();
+      if (mobileNum == '' || mobileNum == null) {
+          $('.phoneMeg').css({
+              display: 'block'
+          });
+          $('.phoneMeg span').text('手机号码不能为空');
+          return;
+      }
+      $('.phone').blur();
+      var val = $('.imgCode').val();
+      if (val == '' || val == null) {
+          $('.imgMeg').css({
+              display: 'block'
+          });
+          $('.imgMeg span').text('图片验证码不能为空');
+          return;
+      }
+      $('.imgCode').blur();
+      if (!f || g || !e) {
+          return;
+      }
+      times();
+      $('.styles').text('60秒后再次获取');
+      $('.styles').css({
+          background: '#ccc'
+      });
+      f = false;
+      //ajax发送手机号，接受验证码
+      var number = $('.phone').val();
+      var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
+      $.ajax({
+          url: "/cloudlink-core-framework/login/getVerifyCode",
+          type: "GET",
+          contentType: "application/json",
+          dataType: "json",
+          data: _data,
+          success: function(data) {}
+      });
+  });
+  //点击获取短信验证码倒计时事件
   function times() {
       var a = 60;
       g = true;
+      c = true;
       var t = setInterval(function() {
           a--;
           $('.styles').text(a + '秒后再次获取');
@@ -413,161 +403,156 @@
               })
               clearInterval(t);
               f = true;
+              g = false;
           }
       }, 1000)
-  }
+  };
   //姓名验证
   $('.userName').blur(function() {
-          var val = $('.userName').val().trim();
-          var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,15}$/;
-          //   console.log(nameReg.test(val));
-          if (val == "" || val == null) {
-              // $('.nameMsg').css({
-              //     display: 'block'
-              // });
-              // $('.nameMsg span').text('姓名不能为空');
-              e = false;
-              return;
-          } else if (!nameReg.test(val)) {
-              $('.nameMsg').css({
-                  display: 'block'
-              });
-              $('.nameMsg span').text('姓名格式不正确');
-              e = false;
-              return;
-          } else {
-              e = true;
-              $('.nameMsg').css({
-                  display: 'none'
-              });
-          }
-      })
-      //密码验证
+      var val = $('.userName').val().trim();
+      var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,15}$/;
+      //   console.log(nameReg.test(val));
+      if (val == "" || val == null) {
+          // $('.nameMsg').css({
+          //     display: 'block'
+          // });
+          // $('.nameMsg span').text('姓名不能为空');
+          e = false;
+          return;
+      } else if (!nameReg.test(val)) {
+          $('.nameMsg').css({
+              display: 'block'
+          });
+          $('.nameMsg span').text('姓名格式不正确');
+          e = false;
+          return;
+      } else {
+          e = true;
+          $('.nameMsg').css({
+              display: 'none'
+          });
+      }
+  });
+  //密码验证
   $('.password1').blur(function() {
-          var val = $(this).val().trim();
-          var pwReg = /^[\dA-z]{6,12}$/;
-          if (val == '' || val == null) {
-              // $('.pswMsg1').css({
-              //     display: 'block'
-              // });
-              // $('.pswMsg1 span').text('密码不能为空');
-              f = false;
-              return
-          } else if (!pwReg.test(val)) {
-              $('.pswMsg1').css({
-                  display: 'block'
-              });
-              $('.pswMsg1 span').text('密码为6-12位');
-              f = false;
-              return;
-          } else {
-              f = true;
-              $('.pswMsg1').css({
-                  display: 'none'
-              });
-          }
-      })
-      //确认密码验证
-  $('.password2').blur(function() {
-          var val1 = $('.password1').val().trim();
-          var val2 = $(this).val().trim();
-          if (val2 == "" || val2 == null) {
-              // $('.pswMsg2').css({
-              //     display: 'block'
-              // });
-              // $('.pswMsg2 span').text('请再次输入密码');
-              g = false;
-              return
-          } else if (val1 != val2) {
-              $('.pswMsg2').css({
-                  display: 'block'
-              });
-              $('.pswMsg2 span').text('两次输入密码不一致');
-              g = false;
-              return
-          } else {
-              g = true;
-              $('.pswMsg2').css({
-                  display: 'none'
-              });
-          }
-      })
-      //邮箱验证             
-  $('.email').blur(function() {
-          var val = $(this).val().trim();
-          var emailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-          if (val == '' || val == null) {
-              h = true;
-              $('.emailMsg').css({
-                  display: 'none'
-              });
-          } else if (!emailReg.test(val)) {
-              $('.emailMsg').css({
-                  display: 'block'
-              });
-              $('.emailMsg span').text('请输入正确邮箱格式');
-              h = false;
-              return;
-          } else {
-              h = true;
-              $('.emailMsg').css({
-                  display: 'none'
-              });
-          }
-      })
-      // 企业名称验证
-  $('.companyName').blur(function() {
-          var val = $('.companyName').val().trim();
-          var companyNameReg = /[\u4e00-\u9fa5a-zA-Z]+$/;
-          if (val == "" || val == null) {
-              // $('.companyMsg').css({
-              //     display: 'block'
-              // });
-              // $('.companyMsg span').text('企业名称不能为空');
-              b = false;
-              return;
-          } else if (!companyNameReg.test(val)) {
-              $('.companyMsg').css({
-                  display: 'block'
-              });
-              $('.companyMsg span').text('企业名称格式错误');
-              b = false;
-              return;
-          } else {
+      var val = $(this).val().trim();
+      var pwReg = /^[\dA-z]{6,12}$/;
+      if (pwReg.test(val)) {
+          f = true;
+          $('.pswMsg1').css({
+              display: 'none'
+          });
+      } else {
+          $('.pswMsg1').css({
+              display: 'block'
+          });
+          $('.pswMsg1 span').text('密码为6-12位');
+          f = false;
+          return;
+      }
+  })
 
-              $('.companyMsg').css({
-                  display: 'none'
-              });
-              // 验证企业名称是否存在接口调用开始
-              var _data = { "enterpriseName": val };
-              $.ajax({
-                      url: "/cloudlink-core-framework/enterprise/isExist",
-                      type: "POST",
-                      contentType: "application/json",
-                      data: JSON.stringify(_data),
-                      dataType: "json",
-                      success: function(data, status) {
-                          console.log(data)
-                          var res = data.rows[0].isExist;
-                          console.log(res)
-                          if (res == 1) {
-                              $('.companyMsg').css({
-                                  display: 'block'
-                              });
-                              $('.companyMsg span').text('企业名称已注册');
-                              b = false;
-                          } else {
-                              $('.companyMsg').css({
-                                  display: 'none'
-                              });
-                              b = true;
-                          }
-                      }
-                  })
-                  // 验证企业名称是否存在接口调用结束
-          }
-      })
-      // 自动跳转页面
+  //确认密码验证
+  $('.password2').blur(function() {
+      var val1 = $('.password1').val().trim();
+      var val2 = $(this).val().trim();
+      if (val2 == "" || val2 == null) {
+          // $('.pswMsg2').css({
+          //     display: 'block'
+          // });
+          // $('.pswMsg2 span').text('请再次输入密码');
+          g = false;
+          return
+      } else if (val1 != val2) {
+          $('.pswMsg2').css({
+              display: 'block'
+          });
+          $('.pswMsg2 span').text('两次输入密码不一致');
+          g = false;
+          return
+      } else {
+          g = true;
+          $('.pswMsg2').css({
+              display: 'none'
+          });
+      }
+  });
+  //邮箱验证             
+  $('.email').blur(function() {
+      var val = $(this).val().trim();
+      var emailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+      if (val == '' || val == null) {
+          h = true;
+          $('.emailMsg').css({
+              display: 'none'
+          });
+      } else if (!emailReg.test(val)) {
+          $('.emailMsg').css({
+              display: 'block'
+          });
+          $('.emailMsg span').text('请输入正确邮箱格式');
+          h = false;
+          return;
+      } else {
+          h = true;
+          $('.emailMsg').css({
+              display: 'none'
+          });
+      }
+  });
+  // 企业名称验证
+  $('.companyName').blur(function() {
+      var val = $('.companyName').val().trim();
+      var companyNameReg = /[\u4e00-\u9fa5a-zA-Z]+$/;
+      if (val == "" || val == null) {
+          // $('.companyMsg').css({
+          //     display: 'block'
+          // });
+          // $('.companyMsg span').text('企业名称不能为空');
+          b = false;
+          return;
+      } else if (!companyNameReg.test(val)) {
+          $('.companyMsg').css({
+              display: 'block'
+          });
+          $('.companyMsg span').text('企业名称格式错误');
+          b = false;
+          return;
+      } else {
+
+          $('.companyMsg').css({
+              display: 'none'
+          });
+          // 验证企业名称是否存在接口调用开始
+          var _data = { "enterpriseName": val };
+          $.ajax({
+              url: "/cloudlink-core-framework/enterprise/isExist",
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(_data),
+              dataType: "json",
+              success: function(data, status) {
+                  console.log(data)
+                  var res = data.rows[0].isExist;
+                  console.log(res)
+                  if (res == 1) {
+                      $('.companyMsg').css({
+                          display: 'block'
+                      });
+                      $('.companyMsg span').text('企业名称已注册');
+                      b = false;
+                  } else {
+                      $('.companyMsg').css({
+                          display: 'none'
+                      });
+                      b = true;
+                  }
+              }
+          });
+          // 验证企业名称是否存在接口调用结束
+      }
+  });
+  // 自动跳转页面
   function jumpto() {
       var a = 5;
       var t = setInterval(function() {
@@ -578,4 +563,4 @@
           }
           $('.jumpTo').text(a);
       }, 1000)
-  }
+  };

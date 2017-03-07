@@ -61,9 +61,9 @@ $(".setdefault").click(function() {
     nojoin = $("input[name='optionEnterprise']:checked").attr("id");
     var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
     if (nojoin == 'loginnowId') {
-        alert("当前企业已经登录");
+        xxwsWindowObj.xxwsAlert("当前企业已经登录");
     } else if (enterpriseId == null || enterpriseId == "") {
-        alert("请选择一个默认企业后，才可登录成功");
+        xxwsWindowObj.xxwsAlert("请选择一个默认企业后，才可登录成功");
     } else if (nojoin != "") {
         //当前需要设置为默认企业并且该企业未加入
         $.ajax({
@@ -77,7 +77,7 @@ $(".setdefault").click(function() {
                     //设置成默认企业之后，需要重新调用获取默认企业ID，然后进行加入该企业
                     getDefaultEnterpriseId(userBo.objectId);
                 } else {
-                    alert("默认企业设置失败，请重新登录进行设置");
+                    xxwsWindowObj.xxwsAlert("默认企业设置失败，请重新登录进行设置");
                 }
             }
         });
@@ -92,7 +92,7 @@ $(".setdefault").click(function() {
                 if (data.success == 1) {
                     getDefaultEnterpriseId(userBo.objectId);
                 } else {
-                    alert("默认企业设置失败，请重新登录进行设置");
+                    xxwsWindowObj.xxwsAlert("默认企业设置失败，请重新登录进行设置");
                 }
             }
         });
@@ -178,6 +178,5 @@ function joinDefaultEnterprise(_enterpriseId) {
 }
 /*退出将退出到登录页面，进行缓存清除*/
 $(".return").click(function() {
-    lsObj.clearAll();
-    parent.location.href = '../../login.html';
+    parent.location.href = '../../main.html';
 });

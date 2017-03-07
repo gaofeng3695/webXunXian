@@ -1,56 +1,61 @@
-$blue : #51b7ff;
-.hide{
+$blue: #51b7ff;
+.hide {
     display: none;
 }
-@mixin hidd{
+
+@mixin hidd {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
 
-ul{
+ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    li{
+    li {
         margin: 0;
         padding: 0;
     }
 }
 
-.mdl_wrapper{
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.mdl_wrapper {
     position: relative;
-    height: 900px;
+    height: 100%;
     min-width: 600px;
-    margin: -10px;
-    .map_wrapper{
+    .map_wrapper {
         height: 100%;
     }
 }
 
-.tab_wrapper{
-    position : absolute;
+.tab_wrapper {
+    position: absolute;
     font-size: 12px;
     color: #666;
     top: 40px;
     left: 40px;
     z-index: 999;
-    .item_wrapper{
-        box-shadow:0px 0px 12px #888;
+    .item_wrapper {
+        box-shadow: 0px 0px 12px #888;
         overflow: hidden;
-        background: rgba(88,88,88,.9);
+        background: rgba(88, 88, 88, .9);
         margin: 0;
-        padding:0 ;
+        padding: 0;
         list-style: none;
-        .border{
+        .border {
             width: 1px;
             height: 22px;
-            margin-top:6px;
+            margin-top: 6px;
             background: #fff;
             float: left;
         }
-        .item{
-
+        .item {
             float: left;
             box-sizing: border-box;
             width: 87px;
@@ -59,67 +64,66 @@ ul{
             color: white;
             line-height: 36px;
             cursor: pointer;
-            &:hover{
-                background-color: rgba(11,11,11,.4) !important;
+            &:hover {
+                background-color: rgba(11, 11, 11, .4) !important;
             }
-            &.active{
-                background-color: rgba(11,11,11,.4) !important;
+            &.active {
+                background-color: rgba(11, 11, 11, .4) !important;
             }
-            &:nth-child(1){
+            &:nth-child(1) {
                 background: url(/src/images/map/icon_down.png) no-repeat 69px center;
             }
-            &:nth-child(3){
+            &:nth-child(3) {
                 background: url(/src/images/map/icon_down.png) no-repeat 69px center;
             }
-            &:nth-child(5){
+            &:nth-child(5) {
                 background: url(/src/images/map/icon_search.png) no-repeat 65px center;
                 background-size: 13px;
             }
-            &:nth-child(7){
+            &:nth-child(7) {
                 background: url(/src/images/map/icon_down.png) no-repeat 56px center;
-                padding-left:24px;
-
+                padding-left: 24px;
             }
         }
     }
-    .result_wrapper{
+    .result_wrapper {
         width: 351px;
         margin-top: 5px;
         /*box-shadow:0px 0px 12px #ccc;*/
-        .sub_wrapper{
-            box-shadow:0px 0px 12px #888;
+        .sub_wrapper {
+            box-shadow: 0px 0px 12px #888;
             background: #fff;
             border: 2px solid #ececec;
             padding-bottom: 10px;
-            .title{
+            .title {
                 padding-left: 20px;
                 box-sizing: border-box;
                 line-height: 28px;
                 overflow: hidden;
-                .num{
+                .num {
                     color: $blue;
                     margin-right: 25px;
                     padding-left: 6px;
                 }
-                .close_btn{
+                .close_btn {
                     float: right;
                     padding: 0 8px;
                     margin-right: 10px;
                     cursor: pointer;
                     font-size: 14px;
-                    &:hover{
+                    &:hover {
                         color: $blue;
                     }
                 }
             }
-            .search_wrapper{
+            .search_wrapper {
                 overflow: hidden;
                 border: 2px solid $blue;
                 height: 31px;
                 width: 330px;
-                margin:10px auto;
+                margin: 10px auto;
                 background: #fff;
-                input{
+                input {
                     float: left;
                     height: 27px;
                     width: 280px;
@@ -129,7 +133,7 @@ ul{
                     border: none;
                     padding-left: 8px;
                 }
-                span{
+                span {
                     cursor: pointer;
                     float: right;
                     width: 44px;
@@ -137,40 +141,39 @@ ul{
                     background: $blue url(/src/images/map/icon_search.png) no-repeat center center;
                 }
             }
-            .result{
+            .result {
                 max-height: 500px;
-                ul{
-                    li{
+                ul {
+                    li {
                         height: 35px;
                         line-height: 31px;
                         border: 2px solid #fff;
                         cursor: pointer;
-                        &:hover{
-                           background: #edf7ff;
-                        }
-                        &.active{
-                            border-color:$blue;
+                        &:hover {
                             background: #edf7ff;
                         }
-
+                        &.active {
+                            border-color: $blue;
+                            background: #edf7ff;
+                        }
                     }
                 }
-                &.people{
-                    ul{
-                        li{
-                            span{
+                &.people {
+                    ul {
+                        li {
+                            span {
                                 display: inline-block;
-                                &.name{
+                                &.name {
                                     @include hidd;
                                     width: 60px;
                                     margin: 0 10px 0 38px;
                                 }
-                                &.dept{
+                                &.dept {
                                     @include hidd;
                                     width: 80px;
                                     margin: 0 10px;
                                 }
-                                &.task{
+                                &.task {
                                     @include hidd;
                                     width: 80px;
                                     margin: 0 10px;
@@ -179,94 +182,233 @@ ul{
                         }
                     }
                 }
-                &.event ul li{
+                &.event ul li {
                     line-height: 24px;
                     height: auto;
-                    padding: 8px 18px ;
-                    .line01{
+                    padding: 8px 18px;
+                    .line01 {
                         height: 24px;
-                        span{
+                        span {
                             display: inline-block;
                         }
-                        .type{
+                        .type {
                             @include hidd;
                             width: 120px;
                             margin-right: 10px;
                         }
-                        .name{
+                        .name {
                             @include hidd;
                             width: 50px;
                         }
-                        .date{
+                        .date {
                             @include hidd;
                             padding-left: 20px;
                             background: url(/src/images/map/icon_clock.png) no-repeat 0 center;
                         }
                     }
-                    .loca_desc{
+                    .loca_desc {
                         @include hidd;
                         padding-left: 20px;
                         background: url(/src/images/index/icon_loca.png) no-repeat 0 center;
                         background-size: 13px 16px;
                     }
-
                 }
-                &.location ul li{
+                &.location ul li {
                     padding: 6px 20px;
                     line-height: 24px;
                     height: auto;
-                    .loca{
+                    .loca {
                         @include hidd;
                     }
-                    .loca_desc{
+                    .loca_desc {
                         @include hidd;
                         padding-left: 20px;
                         background: url(/src/images/index/icon_loca.png) no-repeat 0 center;
                         background-size: 13px 16px;
                     }
                 }
-
             }
         }
-        .tool_wrapper{
-            box-shadow:0px 0px 12px #888;
+        .tool_wrapper {
+            box-shadow: 0px 0px 12px #888;
             position: absolute;
             right: 0;
             line-height: 36px;
             background: #fff;
             padding: 0 8px;
-            div{
+            div {
                 cursor: pointer;
                 padding: 0 0 0 22px;
-                &.distance{
+                &.distance {
                     background: url(/src/images/map/i_dis.png) no-repeat 0 center;
-                    &:hover{
+                    &:hover {
                         color: $blue;
                         background-image: url(/src/images/map/i_dis_a.png)
                     }
                 }
-                &.area{
+                &.area {
                     background: url(/src/images/map/i_area.png) no-repeat 0 center;
-                    &:hover{
+                    &:hover {
                         color: $blue;
                         background-image: url(/src/images/map/i_area_a.png)
                     }
                 }
-                &.output{
+                &.output {
                     background: url(/src/images/map/i_out.png) no-repeat 0 center;
-                    &:hover{
+                    &:hover {
                         color: $blue;
                         background-image: url(/src/images/map/i_out_a.png)
                     }
                 }
             }
-
         }
     }
 }
 
+.player_wrapper {
+    position: absolute;
+    z-index: 999;
+    left: 50%;
+    bottom: 20px;
+    width: 740px;
+    margin-left: -370px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: rgba(11, 11, 11, .7);
+    box-shadow: 0px 0px 12px #888;
+    text-align: center;
+    color: white;
+    font-size: 12px;
+    .btn_close {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        background: rgba(11, 11, 11, .7);
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .title {
+        border-bottom: 1px solid #333;
+        line-height: 24px;
+        .date {
+            position: absolute;
+            left: 12px;
+            top: 0;
+        }
+        .speed {
+            position: absolute;
+            top: 0;
+            right: 28px;
+            .item {
+                padding: 0 5px;
+                cursor: pointer;
+                border-radius: 2px;
+                margin: 0 3px;
+                &.active {
+                    background: $blue;
+                }
+            }
+        }
+    }
+    .time_line {
+        height: 64px;
+        position: relative;
+        border-top: 1px solid rgba(222, 222, 222, 0.4);
+        .btn_play {
+            position: absolute;
+            top: 50%;
+            margin-top: -14px;
+            left: 16px;
+            width: 26px;
+            height: 28px;
+            cursor: pointer;
+            background: url(/src/images/map/btn_play.png) no-repeat 0px 0px;
+            &.active {
+                background: url(/src/images/map/btn_pause.png) no-repeat 0px 0px;
+            }
+        }
+        .border {
+            position: absolute;
+            height: 26px;
+            top: 50%;
+            margin-top: -13px;
+            left: 60px;
+            border-right: 1px solid rgba(222, 222, 222, 0.4);
+            border-left: 1px solid #333;
+        }
+        .line_wrapper {
+            padding-left: 62px;
+            width: 100%;
+            height: 100%;
+            .line_bar {
+                position: absolute;
+                top: 26px;
+                left: 50%;
+                margin-left: -265px;
+                height: 12px;
+                width: 600px;
+                background: #666;
+                border-radius: 6px;
+                .line_bar_active {
+                    border-radius: 6px;
+                    width: 0px;
+                    height: 100%;
+                    background: $blue;
+                }
+                .move_bar {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    margin-left: -9px;
+                    margin-top: -9px;
+                    height: 18px;
+                    width: 18px;
+                    border: 6px solid white;
+                    border-radius: 50%;
+                    background: $blue;
+                    cursor: pointer;
+                }
+                .time_now {
+                    width: 56px;
+                    position: absolute;
+                    top: -20px;
+                    left: 0;
+                    margin-left: -28px;
+                }
+                .stick_bar{
+                    position: absolute;
+                    width: 100%;
+                    height: 5px;
+                    bottom: 0px;
+                    .stick{
+                        border-left: 1px solid white;
+                        height: 5px;
+                        position: absolute;
+                        &:nth-of-type(1){left: 16.66%;}
+                        &:nth-of-type(2){left: 33.32%;}
+                        &:nth-of-type(3){left: 50%;}
+                        &:nth-of-type(4){left: 16.66%;}
+                        &:nth-of-type(5){left: 16.66%;}
+                    }
 
-
-
-
-
+                }
+                .time_mark{
+                    position: absolute;
+                    width: 100%;
+                    height: 5px;
+                    bottom: 0px;
+                    .time{
+                        width: 56px;
+                        position: absolute;
+                        top: 10px;
+                        margin-left: -28px;
+                    }
+                }
+            }
+        }
+    }
+}

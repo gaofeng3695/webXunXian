@@ -42,10 +42,9 @@ var eventObj = {
     },
     mapOpen: function() { //打开地图摸态窗口
         this.$mapM.modal();
-        setTimeout(function() {
-            // mapAddObj.init();
-        }, 1000)
-
+        this.$mapM.on('shown.bs.modal', function(e) {
+            mapAddObj.reload();
+        });
         this.iconHide();
     },
     submit: function() { //提交表单
@@ -56,15 +55,15 @@ var eventObj = {
         if (this.$flg == true) {
             this.$flg = false;
             if (occurrenceTime == "") {
-                alert("请选择发生事件的时间!");
+                xxwsWindowObj.xxwsAlert("请选择发生事件的时间!");
                 this.again();
                 return false;
             } else if (address == "") {
-                alert("请选择发生事件的地点!");
+                xxwsWindowObj.xxwsAlert("请选择发生事件的地点!");
                 this.again();
                 return false;
             } else if (description == "") {
-                alert("请描述发生的事件!");
+                xxwsWindowObj.xxwsAlert("请描述发生的事件!");
                 this.again();
                 return false;
             } else {
@@ -98,7 +97,7 @@ var eventObj = {
                                 _this.uploadData();
                             }
                         } else {
-                            alert("当前网络不稳定");
+                            xxwsWindowObj.xxwsAlert("当前网络不稳定");
                             _this.again();
                         }
                     }
@@ -124,7 +123,7 @@ var eventObj = {
                     _this.$eventM.modal('hide');
                     window.location.reload();
                 } else {
-                    alert("当前网络不稳定");
+                    xxwsWindowObj.xxwsAlert("当前网络不稳定");
                     _this.again();
                 }
             }
@@ -200,7 +199,7 @@ var eventObj = {
                 // console.log(JSON.stringify(data));
                 var peopleAllArr = data.rows;
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！')
                     return;
                 }
 
@@ -215,7 +214,7 @@ var eventObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！');
                 }
             }
         });
@@ -306,8 +305,7 @@ var mapAddObj = { //上报事件地图
     $address: new BMap.Geocoder(),
     init: function() {
         // debugger;
-        this.$map.centerAndZoom(new BMap.Point(116.404, 39.915), 9); // 初始化地图,设置中心点坐标和地图级别
-        this.$map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+
         //声明-比例尺控件（左下角）
         var bottom_left_ScaleControl = new BMap.ScaleControl({
             anchor: BMAP_ANCHOR_BOTTOM_LEFT
@@ -324,11 +322,6 @@ var mapAddObj = { //上报事件地图
 
 
         var _this = this;
-        // this.$lon = 116.404;
-        // this.$lat = 39.915;
-        // this.$point = new BMap.Point(this.$lon, this.$lat);
-        // this.$map.centerAndZoom(this.$point, 11);
-        // this.$map.enableScrollWheelZoom(); //启用滚轮放大缩小
 
         this.$map.addEventListener("click", function(e) { //添加选择点
             _this.$lon = e.point.lng;
@@ -337,7 +330,7 @@ var mapAddObj = { //上报事件地图
             _this.add();
         });
         this.$botton.click(function() { //地点搜索
-            // alert(_this.$val.val().trim())
+            // xxwsWindowObj.xxwsAlert(_this.$val.val().trim())
             // debugger;
             var local = new BMap.LocalSearch(_this.$map, {
                 renderOptions: {
@@ -347,8 +340,10 @@ var mapAddObj = { //上报事件地图
             local.search(_this.$val.val().trim());
         });
         this.$dataPass.click(function() { //地址传到上报页面
+            // console.log("dddd")
             if (_this.$text.val() == '') {
-                alert("请选择地理位置！")
+                xxwsWindowObj.xxwsAlert("请选择地理位置！");
+                return false;
             } else {
                 eventObj.$mapA.val(_this.$text.val()); //传地址过去
                 eventObj.$lon.val(_this.$lon);
@@ -358,7 +353,8 @@ var mapAddObj = { //上报事件地图
         })
     },
     reload: function() { //重新加载地图
-
+        this.$map.centerAndZoom(new BMap.Point(116.404, 39.915), 9); // 初始化地图,设置中心点坐标和地图级别
+        this.$map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
     },
     add: function() {
         this.$point = new BMap.Point(this.$lon, this.$lat);
@@ -388,11 +384,11 @@ var addListenEventHandle = function() {
     //地图展示已选-点击事件
     $("#map_choice").click(function() {
         var selectedPointItems = $('#table').bootstrapTable('getSelections');
-        // alert(selectedPointItems.length);
+        // xxwsWindowObj.xxwsAlert(selectedPointItems.length);
         if (selectedPointItems.length > 0) {
             mapObj.setPointsMarkerWithCenterPointAndZoomLevel(selectedPointItems);
         } else {
-            alert("请选择地图展示的数据。");
+            xxwsWindowObj.xxwsAlert("请选择地图展示的数据。");
         }
     });
 
@@ -408,7 +404,7 @@ var addListenEventHandle = function() {
         if (imgNum <= 4) {
             $(".upload_file").trigger("click");
         } else {
-            alert("最多上传五张图片");
+            xxwsWindowObj.xxwsAlert("最多上传五张图片");
         }
     });
 
@@ -482,7 +478,7 @@ var mapObj = {
 
         this.aCurrentPoints = [];
         var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
-        // alert(JSON.stringify(maxPointAndMinPointObj));
+        // xxwsWindowObj.xxwsAlert(JSON.stringify(maxPointAndMinPointObj));
         var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
         this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
         this.setPointsMarker(data);
@@ -566,7 +562,7 @@ var mapObj = {
         var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A  
         var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B  
         var distance = this.$bdMap.getDistance(pointA, pointB).toFixed(1); //获取两点距离,保留小数点后两位
-        //alert(distance);
+        //xxwsWindowObj.xxwsAlert(distance);
         var _obj = {
             zoomlevel: 0,
             centerPoint: null
@@ -638,7 +634,7 @@ var mapObj = {
     addClickHandler: function(content, marker) {
         var _this = this;
         marker.addEventListener("click", function(e) {
-            // alert(content);
+            // xxwsWindowObj.xxwsAlert(content);
             _this.openInfo(content, e)
         });
     },
@@ -739,6 +735,7 @@ var searchObj = {
         var that = this;
         /* 选择条件 */
         that.$items.click(function() {
+            // console.log(that.$searchInput.val().trim())
             var key = $(this).parent().attr("data-class");
             var value = $(this).attr("data-value");
 
@@ -754,7 +751,6 @@ var searchObj = {
             obj[key] = value;
             that.renderActive(obj);
             that.refreshTable();
-            console.log(that.querryObj);
         });
 
         /* 搜索关键词 */
@@ -762,6 +758,14 @@ var searchObj = {
             var s = $(this).parent().find('input').val();
             that.querryObj.keyword = s;
             that.refreshTable();
+        });
+
+        /* keyup事件 */
+        that.$searchInput.keypress(function(e) {
+            if (e && e.keyCode === 13) { // enter 键
+                //that.querryObj.keyword = that.$searchInput.val();
+                that.refreshTable();
+            }
         });
         /* 显示高级搜索 */
         $('#search_more').click(function() {
@@ -780,17 +784,21 @@ var searchObj = {
             // Object.assign(that.querryObj, that.defaultObj);
             that.renderActive();
             that.refreshTable();
+            that.$startDate.val("");
+            that.$endDate.val("");
+            that.$searchInput.val("");
+            $("#diyDateBtn").removeClass("active");
         });
         //自定义时间
         $('#diyDateBtn').on('click', function() {
             var s = that.$startDate.val();
             var e = that.$endDate.val();
             if (!s) {
-                alert('请选择开始时间');
+                xxwsWindowObj.xxwsAlert('请选择开始时间');
                 return;
             }
             if (!e) {
-                alert('请选择结束时间');
+                xxwsWindowObj.xxwsAlert('请选择结束时间');
                 return;
             }
             that.querryObj.startDate = s;
@@ -842,6 +850,7 @@ var searchObj = {
     },
     refreshTable: function() {
         var that = this;
+        that.querryObj.keyword = that.$searchInput.val().trim();
         that.$searchInput.val(that.querryObj.keyword);
         that.querryObj.pageNum = '1';
         $('#table').bootstrapTable('refreshOptions', {
@@ -873,7 +882,7 @@ var searchObj = {
             autoclose: true,
             // startDate: new Date()
         }).on("click", function() {
-            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
+            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val());
         });
         $("#datetimeEnd").datetimepicker({
             format: 'yyyy-mm-dd',
@@ -920,7 +929,7 @@ function initTable() {
             return res;
         },
         onLoadSuccess: function(data) {
-            // alert(data.rows.length);
+            // xxwsWindowObj.xxwsAlert(data.rows.length);
             if (data.rows.length > 0) {
                 mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
             } else {
@@ -993,7 +1002,16 @@ function initTable() {
     });
 }
 
-
+//判断时间选择是否有值
+function dateChangeForSearch() {
+    var startDate = $("#datetimeStart").val();
+    var endDate = $("#datetimeEnd").val();
+    if (startDate != "" && endDate !== "") {
+        $("#diyDateBtn").addClass("active");
+    } else {
+        $("#diyDateBtn").removeClass("active");
+    }
+}
 /*
  *表单的操作（html样式）
  */
@@ -1025,9 +1043,12 @@ window.operateEvents = {
         var objId = row.objectId;
 
         $("#details").modal(); //打开详情模态框
-        setTimeout(function() {
+        $('#details').on('shown.bs.modal', function(e) {
             detailsObj.loadEventDetails(objId);
-        }, 1000);
+        });
+        // setTimeout(function() {
+        //     detailsObj.loadEventDetails(objId);
+        // }, 1000);
         return false;
     }
 };
@@ -1071,7 +1092,7 @@ var exportFileObj = {
             var selectionsData = $('#table').bootstrapTable('getSelections');
             var objectIds = [];
             if (selectionsData.length == 0) {
-                alert("请选择你需要导出的任务！");
+                xxwsWindowObj.xxwsAlert("请选择你需要导出的任务！");
                 return false;
             } else {
                 for (var i = 0; i < selectionsData.length; i++) {

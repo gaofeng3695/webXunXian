@@ -82,7 +82,7 @@ var routerObj = {
                 loadRelativePage("/src/html/track.html");
             },
             '/map': function(){
-                loadRelativePage("/src/html/none.html");
+                loadRelativePage("/src/html/map.html");
             },
             '/equipment': function(){
                 loadRelativePage("/src/html/none.html");

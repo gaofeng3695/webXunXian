@@ -52,9 +52,15 @@ $('.btn').click(function() {
             dataType: "json",
             success: function(data) {
                 if (data.success == 1) {
-                    xxwsWindowObj.xxwsAlert("密码修改成功，并即将返回登录页面，请重新登录", '', '', function() {
+                    xxwsWindowObj.xxwsAlert("密码修改成功，并即将返回登录页面，请重新登录", function() {
                         lsObj.clearAll();
                         top.location.href = '../../login.html';
+                    });
+                } else if (data.msg == "原密码不正确") {
+                    xxwsWindowObj.xxwsAlert("原密码输入错误", function() {
+                        $(".pw").val("");
+                        $(".pw1").val("");
+                        $(".pw2").val("");
                     });
                 } else {
                     xxwsWindowObj.xxwsAlert("密码修改失败");

@@ -111,38 +111,38 @@ function base_personal() {
     var _updateUserBo = JSON.parse(lsObj.getLocalStorage("userBo"));
     nameVal = $("#name").val().trim(); //姓名
     _updateUserBo.userName = nameVal;
-    ageVal = $("#age").val().trim(); //年龄
     sexVal = $(".selectsex").val(); //性别
     _updateUserBo.sex = sexVal;
-    qqVal = $("#qq").val().trim(); //qq号
-    weixinVal = $("#weixin").val().trim(); //微信
-    emailVal = $("#email").val().trim(); //邮箱
     var _data = {
         "objectId": _updateUserBo.objectId,
         "userName": nameVal,
         "sex": sexVal
     };
+    ageVal = $("#age").val().trim(); //年龄
+    _updateUserBo.age = ageVal;
     if (ageVal != "" && ageVal != null) {
-        _updateUserBo.age = ageVal;
         _data.age = ageVal;
         if (!checkage()) {
             return;
         }
+    } else {
+        _data.age = null;
     }
+    qqVal = $("#qq").val().trim(); //qq号
+    _data.qq = qqVal;
+    _updateUserBo.qq = qqVal;
     if (qqVal != "" && qqVal != null) {
-        _updateUserBo.qq = qqVal;
-        _data.qq = qqVal;
         if (!checkQQ()) {
             return;
         }
     }
-    if (weixinVal != "" && weixinVal != null) {
-        _updateUserBo.wechat = weixinVal;
-        _data.wechat = weixinVal;
-    }
+    weixinVal = $("#weixin").val().trim(); //微信
+    _updateUserBo.wechat = weixinVal;
+    _data.wechat = weixinVal;
+    emailVal = $("#email").val().trim(); //邮箱
+    _data.email = emailVal;
+    _updateUserBo.email = emailVal;
     if (emailVal != "" && emailVal != null) {
-        _updateUserBo.email = emailVal;
-        _data.email = emailVal;
         if (!checkemail()) {
             return;
         }

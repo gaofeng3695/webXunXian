@@ -15,7 +15,7 @@ $(function() {
         if (imgNum <= 4) {
             $(".upload_file").trigger("click");
         } else {
-            alert("最多上传五张图片");
+            xxwsWindowObj.xxwsAlert("最多上传五张图片");
         }
     });
 });
@@ -87,12 +87,12 @@ var taskObj = {
         if (this.$flg == true) {
             this.$flg = false;
             if (content == "") {
-                alert("请描述处置的信息!");
+                xxwsWindowObj.xxwsAlert("请描述处置的信息!");
                 this.again();
                 return false;
             } else if (this._taskType == "20") {
                 if (receiveUser == '') {
-                    alert("请选择【请示】消息的接收人！");
+                    xxwsWindowObj.xxwsAlert("请选择【请示】消息的接收人！");
                     this.again();
                     return false;
                 }
@@ -125,7 +125,7 @@ var taskObj = {
                                 _this.uploadData();
                             }
                         } else {
-                            alert("当前网络不稳定");
+                            xxwsWindowObj.xxwsAlert("当前网络不稳定");
                             _this.again();
                         }
                     }
@@ -151,7 +151,7 @@ var taskObj = {
                     _this.$taskM.modal('hide');
                     window.location.reload();
                 } else {
-                    alert("当前网络不稳定");
+                    xxwsWindowObj.xxwsAlert("当前网络不稳定");
                     _this.again();
                 }
             }
@@ -189,7 +189,7 @@ var taskObj = {
             success: function(data) {
                 //console.log(data);
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！')
                     return;
                 }
                 that.aAllPeople = data.rows;
@@ -197,7 +197,7 @@ var taskObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！');
                 }
             }
         });
@@ -274,7 +274,7 @@ var taskObj = {
                 if (data.success == 1) {
                     var taskState = data.rows;
                     if (taskState[0].status == 21) {
-                        alert("您好，该任务已经关闭！");
+                        xxwsWindowObj.xxwsAlert("您好，该任务已经关闭！");
                         window.location.reload();
                         return false;
                     } else {

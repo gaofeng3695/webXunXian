@@ -9,7 +9,7 @@
     <link href="/lib/css/bootstrap.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-table.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link href="/lib/css/zTreeStyle.css"  rel="stylesheet">
+    <link href="/lib/css/zTreeStyle.css" rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
     <link href="/src/css/track.css" rel="stylesheet">
 </head>
@@ -32,8 +32,11 @@
                         </div>
                     </div>
                     <div class="col-lg-6 col-xs-12 right_wrapper">
-                        <div class="more" id="search_more">
-                            高级搜索
+                        <div class="search_btn_right">
+                            <div class="search_reset" id="gf_reset_Btn">重置</div>
+                            <div class="more" id="search_more">
+                                高级搜索
+                            </div>
                         </div>
                         <div class="search_wrapper">
                             <div class="input_wrapper">
@@ -61,9 +64,9 @@
                                         <span class="date" data-class="date">
                                                 <span id="item_diy" class="diy">自定义</span>
                                         <span>：</span>
-                                        <input size="16" type="text" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
+                                        <input size="16" type="text" id="datetimeStart" onChange="dateChangeForSearch()" placeholder="选择起始时间" readonly class="form_datetime">
                                         <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
-                                        <input size="16" type="text" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
+                                        <input size="16" type="text" id="datetimeEnd" onChange="dateChangeForSearch()" placeholder="选择结束时间" readonly class="form_datetime">
                                         <span id="diyDateBtn" class="itemBtn" data-value="diy">确定</span>
                                         </span>
                                     </div>
@@ -71,7 +74,7 @@
                             </div>
                             <!-- 时间end -->
                             <!-- 事件状态begin -->
-                            <div class="line">
+                            <!--<div class="line">
                                 <div class="title">事件</div>
                                 <div class="item_box">
                                     <div class="item1" data-class="status">
@@ -80,7 +83,7 @@
                                         <span class="item" data-value="0">无事件</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                             <!-- 事件状态end -->
                             <!-- 人员start -->
                             <div class="line">
@@ -99,9 +102,6 @@
                                 </div>
                             </div>
                             <!-- 人员end -->
-                        </div>
-                        <div class="btn_wrapper">
-                            <span id="gf_reset_Btn" class="clear">清空筛选条件</span>
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
         </div>
     </div>
     <!--details begin-->
-    <div id="gf_detail" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div id="gf_detail" class="modal big_modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -203,9 +203,10 @@
                 </div>
             </div>
         </div>
-    </div><!--details end-->
+    </div>
+    <!--details end-->
 
-    <div id="gf_people" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div id="gf_people" class="modal big_modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -232,6 +233,7 @@
     <script src="/lib/js/bootstrap-table-zh-CN.min.js"></script>
     <script src="/lib/js/bootstrap-datetimepicker.min.js"></script>
     <script src="/src/js/common/common.js"></script>
+    <script src="/src/js/common/bootstrap.modal.alert.js"></script>
     <script src="/src/js/common/html5-storage.js"></script>
     <script src="/src/js/track.js"></script>
 

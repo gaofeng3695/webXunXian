@@ -267,7 +267,7 @@ var playerObj = {
     $speed: $('.player_wrapper .title .speed .item'),
     $btn_play: $('.player_wrapper .time_line .btn_play'),
     $time_mark: $('.player_wrapper .time_line .time_mark'),
-    $stick_bar : $('.player_wrapper .time_line .stick_bar'),
+    $stick_bar: $('.player_wrapper .time_line .stick_bar'),
     $move_bar: $('.player_wrapper .time_line .move_bar'),
     $active_bar: $('.player_wrapper .time_line .line_bar_active'), //蓝色进度条
     $time_now: $('.player_wrapper .time_line .time_now'),
@@ -275,9 +275,9 @@ var playerObj = {
     lineLength: $('.player_wrapper .time_line .line_bar').width(),
     timer: null, //定时器
     nowTime: 0, //播放的时间进度
-    beginTime : null,
-    endTime : null,
-    allTime : null, //巡线总时长
+    beginTime: null,
+    endTime: null,
+    allTime: null, //巡线总时长
     aData: null, //轨迹点
     lastPt: null, //上一个轨迹点
     nextPt: null, //下一个轨迹点
@@ -291,7 +291,7 @@ var playerObj = {
         var that = this;
         that.$btn_play[0].onclick = function () {
             if ($(this).hasClass('active')) {
-                if(that.nowTime >=  that.allTime){
+                if (that.nowTime >= that.allTime) {
                     that.nowTime = 0;
                 }
                 that.setTimer(true);
@@ -299,12 +299,12 @@ var playerObj = {
             }
             that.setTimer();
         };
-        that.$speed.click(function(){
+        that.$speed.click(function () {
             var index = $(this).index();
-            var aRate = [1,30,60,120,240];
+            var aRate = [1, 30, 60, 120, 240];
             that.$speed.removeClass('active');
             $(this).addClass('active');
-            that.rate = aRate[index-1];
+            that.rate = aRate[index - 1];
         });
     },
     render: function () {
@@ -313,36 +313,41 @@ var playerObj = {
         var begin = new Date(that.beginTime).Format('yyyy.MM.dd');
         var end = new Date(that.endTime).Format('yyyy.MM.dd');
         var sDate = begin;
-        if(end.slice(-2) !== begin.slice(-2)){
+        if (end.slice(-2) !== begin.slice(-2)) {
             var sDate = begin + ' - ' + end;
         }
         that.$date.html(sDate);
-
+        that.$rangeEnd.html(new Date(that.allTime - 8*3600*1000).Format('HH:mm:ss'));
 
         that.renderStick();
-
     },
-    renderStick : function(){
+    renderStick: function () {
         var that = this;
         var begin_time = new Date(that.beginTime).Format('HH:mm:ss');
         var end_time = new Date(that.endTime).Format('HH:mm:ss');
         var s = '';
-        var sTime = '<div class="time">'+ begin_time +'</div>';
-        for(var i = 1; i < 6;i++){
-            s+= '<div class="stick" style="left:'+ i/6*that.lineLength+'px"></div>';
-            sTime += '<div class="time" style="left:'+ i/6*that.lineLength+'px">'+ new Date(that.beginTime+that.allTime*i/6).Format('HH:mm:ss') +'</div>';
+        var sTime = '<div class="time">' + begin_time + '</div>';
+        for (var i = 1; i < 6; i++) {
+            s += '<div class="stick" style="left:' + i / 6 * that.lineLength + 'px"></div>';
+            sTime += '<div class="time" style="left:' + i / 6 * that.lineLength + 'px">' + new Date(that.beginTime + that.allTime * i / 6).Format('HH:mm:ss') + '</div>';
         }
-        sTime += '<div class="time" style="left:'+ i/6*that.lineLength+'px">'+ end_time +'</div>';
-        console.log(that.lineLength);
+        sTime += '<div class="time" style="left:' + i / 6 * that.lineLength + 'px">' + end_time + '</div>';
         that.$stick_bar.html(s);
         that.$time_mark.html(sTime);
     },
-    renderTimeLine : function(){
+    renderTimeLine: function () {
         var that = this;
         var rate = that.nowTime / that.allTime;
-        that.$move_bar.css('left', rate*600);
-        that.$active_bar.css('width', rate*600);
-        that.$time_now.css('left', rate*600);
+        rate = rate > 1 ? 1 : rate;
+        that.$move_bar.css('left', rate * 600);
+        that.$active_bar.css('width', rate * 600);
+        that.$time_now.css('left', rate * 600);
+        var timeNow = that.beginTime + that.nowTime;
+        timeNow = timeNow > that.endTime ? that.endTime : timeNow;
+        that.$time_now.html(new Date(timeNow).Format('HH:mm:ss'));
+        var _timeNow = that.nowTime > that.allTime ? that.allTime : that.nowTime;
+        _timeNow = _timeNow - 8*3600*1000;
+        that.$rangeNow.html(new Date(_timeNow).Format('HH:mm:ss'));
     },
     requestRoutePoint: function () {
         var that = this;
@@ -402,11 +407,11 @@ var playerObj = {
          */
         var that = this;
         var data = that.aData;
-        if (that.timer ) {
+        if (that.timer) {
             that.$btn_play.addClass('active');
             clearInterval(that.timer);
         }
-        if( that.nowTime > that.allTime || !bool ){
+        if (that.nowTime > that.allTime || !bool) {
             return;
         }
         that.$btn_play.removeClass('active');

@@ -1,12 +1,14 @@
 var trackObj = {
     $items: $('.top .item'), //搜索条件dom
     $searchInput: $('#searchInput'), //搜索关键词dom
-    $peopleInput : $('#peopleInput'),
+    $peopleInput: $('#peopleInput'),
+
+
 
     tracksIdsArr: [], //存放已被选中的轨迹ID
-    aPeopleId : [],
-    aPeopleName : [],
-    sCurrentTrackId : '',
+    aPeopleId: [],
+    aPeopleName: [],
+    sCurrentTrackId: '',
     defaultObj: { //默认搜索条件
         "status": "1,0", //1:有事件，0：无事件，1,0:全部
         "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
@@ -74,15 +76,22 @@ var trackObj = {
             }
             var obj = {};
             obj[key] = value;
+            //that.querryObj.keyword = that.$searchInput.val();
             that.renderActive(obj);
             that.refreshTable();
 
         });
         /* 搜索关键词 */
         $('#gf_Btn').click(function () {
-            var s = $(this).parent().find('input').val();
-            that.querryObj.keyword = s;
+            //that.querryObj.keyword = that.$searchInput.val();
             that.refreshTable();
+        });
+        /* keyup事件 */
+        that.$searchInput.keypress(function (e) {
+            if (e && e.keyCode === 13) { // enter 键
+                //that.querryObj.keyword = that.$searchInput.val();
+                that.refreshTable();
+            }
         });
         /* 显示高级搜索 */
         $('#search_more').click(function () {
@@ -98,7 +107,10 @@ var trackObj = {
         $('#gf_reset_Btn').click(function () {
             //请求数据还原到初始话
             /*Object.assign(that.querryObj, that.defaultObj);*/
-            $.extend(that.querryObj,that.defaultObj);
+            $.extend(that.querryObj, that.defaultObj);
+            $('#datetimeStart').val("");
+            $('#datetimeEnd').val("");
+            $("#diyDateBtn").removeClass("active");
             that.initPeopleList();
             that.renderActive();
             that.refreshTable();
@@ -115,15 +127,15 @@ var trackObj = {
             that.requestOutput(1, that.sCurrentTrackId);
         });
     },
-    bindPeopleEvent : function(){
+    bindPeopleEvent: function () {
         var that = this;
         /* 显示人员模态框 */
-        that.$peopleInput.parent().click(function(){
+        that.$peopleInput.parent().click(function () {
             that.requestPeopleTree();
             $('#gf_people').modal({});
         });
         /* 确定选中的人员 */
-        $('#btn_selectPeople').click(function(){
+        $('#btn_selectPeople').click(function () {
             that.setSelectedPerson();
             that.querryObj.userIds = that.aPeopleId.join(',');
             //console.log(that.querryObj);
@@ -135,7 +147,7 @@ var trackObj = {
             that.refreshTable();
         });*/
         /* 清空搜索条件 */
-        $('#clear_people').click(function(){
+        $('#clear_people').click(function () {
             that.initPeopleList();
             that.refreshTable();
         });
@@ -167,11 +179,11 @@ var trackObj = {
             var s = $startInput.val();
             var e = $endInput.val();
             if (!s) {
-                alert('请选择开始时间');
+                xxwsWindowObj.xxwsAlert('请选择开始时间');
                 return;
             }
             if (!e) {
-                alert('请选择结束时间');
+                xxwsWindowObj.xxwsAlert('请选择结束时间');
                 return;
             }
             that.querryObj.startDate = s;
@@ -223,8 +235,8 @@ var trackObj = {
     },
     refreshTable: function () {
         var that = this;
-        that.$searchInput.val(that.querryObj.keyword);
-        that.querryObj.pageNum = '1';
+        that.querryObj.keyword = that.$searchInput.val();
+        that.querryObj.pageNum = '1';/**/
         $('#gf_table').bootstrapTable('refreshOptions', {
             pageNumber: +that.querryObj.pageNum,
             pageSize: +that.querryObj.pageSize,
@@ -251,7 +263,7 @@ var trackObj = {
             success: function (data) {
                 ////console.log(data);
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
                 $('#gf_detail').modal({});
@@ -260,7 +272,7 @@ var trackObj = {
             },
             statusCode: {
                 404: function () {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
@@ -292,10 +304,10 @@ var trackObj = {
                 aDesc[index].innerHTML = item.eventTypeDesc;
             }
         });
-        setTimeout(function(){
+        setTimeout(function () {
             console.log(123);
             $('#details_content').scrollTop(0)
-        },1000)
+        }, 1000)
 
         //$('#gf_detail .else_desc').html();
 
@@ -324,7 +336,7 @@ var trackObj = {
         var that = this;
         var obj = {};
         /*Object.assign(obj, that.querryObj);*/
-        $.extend(obj,that.querryObj);
+        $.extend(obj, that.querryObj);
         delete obj.pageSize;
         delete obj.pageNum;
         obj.ids = "";
@@ -333,16 +345,16 @@ var trackObj = {
         }
         if (flag == 2) {
             if (that.tracksIdsArr.length === 0) {
-                alert('请勾选信息');
+                xxwsWindowObj.xxwsAlert('请勾选信息');
                 return;
             }
             obj.ids = that.tracksIdsArr.join(',');
         }
         //console.log(obj);
         commonObj.downloadFile({
-            url:"/cloudlink-inspection-event/inspectionRecord/exportWord?token="+lsObj.getLocalStorage('token'),
-            data:obj,
-            method:'post'
+            url: "/cloudlink-inspection-event/inspectionRecord/exportWord?token=" + lsObj.getLocalStorage('token'),
+            data: obj,
+            method: 'post'
         });
         /*$.ajax({
             type: "POST",
@@ -353,7 +365,7 @@ var trackObj = {
             success: function (data, status) {
                 //console.log(data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
             },
@@ -362,14 +374,14 @@ var trackObj = {
             },
             statusCode: {
                 404: function () {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });*/
     },
-    requestPeopleTree : function(){
+    requestPeopleTree: function () {
         var that = this;
-        if(that.aAllPeople){
+        if (that.aAllPeople) {
             //that.renderPeopleTree(that.aAllPeople);
             return;
         }
@@ -379,13 +391,13 @@ var trackObj = {
             contentType: "application/json",
             data: {
                 token: lsObj.getLocalStorage('token'),
-                status : 1
+                status: 1
             },
             dataType: "json",
             success: function (data) {
                 //console.log(data);
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
                 that.aAllPeople = data.rows;
@@ -393,7 +405,7 @@ var trackObj = {
             },
             statusCode: {
                 404: function () {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
@@ -512,7 +524,7 @@ var trackObj = {
                 //$(this).css("color", "red");
                 that.requestDetails(row.objectId);
                 that.sCurrentTrackId = row.objectId;
-                    //that.showModal();
+                //that.showModal();
                 return false;
             },
             //导出word
@@ -552,40 +564,40 @@ var trackObj = {
                 that.tracksIdsArr = [];
             })
     },
-    renderPeopleTree : function(data){
+    renderPeopleTree: function (data) {
         var that = this;
         //data = '';
         ////console.log(data)
         ////console.log(JSON.stringify(data))
         var setting = {
-			view: {
-				showLine: true
-			},
-			data: {
-                key : {
-                    name : 'treenodename'
+            view: {
+                showLine: true
+            },
+            data: {
+                key: {
+                    name: 'treenodename'
                 },
-				simpleData: {
-					enable: true,
-                    pIdKey : 'pid'
-				}
-			},
-            check : {
-                enable : true,
-                chkStyle : "checkbox",
+                simpleData: {
+                    enable: true,
+                    pIdKey: 'pid'
+                }
+            },
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
             }
 
-		};
+        };
         that.zTree = $.fn.zTree.init($("#people_list"), setting, data);
         that.zTree.expandAll(true);
     },
-    setSelectedPerson : function(){
+    setSelectedPerson: function () {
         var that = this;
         that.aPeopleId = [];
         that.aPeopleName = [];
         var arr = that.zTree.getCheckedNodes(true);
-        arr.forEach(function(item,index){
-            if(item.isParent){
+        arr.forEach(function (item, index) {
+            if (item.isParent) {
                 return;
             }
             that.aPeopleId.push(item.id);
@@ -596,16 +608,26 @@ var trackObj = {
         //console.log(that.aPeopleId);
         //console.log(that.aPeopleName);
     },
-    initPeopleList : function(){
+    initPeopleList: function () {
         var that = this;
         that.aPeopleId = [];
         that.aPeopleName = [];
         that.$peopleInput.val('');
         that.querryObj.userIds = '';
-        if(that.zTree){
+        if (that.zTree) {
             that.zTree.checkAllNodes(false);
         }
     }
 };
 trackObj.init();
 
+//判断时间选择是否有值
+function dateChangeForSearch() {
+    var startDate = $("#datetimeStart").val();
+    var endDate = $("#datetimeEnd").val();
+    if (startDate != "" && endDate !== "") {
+        $("#diyDateBtn").addClass("active");
+    } else {
+        $("#diyDateBtn").removeClass("active");
+    }
+}

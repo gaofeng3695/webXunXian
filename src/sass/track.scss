@@ -14,7 +14,7 @@ $bgclr : #e7e8ec;
         overflow: hidden;
 }
 
-.modal-dialog{
+.big_modal .modal-dialog{
     @include modal_size();
     /*position: absolute;
     margin: 0;
@@ -147,10 +147,6 @@ $bgclr : #e7e8ec;
     .modal-dialog{
         @include modal_size(540px); /* 自定义模态框宽度 */
     }
-
-
-
-
 }
 
 

@@ -246,7 +246,7 @@
             width: 800px;
             height: 600px;
             .modal-header {
-                height: 40px;
+                height: 38px;
                 background: #344052;
                 color: #fff;
                 padding: 0;
@@ -506,6 +506,7 @@
                                 border-radius: 18px 0 0 18px;
                                 border: 1px solid #e3e2e2;
                                 text-indent: 25px;
+                                outline: none;
                             }
                             input::-webkit-input-placeholder {
                                 background: url(/src/images/event/search.png) 6px center no-repeat;
@@ -517,7 +518,7 @@
                                 background: url(/src/images/event/search.png) 6px center no-repeat;
                             }
                             input:-ms-input-placeholder {
-                                background: url(/src/images/event/search.png) 6px center no-repeat;
+                                background: url(/src/images/event/search.png) 6px center no-repeat #fff;
                             }
                         }
                     }
@@ -542,6 +543,7 @@
                 button {
                     background: #59b6fc;
                     color: #fff;
+                    margin: 7px 0 0 0;
                 }
             }
         }

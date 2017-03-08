@@ -53,8 +53,11 @@
                             </div>
                         </div>
                         <div class="col-lg-6 col-xs-12 right_wrapper">
-                            <div class="more" id="search_more">
-                                高级搜索
+                            <div class="search_btn_right">
+                                <div class="search_reset" id="gf_reset_Btn">重置</div>
+                                <div class="more" id="search_more">
+                                    高级搜索
+                                </div>
                             </div>
                             <div class="search_wrapper">
                                 <div class="input_wrapper">
@@ -71,7 +74,7 @@
                                     <i></i>
                                 </b>
                             <div class="son_wrapper">
-                                <div class="line">
+                                <!--<div class="line">
                                     <div class="title">事件状态</div>
                                     <div class="item_box">
                                         <div class="item1" data-class="status">
@@ -80,9 +83,9 @@
                                             <span class="item" data-value="21">已完成</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                                 <div class="line">
-                                    <div class="title">事件状态</div>
+                                    <div class="title">事件类型</div>
                                     <div class="item_box">
                                         <div class="item1" data-class="typeParent">
                                             <span class="item" data-value="0">全部</span>
@@ -135,17 +138,14 @@
                                             <span class="item" data-value="month">本月</span>
                                             <span class="date">
                                                     <span id="item_diy" class="diy">自定义：</span>
-                                            <input size="16" type="text" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
+                                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
                                             <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
-                                            <input size="16" type="text" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
+                                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
                                             <span class="itemBtn" id="diyDateBtn" data-value="diy">确定</span>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="btn_wrapper">
-                                <span class="clear" id="gf_reset_Btn">清空筛选条件</span>
                             </div>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                             <span class="glyphicon glyphicon-saved" aria-hidden="true"></span>导出已选
                         </button>
                         <button id="map_choice" type="button" class="btn btn-default">
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>在地图上展示已选
+                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>多点定位
                         </button>
                     </div>
                     <table id="task_table"></table>
@@ -361,6 +361,7 @@
     <script type="text/javascript" src="/src/js/event/ajaxFileUpload.js"></script>
     <script type="text/javascript" src="/src/js/common/html5-storage.js"></script>
 
+    <script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>
 
     <script type="text/javascript" src="/src/js/common/drafting.js"></script>
     <script type="text/javascript" src="/src/js/common/common.js"></script>

@@ -3,74 +3,75 @@ $lightblue:#edf7ff;
 $g9:#999;
 $g3:#333;
 $e3:#e3e3e3;
-@mixin hidd{
+@mixin hidd {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
-@mixin wrapper_border{
+
+@mixin wrapper_border {
     border-bottom: 1px solid #cbccce;
     border-radius: 6px;
     box-shadow: 0px 1px 8px $e3;
 }
 
-
-html,body{
+html,
+body {
     background-color: #edf1f2;
 }
-.page_bg_wrapper{
+
+.page_bg_wrapper {
     background: #edf1f2;
     padding: 15px;
 }
-.search_item_wrapper{
 
+.search_item_wrapper {
     padding-bottom: 15px;
     margin-bottom: 15px;
     background: #fff;
     @include wrapper_border;
-    .search_title{
+    .search_title {
         line-height: 34px;
-        .btn_wrapper{
+        .btn_wrapper {
             margin-top: 15px;
             padding: 0;
             text-align: center;
-
-            color:$g9;
-            .item{
-                border:1px solid $e3;
+            color: $g9;
+            .item {
+                border: 1px solid $e3;
                 cursor: pointer;
                 padding: 0;
-                &.active{
+                &.active {
                     border-color: $blue;
                     background: $lightblue;
                     color: $blue;
                 }
-                &:hover{
+                &:hover {
                     background: $lightblue;
                 }
-                &:first-child{
+                &:first-child {
                     border-right: none;
                     border-radius: 16px 0 0 16px;
                 }
-                &:last-child{
+                &:last-child {
                     border-left: none;
                     border-radius: 0 16px 16px 0;
                 }
             }
         }
-        .right_wrapper{
+        .right_wrapper {
             margin-top: 15px;
-            .search_wrapper{
-                    margin-right: 150px;
-                    position: relative;
-                .input_wrapper{
+            .search_wrapper {
+                margin-right: 250px;
+                position: relative;
+                .input_wrapper {
                     border-radius: 16px 0 0 16px;
                     height: 36px;
                     margin-right: 80px;
                     border: 1px solid $e3;
                     padding-left: 30px;
                     background: url(/src/images/common/icon_search.png) no-repeat 10px center;
-                    input{
+                    input {
                         color: $g3;
                         float: left;
                         height: 34px;
@@ -80,7 +81,7 @@ html,body{
                         border: none;
                     }
                 }
-                .mybtn{
+                .mybtn {
                     height: 36px;
                     color: white;
                     background: $blue;
@@ -94,37 +95,54 @@ html,body{
                     cursor: pointer;
                 }
             }
-            .more{
-                border: 1px solid $blue;
-                color: $blue;
-                cursor:pointer;
-                border-radius: 16px;
-                text-align: center;
+            .search_btn_right {
                 margin-right: 15px;
                 position: absolute;
                 right: 0;
                 top: 0;
-                width: 120px;
-                padding-right: 10px;
-                line-height: 34px;
-                background: $lightblue url(/src/images/common/icon_down1.png) no-repeat 90px center;
-                &.active{
+                width: 220px;
+                .more {
+                    border: 1px solid $blue;
+                    color: $blue;
+                    cursor: pointer;
+                    border-radius: 16px;
+                    text-align: center;
+                    width: 120px;
+                    padding-right: 10px;
+                    line-height: 34px;
+                    float: right;
+                    background: $lightblue url(/src/images/common/icon_down1.png) no-repeat 90px center;
+                    &.active {
+                        color: white;
+                        background: $blue url(/src/images/common/icon_up1.png) no-repeat 90px center;
+                    }
+                }
+                .search_reset {
+                    height: 36px;
                     color: white;
-                    background: $blue url(/src/images/common/icon_up1.png) no-repeat 90px center;
+                    background: $blue;
+                    width: 80px;
+                    text-align: center;
+                    line-height: 36px;
+                    border-radius: 18px;
+                    float: left;
+                    cursor: pointer;
+                    &:hover {
+                        background: #75c3fe;
+                    }
                 }
             }
         }
     }
-    .more_item_wrapper{
+    .more_item_wrapper {
         padding-top: 15px;
         display: none;
-        .sub_wrapper{
+        .sub_wrapper {
             position: relative;
             border: 1px solid $e3;
             padding: 15px;
             background: #f7f7f7;
-            .up_triangle{
-
+            .up_triangle {
                 width: 0;
                 height: 0;
                 font-size: 0;
@@ -134,7 +152,7 @@ html,body{
                 position: absolute;
                 right: 42px;
                 top: -10px;
-                i{
+                i {
                     display: block;
                     width: 0;
                     height: 0;
@@ -146,65 +164,64 @@ html,body{
                     left: -10px;
                 }
             }
-            .son_wrapper{
-                div{
+            .son_wrapper {
+                div {
                     overflow: hidden;
                 }
-                .line{
+                .line {
                     line-height: 32px;
                     position: relative;
                     overflow: hidden;
                     padding: 6px 0;
-                    .title{
-                        position:absolute;
-
+                    .title {
+                        position: absolute;
                         width: 80px;
                         text-align: right;
-
                         color: #666;
-                        &:after{
+                        &:after {
                             content: '：';
                         }
                     }
-                    .item_box{
+                    .item_box {
                         margin-left: 95px;
-                        b{
+                        b {
                             float: left;
                             font-weight: normal;
                             margin: 0 4px;
                         }
-                        .item2{
-                            div{
+                        .item2 {
+                            div {
                                 display: none;
-                                &.active{
+                                &.active {
                                     display: block;
                                 }
                             }
                         }
-                        .item{
+                        .item {
                             float: left;
                             position: relative;
-                            margin-right:36px;
+                            margin-right: 36px;
                             cursor: pointer;
-                            &:last-of-type{
+                            &:last-of-type {
                                 margin-right: 0;
                             }
-                            &:hover{
+                            &:hover {
                                 color: $blue;
                             }
-                            &.active{
+                            &.active {
                                 color: $blue;
                             }
-                            i{
+                            i {
                                 padding-left: 8px;
                                 font-size: 12px;
                             }
                         }
-                        .date,.peo_wrapper{
-                            .itemBtn{
+                        .date,
+                        .peo_wrapper {
+                            .itemBtn {
                                 float: left;
                                 position: relative;
-                                margin-right:36px;
+                                margin-right: 36px;
                                 cursor: pointer;
                                 margin-left: 10px;
                                 width: 54px;
@@ -212,27 +229,26 @@ html,body{
                                 color: white;
                                 background: $g9;
                                 border-radius: 16px;
-                                &.active{
+                                &.active {
                                     background: $blue;
                                 }
-                                &:hover{
+                                &:hover {
                                     background: $blue;
                                     color: white;
                                 }
                             }
                         }
-
-                        .date{
+                        .date {
                             float: left;
-                            .diy{
-                                &.active{
+                            .diy {
+                                &.active {
                                     color: $blue;
                                 }
                             }
-                            span{
+                            span {
                                 float: left;
                             }
-                            input{
+                            input {
                                 line-height: 30px;
                                 float: left;
                                 height: 30px;
@@ -240,24 +256,23 @@ html,body{
                                 outline: none;
                                 -webkit-appearance: none;
                                 color: $g9;
-                                padding-left:8px;
+                                padding-left: 8px;
                                 width: 118px;
                                 cursor: pointer;
                                 background: #fff url(/src/images/common/icon_down2.png ) no-repeat 98px center;
                                 background-size: 12px 6px;
                             }
                         }
-                        .peo_wrapper{
+                        .peo_wrapper {
                             float: left;
-                            .peo_border{
+                            .peo_border {
                                 background: #fff;
-
                                 float: left;
                                 border: 1px solid $e3;
                                 height: 32px;
                                 line-height: 30px;
                                 width: 320px;
-                                .peo_selected{
+                                .peo_selected {
                                     @include hidd;
                                     padding-left: 10px;
                                     float: left;
@@ -268,7 +283,7 @@ html,body{
                                     border: none;
                                     cursor: pointer;
                                 }
-                                .mybtn{
+                                .mybtn {
                                     cursor: pointer;
                                     float: right;
                                     width: 32px;
@@ -276,11 +291,11 @@ html,body{
                                     background: url(/src/images/common/icon_plus.png) no-repeat center center;
                                 }
                             }
-                            .clear{
+                            .clear {
                                 color: #999;
                                 cursor: pointer;
                                 margin-left: 10px;
-                                &:hover{
+                                &:hover {
                                     color: $blue;
                                 }
                             }
@@ -288,10 +303,10 @@ html,body{
                     }
                 }
             }
-            .btn_wrapper{
+            .btn_wrapper {
                 position: relative;
                 height: 20px;
-                .clear{
+                .clear {
                     cursor: pointer;
                     color: $blue;
                     float: right;
@@ -299,16 +314,14 @@ html,body{
                     line-height: 18px;
                     background: url(/src/images/common/icon_clear.png) no-repeat 0 center;
                 }
-
             }
         }
-
     }
 }
 
-.table_wrapper{
+.table_wrapper {
     @include wrapper_border;
-    background:#fff;
+    background: #fff;
     //font-size: 40px;
     text-align: center;
     //line-height: 400px;

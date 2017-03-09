@@ -25,11 +25,32 @@ var detailsObj = {
         this.$detailsMap.addControl(bottom_right_navigation);
         this.$detailsMap.addControl(new BMap.MapTypeControl());
     },
-    setCenterZoom: function(lon, lat) { //设置中心点
+    setCenterZoom: function(msg) { //设置中心点
         var _this = this;
+        var lon = msg[0].bdLon;
+        var lat = msg[0].bdLat;
         this.$detailsMap.clearOverlays();
         var point = new BMap.Point(lon, lat);
-        var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
+        var myIcon = null;
+        if (msg[0].parentTypeId == 1) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+            }
+        } else if (msg[0].parentTypeId == 2) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+            }
+        } else if (msg[0].parentTypeId == 3) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+            }
+        }
         var marker = new BMap.Marker(point, {
             icon: myIcon
         });
@@ -68,11 +89,8 @@ var detailsObj = {
                     var audioMain = '<button  class="audioPlay" onclick="playAmrAudio(\'' + msg[0].audio[0] + '\',this)"></button>';
                     $(".event_audio").html(audioMain);
                 }
-
                 //打开地图中心点
-                var lon = msg[0].bdLon;
-                var lat = msg[0].bdLat;
-                _this.setCenterZoom(lon, lat);
+                _this.setCenterZoom(msg);
             }
         });
     }

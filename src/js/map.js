@@ -1,13 +1,6 @@
-(function resizeWrapper() {
-    $('')
-})();
-var map;
-(function () {
-    /* 展现地图 */
-    map = new BMap.Map("container"); // 创建地图实例
-    var point = new BMap.Point(116.404, 39.915); // 创建点坐标
-    map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
-})();
+$(function () {
+    playerObj.play();
+})
 
 var tabObj = {
     tabsTitle: $('.item_wrapper .item'),
@@ -78,7 +71,7 @@ var tabObj = {
 
 tabObj.init();
 
-var data = {
+/*var data = {
     "success": 1,
     "code": "200",
     "msg": "ok",
@@ -257,7 +250,7 @@ var data = {
         "lat": 39.987303,
         "bdLat": 39.994463
     }]
-}
+}*/
 
 var playerObj = {
     $close: $('.player_wrapper .btn_close'),
@@ -271,6 +264,8 @@ var playerObj = {
     $move_bar: $('.player_wrapper .time_line .move_bar'),
     $active_bar: $('.player_wrapper .time_line .line_bar_active'), //蓝色进度条
     $time_now: $('.player_wrapper .time_line .time_now'),
+    $line_bar: $('.player_wrapper .time_line .line_bar'),
+    $mask_bar: $('.player_wrapper .time_line .mask_bar'),
 
     lineLength: $('.player_wrapper .time_line .line_bar').width(),
     timer: null, //定时器
@@ -285,10 +280,39 @@ var playerObj = {
 
     init: function () {
         var that = this;
-        that.bindEvent();
+        this.timer = null; //定时器
+        this.nowTime = 0; //播放的时间进度
+        this.beginTime = null;
+        this.endTime = null;
+        this.allTime = null; //巡线总时长
+        this.aData = null; //轨迹点
+        this.lastPt = null; //上一个轨迹点
+        this.nextPt = null; //下一个轨迹点
+        this.rate = 30; //播放速度比率
+
+        this.$date.html('-');
+        this.$rangeNow.html('-');
+        this.$rangeEnd.html('-');
+        this.$time_mark.html('-');
+        this.$time_now.html('-');
+
+        that.$move_bar.css('left', 0);
+        that.$active_bar.css('width', 0);
+        that.$time_now.css('left', 0);
+
+        if (!that.isBindEvent) {
+            that.bindEvent();
+            that.isBindEvent = true;
+        }
+        $('.player_wrapper').css('display', 'block');
+        that.$btn_play.removeClass('active');
+        that.$speed.removeClass('active').eq(1).addClass('active');
+        mapObj.$bdMap.clearOverlays();
+
     },
     bindEvent: function () {
         var that = this;
+        /* 点击播放按钮 */
         that.$btn_play[0].onclick = function () {
             if ($(this).hasClass('active')) {
                 if (that.nowTime >= that.allTime) {
@@ -299,6 +323,11 @@ var playerObj = {
             }
             that.setTimer();
         };
+        /* 关闭播放器 */
+        that.$close.click(function () {
+            that.close_player();
+        });
+        /* 选择播放速度 */
         that.$speed.click(function () {
             var index = $(this).index();
             var aRate = [1, 30, 60, 120, 240];
@@ -306,10 +335,39 @@ var playerObj = {
             $(this).addClass('active');
             that.rate = aRate[index - 1];
         });
+        /* 点击时间轴事件 */
+        that.$mask_bar.on('click', function (e) {
+            //console.log(e.offsetX/that.lineLength*that.allTime);
+            var e = e || event;
+            that.nowTime = e.offsetX / that.lineLength * that.allTime;
+            that.setCurrentPointByTime(that.nowTime + that.beginTime);
+            that.renderTimeLine();
+            return false;
+        });
+        /* 移动进度按钮事件 */
+        that.$move_bar[0].onmousedown = function () {
+                var bool = that.$btn_play.hasClass('active');
+                this.ispause = bool;
+                that.setTimer();
+                this.onmousemove = null;
+                this.onmousemove = function (e) {
+                    var e = e || event;
+                    that.nowTime = Math.ceil(+that.$move_bar.css('left').slice(0, -2) + e.offsetX) / that.lineLength * that.allTime;
+                    that.setCurrentPointByTime(that.nowTime + that.beginTime);
+                    that.renderTimeLine();
+                    return false;
+                }
+            }
+            /* 取消移动按钮事件 */
+        that.$move_bar[0].onmouseup = that.$move_bar[0].onmouseout = function (e) {
+            var e = e || event;
+            this.onmousemove = null;
+            return false;
+        }
     },
     render: function () {
         var that = this;
-        console.log(that.beginTime)
+        //console.log(that.beginTime)
         var begin = new Date(that.beginTime).Format('yyyy.MM.dd');
         var end = new Date(that.endTime).Format('yyyy.MM.dd');
         var sDate = begin;
@@ -317,7 +375,7 @@ var playerObj = {
             var sDate = begin + ' - ' + end;
         }
         that.$date.html(sDate);
-        that.$rangeEnd.html(new Date(that.allTime - 8*3600*1000).Format('HH:mm:ss'));
+        that.$rangeEnd.html(new Date(that.allTime - 8 * 3600 * 1000).Format('HH:mm:ss'));
 
         that.renderStick();
     },
@@ -346,12 +404,52 @@ var playerObj = {
         timeNow = timeNow > that.endTime ? that.endTime : timeNow;
         that.$time_now.html(new Date(timeNow).Format('HH:mm:ss'));
         var _timeNow = that.nowTime > that.allTime ? that.allTime : that.nowTime;
-        _timeNow = _timeNow - 8*3600*1000;
+        _timeNow = _timeNow - 8 * 3600 * 1000;
         that.$rangeNow.html(new Date(_timeNow).Format('HH:mm:ss'));
     },
-    requestRoutePoint: function () {
+    requestRoutePoint: function (s) {
         var that = this;
-        setTimeout(function () {
+        var s = s ? s : 'c2f52b27-a888-40b7-824d-3abc7c056281';
+        that.close_player();
+
+        $.ajax({
+            type: "POST",
+            url: "/cloudlink-inspection-trajectory/trajectory/getByRecordId",
+            contentType: "application/json",
+            data: JSON.stringify({
+                inspRecordId: s
+            }),
+            dataType: "json",
+            success: function (data) {
+                //console.log(data);
+                if (data.success != 1) {
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
+                    return;
+                }
+
+                that.requestEventInfo(s);
+
+                that.init();
+
+                that.aData = data.rows;
+                that.beginTime = that.aData[0].createTime;
+                that.endTime = that.aData[that.aData.length - 1].createTime;
+                that.allTime = that.endTime - that.beginTime;
+                that.render();
+                that.drawRoute(that.aData);
+                that.movePerson(that.aData);
+            },
+            statusCode: {
+                404: function () {
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
+                }
+            }
+        });
+
+        /*setTimeout(function () {
+
+            that.init();
+
             that.aData = data.rows;
             that.beginTime = that.aData[0].createTime;
             that.endTime = that.aData[that.aData.length - 1].createTime;
@@ -359,19 +457,65 @@ var playerObj = {
             that.render();
             that.drawRoute(that.aData);
             that.movePerson(that.aData);
-        }, 200);
+        }, 2000);*/
+    },
+    requestEventInfo: function (s) {
+        var that = this;
+        console.log({
+                "status": "20,21,30", //处理状态 固定为”20,21,30”查询所有
+                "type": "1,2,3", //固定为空”1,2,3”查询所有
+                "startDate": "", //固定为空字符串
+                "endDate": "", //固定为空字符串
+                "keyword": "", // 固定为空字符串
+                "inspRecordId": s, //巡检记录ID
+                "pageNum": 1, //第几页 固定为1
+                "pageSize": 1000 //每页记录数 固定为100
+            })
+        $.ajax({
+            type: "POST",
+            url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'),
+            contentType: "application/json",
+            data: JSON.stringify({
+                "status": "20,21,30", //处理状态 固定为”20,21,30”查询所有
+                "type": '', //固定为空”1,2,3”查询所有
+                "startDate": "", //固定为空字符串
+                "endDate": "", //固定为空字符串
+                "keyword": "", // 固定为空字符串
+                "inspRecordId": s, //巡检记录ID
+                "pageNum": 1, //第几页 固定为1
+                "pageSize": 100 //每页记录数 固定为100
+            }),
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data.success != 1) {
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
+                    return;
+                }
+                console.log(data.rows);
+            },
+            statusCode: {
+                404: function () {
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
+                }
+            }
+        });
     },
     play: function () {
         var that = this;
         that.requestRoutePoint();
     },
     drawRoute: function (data) {
-        var obj = mapObj.getMaxPointAndMinPoint(data);
-        var level = mapObj.getCenterPointAndZoomLevel(obj.maxLon, obj.maxLat, obj.minLon, obj.minLat);
-        map.centerAndZoom(level.centerPoint, level.zoomlevel);
+        // var obj = mapObj.getMaxPointAndMinPoint(data);
+        // var level = mapObj.getCenterPointAndZoomLevel(obj.maxLon, obj.maxLat, obj.minLon, obj.minLat);
+        // mapObj.$bdMap.centerAndZoom(level.centerPoint, level.zoomlevel);
         var arr = data.map(function (item, index, arr) {
             return new BMap.Point(item.bdLon, item.bdLat);
         });
+        var level = mapObj.$bdMap.setViewport(arr, {
+            zoomFactor: -1
+        });
+
         var polyline = new BMap.Polyline(arr, {
             strokeColor: "#59b6fc",
             strokeWeight: 4,
@@ -387,17 +531,18 @@ var playerObj = {
                 anchor: new BMap.Size(15, 42), //图标的定位锚点
             })
         });
-        map.addOverlay(startMarker);
-        map.addOverlay(endMarker);
-        map.addOverlay(polyline);
+        mapObj.$bdMap.addOverlay(startMarker);
+        mapObj.$bdMap.addOverlay(endMarker);
+        mapObj.$bdMap.addOverlay(polyline);
     },
     movePerson: function (data) {
         var that = this;
         that.personMarker = new BMap.Marker(new BMap.Point(data[0].bdLon, data[0].bdLat), {
             icon: new BMap.Icon("/src/images/map/icon_person.png", new BMap.Size(30, 42))
         });
-        map.addOverlay(that.personMarker);
+        mapObj.$bdMap.addOverlay(that.personMarker);
         //console.log(data[0])
+        that.$btn_play.removeClass('active');
         that.setTimer(true);
     },
     setTimer: function (bool) {
@@ -425,7 +570,7 @@ var playerObj = {
             that.renderTimeLine();
         }, 40);
     },
-    setCurrentScopeByTime: function (time) {
+    setCurrentScopeByTime: function (time) { //入参：毫秒时间点
         var that = this;
         var a = that.aData;
         var l = a.length;
@@ -439,7 +584,7 @@ var playerObj = {
         that.lastPt = a[l - 1];
         that.nextPt = null;
     },
-    setCurrentPointByTime: function (time) {
+    setCurrentPointByTime: function (time) { //入参：毫秒时间点
         var that = this;
         that.setCurrentScopeByTime(time);
         if (!that.nextPt) {
@@ -451,7 +596,11 @@ var playerObj = {
         var lat = that.lastPt.bdLat + (that.nextPt.bdLat - that.lastPt.bdLat) * rate;
         var lon = that.lastPt.bdLon + (that.nextPt.bdLon - that.lastPt.bdLon) * rate;
         that.personMarker.setPosition(new BMap.Point(lon, lat));
+    },
+    close_player: function () {
+        var that = this;
+        that.setTimer();
+        mapObj.$bdMap.clearOverlays();
+        $('.player_wrapper').css('display', 'none');
     }
 };
-playerObj.init();
-playerObj.play();

@@ -1,0 +1,339 @@
+.block {
+    display: block;
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.width {
+    display: block;
+    width: 65px;
+    padding-left: 10px;
+    float: left
+}
+
+.pr30 {
+    padding-right: 30px;
+}
+
+.pr10 {
+    padding-right: 10px;
+}
+
+.pr5 {
+    padding-right: 5px;
+}
+
+.pl5 {
+    padding-left: 5px;
+}
+
+.pt10 {
+    padding-top: 10px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.pb10 {
+    padding-bottom: 10px;
+}
+
+.pr15 {
+    padding-right: 15px;
+}
+
+.font14 {
+    font-size: 14px;
+}
+
+.inputStyle {
+    width: 75px;
+    height: 20px;
+}
+
+.buttonStyle {
+    height: 20px;
+    margin-left: 5px;
+    color: #fff;
+    background: #54B8FC;
+    line-height: 20px;
+    outline: none;
+    border: none;
+}
+
+.borderLeft {
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+}
+
+// 人员开始
+.change {
+    width: 228px;
+    background: #686866;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    height: 37px;
+    line-height: 37px;
+    color: #fff;
+    padding-left: 30px;
+    img {
+        padding-left: 10px;
+    }
+}
+
+#accordion {
+    display: none;
+    width: 228px;
+    position: absolute;
+    top: 105px;
+    right: 40px;
+    .panel {
+        width: 228px;
+        height: 100%;
+        margin: 0;
+        a {
+            text-decoration: none;
+            border-radius: 50%;
+        }
+        p {
+            height: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            margin: 0;
+        }
+        .viewDetails {
+            width: 178px;
+            height: 30px;
+            margin-left: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            background: #fff;
+            border: 2px solid #76C4F9;
+            color: #76C4F9;
+            outline: none;
+            border-radius: 5px;
+        }
+    }
+    .personnel {
+        background: #686866;
+        height: 37px;
+        line-height: 37px;
+        color: #fff;
+        padding-left: 10px;
+    }
+    .message {
+        width: 228px;
+        height: 177px;
+        overflow: hidden;
+        background: #fff;
+        .essentialInformation {
+            width: 198px;
+            height: 157px;
+            margin: 0 auto;
+            margin-top: 10px;
+            .peopleInformation {
+                width: 100%;
+                height: 85px;
+                margin-bottom: 10px;
+                overflow: hidden;
+                .left {
+                    width: 55px;
+                    height: 79px;
+                    margin-top: 3px;
+                }
+                .right {
+                    width: 128px;
+                    height: 85px;
+                    margin-left: 15px;
+                    p {
+                        height: 21px;
+                        font-size: 12px;
+                        line-height: 21px;
+                        text-align: left;
+                        margin: 0;
+                    }
+                }
+            }
+            .patrolInformation {
+                width: 198px;
+                height: 60px;
+                overflow: hidden;
+                p {
+                    height: 20px;
+                    font-size: 12px;
+                    line-height: 20px;
+                    margin: 0;
+                    color: #666;
+                }
+            }
+        }
+    }
+}
+
+.panel-heading {
+    padding: 6px 15px;
+    font-size: 12px;
+}
+
+.panel-body {
+    padding: 7px;
+    height: 100%;
+    // padding-bottom: 20px;
+}
+
+.record_details {
+    background: #F9F9F9;
+    height: 140px;
+    margin-top: 10px;
+}
+
+.searchStyle {
+    height: 20px;
+    font-size: 12px;
+}
+
+.inputStyle {
+    width: 75px;
+    height: 20px;
+}
+
+.buttonStyle {
+    height: 20px;
+    margin-left: 5px;
+    color: #fff;
+    background: #54B8FC;
+    line-height: 20px;
+    outline: none;
+    border: none;
+}
+
+.pagination {
+    // width: 212;
+    height: 27px;
+    margin: 10px 0px;
+    li:hover a {
+        background: #5DB8FB;
+    }
+    li {
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        a {
+            width: 27px;
+            height: 27px;
+            color: #000;
+            line-height: 17px;
+            text-align: center;
+            border-radius: 50%;
+            span {
+                width: 27px;
+                height: 27px;
+                line-height: -5px;
+                border-radius: 50%;
+            }
+        }
+    }
+}
+
+// 人员结束
+//事件处理
+.event_list {
+    display: none;
+    .event {
+        position: absolute;
+        font-size: 12px;
+        color: #666;
+        top: 100px;
+        right: 40px;
+        z-index: 999;
+        box-shadow: 0px 0px 12px #888;
+        overflow: hidden;
+        background: rgba(88, 88, 88, 0.9);
+        margin: 0;
+        padding: 0;
+        width: 228px;
+        span {
+            color: #fff;
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+            margin: 0px 15px;
+        }
+    }
+    .event_detail {
+        position: absolute;
+        font-size: 12px;
+        top: 130px;
+        right: 40px;
+        z-index: 999;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        width: 228px;
+        background: #f3f3f3;
+        .event_show,
+        .event_image {
+            margin: 10px;
+            background: #f9f9f9;
+            color: #6a6a6a;
+            font-size: 12px;
+            .event_tab {
+                margin: 10px 0px 0px 5px;
+                .left {
+                    display: inline-block;
+                    width: 60px;
+                    border-right: 1px solid #eaeaea;
+                }
+                .right {
+                    display: inline-block;
+                    margin-left: 8px;
+                }
+                .address {
+                    background: #ebebeb url(/src/images/event/map_h.png) 5px 5px no-repeat;
+                    background-size: 10px;
+                    padding: 2px;
+                    width: 130px;
+                    span {
+                        margin-left: 15px;
+                    }
+                }
+                img {
+                    width: 64px;
+                    height: 64px;
+                    display: inline-block;
+                    margin: 3px 0.5px;
+                    ;
+                }
+            }
+        }
+        .view_detail {
+            margin: 10px 10px 20px 10px;
+            border: 1px solid #5ab7fd;
+            border-radius: 5px;
+            .btn {
+                background: #fff;
+                width: 100%;
+                text-align: center;
+                color: #5ab7fd;
+                font-size: 12px;
+            }
+        }
+        .audioPlay {
+            background: url(/src/images/task/play.png) no-repeat;
+            width: 82px;
+            height: 26px;
+            border: none;
+            display: inline-block;
+            outline: none;
+        }
+    }
+}

@@ -111,6 +111,7 @@ var trackObj = {
             $('#datetimeStart').val("");
             $('#datetimeEnd').val("");
             $("#diyDateBtn").removeClass("active");
+            $('#searchInput').val('');
             that.initPeopleList();
             that.renderActive();
             that.refreshTable();

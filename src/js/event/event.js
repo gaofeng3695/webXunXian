@@ -48,6 +48,7 @@ var eventObj = {
         this.iconHide();
     },
     submit: function() { //提交表单
+        var _this = this;
         this.$eventId = baseOperation.createuuid();
         var occurrenceTime = $("#datetime").val();
         var address = this.$mapA.val();
@@ -67,7 +68,18 @@ var eventObj = {
                 this.again();
                 return false;
             } else {
-                this.uploadFile();
+                var defaultOptions = {
+                    tip: '您是否确定上报事件？',
+                    name_title: '提示',
+                    name_cancel: '取消',
+                    name_confirm: '确定',
+                    isCancelBtnShow: true,
+                    callBack: function() {
+                        _this.uploadFile();
+                    }
+                };
+                xxwsWindowObj.xxwsAlert(defaultOptions);
+                this.again();
             }
         }
 
@@ -782,12 +794,13 @@ var searchObj = {
             //请求数据还原到初始话
             $.extend(that.querryObj, that.defaultObj);
             // Object.assign(that.querryObj, that.defaultObj);
-            that.renderActive();
-            that.refreshTable();
+
             that.$startDate.val("");
             that.$endDate.val("");
             that.$searchInput.val("");
             $("#diyDateBtn").removeClass("active");
+            that.renderActive();
+            that.refreshTable();
         });
         //自定义时间
         $('#diyDateBtn').on('click', function() {

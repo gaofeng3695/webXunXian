@@ -30,9 +30,9 @@ var loadRelativePage = function(_url) {
         document.getElementById("page-wrapper").src = _url;
         var $domArr = $('.side-nav li a');
         $domArr.removeClass('active');
-        for(var i = 0; i < $domArr.length; i++){
+        for (var i = 0; i < $domArr.length; i++) {
             var _this = $domArr[i];
-            if(_this.hash === location.hash){
+            if (_this.hash === location.hash) {
                 //console.log($(_this))
                 $(_this).addClass('active');
                 return;
@@ -41,71 +41,55 @@ var loadRelativePage = function(_url) {
     }
     /*进行个人信息初始化 */
 var initPersonal = function() {
-    var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
-    $(".userName").text(userBo.userName);
-    // $(".new_company").html("");
-    // var current = userBo.enterpriseName + '<img src="/src/images/main/refresh.png">';
-    // $(".new_company").append(current);
-    $.ajax({
-        type: "GET",
-        url: "/cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?token=" + lsObj.getLocalStorage('token') + "&businessId=" + userBo.objectId + "&bizType=pic",
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data) {
-            if (data.success == 1) {
-                if (data.rows.length > 0) {
-                    if (data.rows[0].fileId != null && data.rows[0].fileId != "") {
-                        $(".person-img").attr('src', "/cloudlink-core-file/file/getImageBySize?fileId=" + data.rows[0].fileId + "&viewModel=fill&width=500&hight=500");
-                    }
-                }
-
-            }
+        var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
+        $(".userName").text(userBo.userName);
+        if (userBo.profile_photo != null && userBo.profile_photo != "") {
+            $(".person-img").attr('src', "/cloudlink-core-file/file/getImageBySize?fileId=" + userBo.profile_photo + "&viewModel=fill&width=500&hight=500");
         }
-    });
-}
-/* 前端路由模块 */
+    }
+    /* 前端路由模块 */
 var routerObj = {
-    router : null,
-    init : function(){
+    router: null,
+    init: function() {
         var that = this;
         that.router = Router({
-            '/index': function(){
+            '/index': function() {
                 loadRelativePage("/src/html/index.html");
             },
-            '/event': function(){
+            '/event': function() {
                 loadRelativePage("/src/html/event.html");
             },
-            '/task': function(){
+            '/task': function() {
                 loadRelativePage("/src/html/task.html");
             },
-            '/track': function(){
+            '/track': function() {
                 loadRelativePage("/src/html/track.html");
             },
-            '/map': function(){
+            '/map': function() {
                 loadRelativePage("/src/html/map.html");
             },
-            '/equipment': function(){
+            '/equipment': function() {
                 loadRelativePage("/src/html/none.html");
             },
-            '/statistics': function(){
+            '/statistics': function() {
                 loadRelativePage("/src/html/none.html");
             },
-            '/management': function(){
+            '/management': function() {
                 loadRelativePage("/src/html/none.html");
             },
-            '/news': function(){
+            '/news': function() {
                 loadRelativePage("/src/html/none.html");
             },
-            '/personal': function(){
+            '/personal': function() {
                 loadRelativePage("/src/html/personal.html");
             },
-            '/updatepass': function(){
+            '/updatepass': function() {
                 loadRelativePage("/src/html/forgetPassword.html");
             },
-            '/setLogin': function(){
+            '/setLogin': function() {
                 loadRelativePage("/src/html/setLogin.html");
             },
-            '/help': function(){
+            '/help': function() {
                 loadRelativePage("/src/html/help.html");
             }
         });

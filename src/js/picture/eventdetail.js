@@ -3,6 +3,7 @@ var Mapobj = null;
 var eventId = null; //事件ID
 var taskId = null;
 var currenteventid = null;
+var event_data = null; //创建全局变量，进行事件数据的集合
 $(function() {
     Mapobj = new BMap.Map("container"); //创建百度地图实例
     Mapobj.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
@@ -42,7 +43,7 @@ function load_event(eventId) {
             var pic_scr = "";
             if (images.length > 0) {
                 for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>';
+                    pic_scr += '<img class="show_pic" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onmouseover="bigger(e)" onmouseout="smaller(e)" alt=""/>';
                 }
             } else {
                 $(".pic_des").html("无");
@@ -63,6 +64,15 @@ function load_event(eventId) {
     });
 }
 
+function bigger(e) {
+    $(".show_pic").css("width", "200px");
+    $(".show_pic").css("height", "200px");
+}
+
+function smaller(e) {
+    $(".show_pic").css("width", "64px");
+    $(".show_pic").css("height", "64px");
+}
 //进行详情展示
 function view_detail() {
     $("#details").modal(); //打开详情模态框
@@ -170,49 +180,6 @@ function setcenter(lon, lat) {
     // mapObj.iconHide(); //隐藏百度图标
 }
 
-//在地图上面展示目前处理中的所有事件
-function show_point() {
-    var point = null; //点集进行组合
-    var marKer = null; //图像标注
-    var myIcons = new BMap.Icon("/src/images/map/event.png", new BMap.Size(20, 20));
-    var ids = null;
-    var _data = {
-        "status": "20",
-        "type": "",
-        "startDate": "2016-10-01",
-        "endDate": new Date().Format('yyyy-MM-dd'),
-        "keyword": "",
-        "userIds": "e0d3d031-da99-4bea-853a-9315664a824b",
-        "pageNum": 1,
-        "pageSize": 10000
-    }
-    $.ajax({
-        type: 'POST',
-        url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'),
-        data: JSON.stringify(_data),
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data, status) {
-            var result = data.rows;
-            if (result.length > 1) {
-                for (var i = 0; i < result.length; i++) {
-                    eventId = result[i].objectI;
-                    point = new BMap.Point(result[i].bdLon, result[i].bdLat);
-                    marKer = new BMap.Marker(point, {
-                        icon: myIcons
-                    });
-                    Mapobj.addOverlay(marKer);
-                    ids = {
-                        "tsakid": result[i].inspectorId,
-                        "eventid": result[i].objectId
-                    }
-                    addClickHandler(ids, marKer);
-                }
-            }
-        }
-    });
-
-}
 
 function addClickHandler(ids, marker) {
     marker.addEventListener("click", function(e) {
@@ -295,6 +262,7 @@ var peopleChange = $('.renyuan .changeImg');
 $(peopleChange).click(function() {
     if (peopleImg) {
         $(peopleChange).attr('src', '/src/images/map/open.png');
+        // show_peoplepoint();
         peopleImg = false;
     } else {
         $(peopleChange).attr('src', '/src/images/map/close.png');
@@ -317,3 +285,116 @@ $(eventChange).click(function() {
         eventImg = true;
     }
 });
+//在地图上面展示目前处理中的所有事件
+function show_point() {
+    var _data = {
+        "status": "20",
+        "type": "",
+        "startDate": "2016-10-01",
+        "endDate": new Date().Format('yyyy-MM-dd'),
+        "keyword": "",
+        "userIds": "e0d3d031-da99-4bea-853a-9315664a824b",
+        "pageNum": 1,
+        "pageSize": 10000
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'),
+        data: JSON.stringify(_data),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data, status) {
+            event_data = data.rows;
+            $(".inhand").text(event_data.length); //目前没有处理的所有事件
+            var _obj = Enumerable.From(event_data).Where(function(x) {
+                return x.disposeTime.split(" ")[0] == new Date().Format('yyyy-MM-dd')
+            }).Select(function(x) {
+                return x
+            }).ToArray();
+            $(".newevent").text(_obj.length); //今日新增事件
+            if (event_data.length > 0) {
+                var html = "<ul>";
+                for (var i = 0; i < event_data.length; i++) {
+                    html += '<li class=""><div class="line01"> <span class="type">' + event_data[i].fullTypeName +
+                        '</span><span class="name">' + event_data[i].inspectorName + '</span><span class="date">' + event_data[i].disposeTime +
+                        '</span></div><div class="loca_desc">' + event_data[i].address + '</div> </li>';
+                    /*所有事件列表的展示*/
+                    eventListAndbiaozhu(event_data[i]);
+                }
+                html += "</ul>";
+                $(".event01").append(html);
+            }
+        }
+    });
+
+}
+
+function quite() {
+    var search = $("#search").val().trim();
+    var _obj = Enumerable.From(event_data).Where(function(x) {
+        return x.fullTypeName.indexOf(search) >= 0
+    }).Select(function(x) {
+        return x
+    }).ToArray();
+    Mapobj.clearOverlays(); //清除
+    if (_obj.length > 0) {
+        $(".event01").html("");
+        var html = "<ul>";
+        for (var i = 0; i < _obj.length; i++) {
+            html += '<li class=""><div class="line01"> <span class="type">' + _obj[i].fullTypeName +
+                '</span><span class="name">' + _obj[i].inspectorName + '</span><span class="date">' + _obj[i].disposeTime +
+                '</span></div><div class="loca_desc">' + _obj[i].address + '</div> </li>';
+            /*所有事件列表的展示*/
+            eventListAndbiaozhu(_obj[i]);
+        }
+        html += "</ul>";
+        $(".event01").append(html);
+    }
+}
+
+function eventListAndbiaozhu(data) {
+    var myIcons = new BMap.Icon("/src/images/map/event.png", new BMap.Size(20, 20));
+    var eventId = data.objectId;
+    var point = new BMap.Point(data.bdLon, data.bdLat);
+    var marKer = new BMap.Marker(point, {
+        icon: myIcons
+    });
+    Mapobj.addOverlay(marKer);
+    var ids = {
+        "tsakid": data.inspectorId,
+        "eventid": data.objectId
+    }
+    addClickHandler(ids, marKer);
+}
+
+function show_peoplepoint() {
+    var point = null; //点集进行组合
+    var marKer = null; //图像标注
+    var myIcons = new BMap.Icon("/src/images/map/online.png", new BMap.Size(20, 20));
+    var ids = null;
+    var _data = {}
+    $.ajax({
+        type: 'GET',
+        url: "/cloudlink-inspection-event/inspectionRecord/getOnline?token=" + lsObj.getLocalStorage('token'),
+        data: _data,
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data, status) {
+            // var result = data.rows;
+            // if (result.length > 1) {
+            //     for (var i = 0; i < result.length; i++) {
+            //         eventId = result[i].objectI;
+            //         point = new BMap.Point(result[i].bd_lon, result[i].bd_lat);
+            //         marKer = new BMap.Marker(point, {
+            //             icon: myIcons
+            //         });
+            //         Mapobj.addOverlay(marKer);
+            //         ids = {
+            //             "peopleid": result[i].inspectorId
+            //         }
+            //         addClickHandler(ids, marKer);
+            //     }
+            // }
+        }
+    });
+}

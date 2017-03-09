@@ -18,7 +18,7 @@ var titleObj = {
             success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
                 var obj = data.rows[0];
@@ -30,7 +30,7 @@ var titleObj = {
             },
             statusCode: {
                 404: function() {
-                    //alert('page not found');
+                    //xxwsWindowObj.xxwsAlert('page not found');
                 }
             }
         });
@@ -83,7 +83,7 @@ var taskChartObj = {
             success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
                 var obj = data.rows[0];
@@ -94,7 +94,7 @@ var taskChartObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
@@ -218,7 +218,7 @@ var eventChartObj = {
             success: function(data, status) {
                 //console.log('shiajin' +　data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
                 var obj = data.rows[0];
@@ -229,7 +229,7 @@ var eventChartObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
@@ -313,7 +313,7 @@ var taskListObj = {
             success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
 
@@ -329,7 +329,7 @@ var taskListObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
@@ -419,7 +419,7 @@ var eventListObj = {
             success: function(data, status) {
                 //console.log(data)
                 if (data.success != 1) {
-                    alert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
 
@@ -434,7 +434,7 @@ var eventListObj = {
             },
             statusCode: {
                 404: function() {
-                    alert('网络连接出错！code:404');
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });

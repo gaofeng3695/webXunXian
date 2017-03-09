@@ -41,6 +41,7 @@ $('.btn').click(function() {
     var phoneReg = /^1\d{10}$/;
     if (nameVal == "" || nameVal == null) {
         $('.hidkuai1 span').text('手机号码不能为空');
+        $(".password input").val('')
         return;
     } else if (!phoneReg.test(nameVal)) {
         $('.hidkuai1 span').text('您输入的手机号码不正确');

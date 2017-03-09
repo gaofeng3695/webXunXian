@@ -361,15 +361,18 @@ var searchObj = {
         });
         /* 清空搜索条件 */
         $('#gf_reset_Btn').click(function() {
+
+
             //请求数据还原到初始话
             $.extend(that.querryObj, that.defaultObj);
             // Object.assign(that.querryObj, that.defaultObj);
-            that.renderActive();
-            that.refreshTable();
+
             that.$startDate.val("");
             that.$endDate.val("");
             that.$searchInput.val("");
             $("#diyDateBtn").removeClass("active");
+            that.renderActive();
+            that.refreshTable();
         });
         //自定义时间
         $('#diyDateBtn').on('click', function() {
@@ -432,6 +435,7 @@ var searchObj = {
     },
     refreshTable: function() {
         var that = this;
+        // console.log(that.querryObj);
         that.querryObj.keyword = that.$searchInput.val().trim();
         that.$searchInput.val(that.querryObj.keyword);
         that.querryObj.pageNum = '1';
@@ -693,7 +697,7 @@ window.operateEvents = {
     //关闭任务
     'click .closed': function(e, value, row, index) {
         var defaultOptions = {
-            tip: '是否关闭该任务？',
+            tip: '您是否关闭该任务？',
             name_title: '提示',
             name_cancel: '取消',
             name_confirm: '确定',
@@ -735,7 +739,7 @@ var taskDetailsObj = {
         //关闭任务按钮
         this.$closeTask.click(function() {
             var defaultOptions = {
-                tip: '是否关闭该任务？',
+                tip: '您是否关闭该任务？',
                 name_title: '提示',
                 name_cancel: '取消',
                 name_confirm: '确定',
@@ -764,12 +768,34 @@ var taskDetailsObj = {
         this.loadEventDetails(eventId);
         this.loadTaskDetails(this._taskId);
     },
-    setCenterZoom: function(lon, lat) {
+    setCenterZoom: function(msg) {
         // debugger;
         var _this = this;
+        var lon = msg[0].bdLon;
+        var lat = msg[0].bdLat;
         this.$detailsMap.clearOverlays();
         var point = new BMap.Point(lon, lat);
-        var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
+        var myIcon = null;
+        if (msg[0].parentTypeId == 1) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+            }
+        } else if (msg[0].parentTypeId == 2) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+            }
+        } else if (msg[0].parentTypeId == 3) {
+            if (msg[0].status == 20) {
+                myIcon = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+            } else {
+                myIcon = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
+            }
+        }
+        // var myIcon = new BMap.Icon("/src/images/event/personal.png", new BMap.Size(130, 130));
         var marker = new BMap.Marker(point, {
             icon: myIcon
         });
@@ -812,9 +838,13 @@ var taskDetailsObj = {
                 $(".event_pic").append(pic_scr);
 
                 //打开地图中心点
-                var lon = msg[0].bdLon;
-                var lat = msg[0].bdLat;
-                _this.setCenterZoom(lon, lat);
+                _this.setCenterZoom(msg);
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                    if (e.target.innerHTML == "事件详情") {
+                        _this.setCenterZoom(msg);
+                    }
+                });
+
             }
         });
     },

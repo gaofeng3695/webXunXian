@@ -68,7 +68,7 @@
               //   alert("人家好着呢")
               var success = data.success;
               if (success == 1) {
-                  $('.top img').attr('src', 'src/images/enrollImg/2.png')
+                  $('.top img').attr('src', '/src/images/enrollImg/2.png')
                   $('.bottom1,.bottom3,.bottom4,.Notes').css({
                       display: "none"
                   })
@@ -207,7 +207,7 @@
                   lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
               } else {
                   xxwsWindowObj.xxwsAlert("注册失败");
-                      // xxwsWindowObj.xxwsAlert("注册失败");
+                  // xxwsWindowObj.xxwsAlert("注册失败");
               }
 
           }

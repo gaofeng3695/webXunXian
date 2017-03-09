@@ -9,21 +9,14 @@ $blue: #51b7ff;
     overflow: hidden;
 }
 
-ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    li {
-        margin: 0;
-        padding: 0;
-    }
-}
-
 html,
 body {
     width: 100%;
     height: 100%;
 }
+
+
+/* 大容器开始 */
 
 .mdl_wrapper {
     position: relative;
@@ -34,7 +27,22 @@ body {
     }
 }
 
+
+/* 大容器结束 */
+
+
+/* tab切换模块开始 */
+
 .tab_wrapper {
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        li {
+            margin: 0;
+            padding: 0;
+        }
+    }
     position: absolute;
     font-size: 12px;
     color: #666;
@@ -265,6 +273,12 @@ body {
     }
 }
 
+
+/* tab切换模块结束 */
+
+
+/* 播放器模块开始 */
+
 .player_wrapper {
     position: absolute;
     z-index: 999;
@@ -359,6 +373,14 @@ body {
                     height: 100%;
                     background: $blue;
                 }
+                .mask_bar {
+                    height: 100%;
+                    width: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    cursor: pointer;
+                }
                 .move_bar {
                     position: absolute;
                     left: 0;
@@ -379,29 +401,38 @@ body {
                     left: 0;
                     margin-left: -28px;
                 }
-                .stick_bar{
+                .stick_bar {
                     position: absolute;
                     width: 100%;
                     height: 5px;
                     bottom: 0px;
-                    .stick{
+                    .stick {
                         border-left: 1px solid white;
                         height: 5px;
                         position: absolute;
-                        &:nth-of-type(1){left: 16.66%;}
-                        &:nth-of-type(2){left: 33.32%;}
-                        &:nth-of-type(3){left: 50%;}
-                        &:nth-of-type(4){left: 16.66%;}
-                        &:nth-of-type(5){left: 16.66%;}
+                        &:nth-of-type(1) {
+                            left: 16.66%;
+                        }
+                        &:nth-of-type(2) {
+                            left: 33.32%;
+                        }
+                        &:nth-of-type(3) {
+                            left: 50%;
+                        }
+                        &:nth-of-type(4) {
+                            left: 16.66%;
+                        }
+                        &:nth-of-type(5) {
+                            left: 16.66%;
+                        }
                     }
-
                 }
-                .time_mark{
+                .time_mark {
                     position: absolute;
                     width: 100%;
                     height: 5px;
                     bottom: 0px;
-                    .time{
+                    .time {
                         width: 56px;
                         position: absolute;
                         top: 10px;
@@ -412,3 +443,6 @@ body {
         }
     }
 }
+
+
+/* 播放器模块结束 */

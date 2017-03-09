@@ -97,7 +97,18 @@ var taskObj = {
                     return false;
                 }
             }
-            this.closedWhether(_this.$taskId);
+            var defaultOptions = {
+                tip: '您是否确定提交处置信息？',
+                name_title: '提示',
+                name_cancel: '取消',
+                name_confirm: '确定',
+                isCancelBtnShow: true,
+                callBack: function() {
+                    _this.closedWhether(_this.$taskId);
+                }
+            };
+            xxwsWindowObj.xxwsAlert(defaultOptions);
+            _this.again();
         }
 
     },

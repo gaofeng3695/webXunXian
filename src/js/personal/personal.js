@@ -2,6 +2,7 @@ $(function() {
     initUser(); //进行个人资料的查找
 });
 var personalImg_fileId = null; //进行存储头像的文件ID
+var upload_fileId = null;
 /*初始化个人资料基本信息 */
 function initUser() {
     token = lsObj.getLocalStorage('token');
@@ -34,24 +35,12 @@ function initUser() {
         $("#email").val(user.email);
     }
     // /*初始化图像 */
-    $.ajax({
-        type: "GET",
-        url: "/cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?token=" + lsObj.getLocalStorage('token') + "&businessId=" + user.objectId + "&bizType=pic",
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data) {
-            if (data.success == 1) {
-                if (data.rows.length > 0) {
-                    if (data.rows[0].fileId != null && data.rows[0].fileId != "") {
-                        personalImg_fileId = data.rows[0].fileId;
-                        var path = "/cloudlink-core-file/file/getImageBySize?fileId=" + personalImg_fileId + "&viewModel=fill&width=500&hight=500";
-                        $('#userImg').attr('src', path);
-                        $('#userImg').attr('alt', '预览');
-                    }
-                }
-            }
-        }
-    });
+    if (user.profile_photo != "" && user.profile_photo != null) {
+        personalImg_fileId = user.profile_photo;
+        var path = "/cloudlink-core-file/file/getImageBySize?fileId=" + personalImg_fileId + "&viewModel=fill&width=500&hight=500";
+        $('#userImg').attr('src', path);
+        $('#userImg').attr('alt', '预览');
+    }
     $('#uploadfile').change(function() {
         var index = this.value.lastIndexOf('.');
         var file = this.files[0];
@@ -99,7 +88,8 @@ function upload_Img() {
         success: function(data, status) {
             var result = data.success;
             if (result == 1) {
-                base_personal();
+                updateUserBoImg();
+
             } else {
                 xxwsWindowObj.xxwsAlert("当前网络不稳定，请稍候重试");
             }
@@ -146,6 +136,10 @@ function base_personal() {
         if (!checkemail()) {
             return;
         }
+    }
+    if (upload_fileId != null && upload_fileId != "") {
+        _updateUserBo.profile_photo = upload_fileId;
+        _data.profile_photo = upload_fileId;
     }
     /*点击进行个人资料信息的验证 */
     var falg = vialidForm();
@@ -194,6 +188,59 @@ function deleteAnduploadImg() {
             }
         }
     });
+}
+/*上传成功之后，调用方法进行userbo的修改 */
+function updateUserBoImg() {
+    var _data = {
+        "businessId": JSON.parse(lsObj.getLocalStorage('userBo')).objectId,
+        "bizType": "pic"
+    }
+    $.ajax({
+        type: "GET",
+        url: "/cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?&toke=" + lsObj.getLocalStorage('token'),
+        contentType: "application/json",
+        data: _data,
+        dataType: "json",
+        success: function(data) {
+            if (data.success == 1) {
+                if (data.rows.length > 0) {
+                    upload_fileId = data.rows[0].fileId; //返回来的fileid
+                }
+                base_personal();
+            } else {
+                xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
+            }
+        }
+    });
+    // var partURL = "cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?businessId=" + userBo.objectId + "&bizType=pic";
+    // jasHttpRequest.jasHttpGet(partURL, function(id, state, dbSource) {
+    //     if (dbSource == "") {
+    //         baseOperation.alertToast("网关异常，请稍候尝试。。。");
+    //         return;
+    //     }
+    //     var dataobj = JSON.parse(dbSource);
+    //     if (dataobj.rows.length > 0) {
+    //         fileid = dataobj.rows[0].fileId; //返回来的fileid
+    //         var partURL = "cloudlink-core-framework/user/update";
+    //         jasHttpRequest.jasHttpPost(partURL, function(id, state, data) {
+    //             if (data == "") {
+    //                 baseOperation.alertToast("网关异常，请稍候尝试。。。");
+    //                 return;
+    //             }
+    //             var obj = JSON.parse(data);
+    //             if (obj.success == 1) {
+    //                 userBo.profilePhoto = fileid;
+    //                 appcan.locStorage.remove("userBo");
+    //                 appcan.locStorage.setVal("userBo", userBo);
+    //                 appcan.window.evaluatePopoverScript("updateadmininformation", "content", 'relaodUserInfo()');
+    //                 baseOperation.closeToast();
+    //             }
+    //         }, JSON.stringify({
+    //             "objectId": userBo.objectId,
+    //             "profile_photo": fileid
+    //         }));
+    //     }
+    // });
 }
 
 function vialidForm() {

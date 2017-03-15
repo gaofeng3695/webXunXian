@@ -1,11 +1,38 @@
-$(function() {
-        mapObj.init(); //地图初始化
-    })
-    // 地图对象
+$(function () {
+    mapObj.init(); //地图初始化
+});
+// 地图对象
 var mapObj = {
     $bdMap: new BMap.Map("container"), //创建百度地图实例
+    $myDis: null,
     $zoom: ["50", "100", "200", "500", "1000", "2000", "5000", "10000", "20000", "25000", "50000", "100000", "20000", "25000", "50000", "100000", "200000", "500000", "1000000", "2000000"],
-    init: function() {
+    bdIconObj: { //地图上图标On表示处理中或者在线
+        "constructionOn": new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "construction": new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "disasterOn": new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "disaster": new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "pipelineOn": new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "pipeline": new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42), {
+            anchor: new BMap.Size(15, 42)
+        }),
+        "inspectOn": new BMap.Icon("/src/images/map/peopleOn.png", new BMap.Size(29, 29), {
+            anchor: new BMap.Size(15, 29)
+        }),
+        "inspecLeave": new BMap.Icon("/src/images/map/peopleLeave.png", new BMap.Size(29, 29), {
+            anchor: new BMap.Size(15, 29)
+        }),
+    },
+    init: function () {
         //初始化地图
         var point = new BMap.Point(116.404, 39.915); // 创建点坐标
         this.$bdMap.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
@@ -24,24 +51,46 @@ var mapObj = {
         this.$bdMap.addControl(bottom_right_navigation);
         this.$bdMap.addControl(new BMap.MapTypeControl());
 
-        // var myDis = new BMapLib.DistanceTool(_this.$bdMap);
+        this.$myDis = new BMapLib.DistanceTool(this.$bdMap);
         // this.$distance.click(function() {
         //     _this.$bdMap.addEventListener("mouseover", function() {
-        //         myDis.open(); //开启鼠标测距
+        //         mapObj.$myDis.open(); //开启鼠标测距
         //         //myDis.close();  //关闭鼠标测距大
         //     });
         // });
     },
     //地图打点并计算中心点及缩放等级
-    setPointsMarkerWithCenterPointAndZoomLevel: function(data) {
+    setPointsMarkerWithCenterPointAndZoomLevel: function (data) {
         // this.$bdMap.clearOverlays(); //清除地图上已经标注的点
-        var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
+        //var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
         // alert(JSON.stringify(maxPointAndMinPointObj));
-        var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
-        this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
+        //var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
+        //this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
+        var _length = data.length;
+        var _arr = [];
+        try {
+            for (var i = 0; i < _length; i++) {
+                if (data[i].bdLon != "" && data[i].bdLat != "") {
+                    _arr.push(new BMap.Point(data[i].bdLon, data[i].bdLat));
+                }
+            }
+
+            if (_arr.length > 0) {
+                this.$bdMap.setViewport(_arr, {
+                    zoomFactor: -1
+                });
+            } else {
+                var point = new BMap.Point(116.404, 39.915); // 创建点坐标
+                this.$bdMap.centerAndZoom(point, 5); // 初始化地图，设置中心点坐标和地图级别
+            }
+
+        } catch (e) {
+            var point = new BMap.Point(116.404, 39.915); // 创建点坐标
+            this.$bdMap.centerAndZoom(point, 5); // 初始化地图，设置中心点坐标和地图级别
+        }
     },
     ///获取max坐标和min坐标
-    getMaxPointAndMinPoint: function(_data) {
+    getMaxPointAndMinPoint: function (_data) {
         var _maxLon = 0,
             _maxLat = 0,
             _minLon = 999,
@@ -71,7 +120,7 @@ var mapObj = {
         return _obj;　　　　
     },
     //获取中心点及zoom级别
-    getCenterPointAndZoomLevel: function(maxLon, maxLat, minLon, minLat) {
+    getCenterPointAndZoomLevel: function (maxLon, maxLat, minLon, minLat) {
         var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A
         var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B
         var distance = this.$bdMap.getDistance(pointA, pointB).toFixed(1); //获取两点距离,保留小数点后两位

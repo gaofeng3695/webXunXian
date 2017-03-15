@@ -27,18 +27,18 @@
            dataType: "json",
            success: function(data) {
                if (data.success == 1) {
-                   //    console.log(JSON.stringify(data));
+                   console.log(JSON.stringify(data));
                    var dataList = data.rows;
                    for (var i = 0; i < dataList.length; i++) {
                        /*被原企业移除，目前没有任何企业，需要重新创建才可以登录成功 
                        根据获取到的status  设定不同状态 目前：未加入企业  0 已加入的是1 冻结-1 移除 -2 退出改企业为-3 默认企业  其余的都是退出企业*/
                        if (dataList[i].status == -3 || dataList[i].status == -2) {
                            removeEnterprised += '' + dataList[i].enterpriseName + '，'; //被移除的企业名称
-                       } else if (dataList[i].status == 2) {
+                       } else if (dataList[i].status == -1) {
                            forzenENterprised += '<div class="radio"><input type = "radio"  name = "optionEnterprise"   id = "foren' + i + '" value = "' + dataList[i].objectId + '" class ="fl wh20 radiobox " disabled><label for="foren"' + i + ' class="forzen" >' + dataList[i].enterpriseName + '（被冻结）</label></div>';;
                        } else if (dataList[i].status == 1) {
                            joinEnterprised += '<div class="radio "><input type = "radio" name = "optionEnterprise"   id = "join' + i + '" value = "' + dataList[i].objectId + '" class ="fl wh20 radiobox"><label for="join"' + i + '  >' + dataList[i].enterpriseName + '</label></div>';
-                       } else {
+                       } else if (dataList[i].status == 0) {
                            nojoinEnterprised += '<div class="radio"><input type = "radio"  name = "optionEnterprise"   id = "nojoin' + i + '" value = "' + dataList[i].objectId + '" class ="fl wh20 radiobox"><label for="nojoin"' + i + '>' + dataList[i].enterpriseName + '（受邀请）</label></div>';
                        }
                    }
@@ -223,7 +223,7 @@
                    var token = data.token;
                    lsObj.setLocalStorage('token', token);
                    lsObj.setLocalStorage('userBo', JSON.stringify(row[0]));
-                   lsObj.setLocalStorage('timeOut', new Date().getTime() + (0.1 * 60 * 60 * 1000));
+                   lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
                    location.href = '../../main.html';
                } else {
                    switch (data.code) {

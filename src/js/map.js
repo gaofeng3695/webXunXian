@@ -1,75 +1,6 @@
 $(function () {
-    playerObj.play();
+    //playerObj.play('c2f52b27-a888-40b7-824d-3abc7c056281');
 })
-
-var tabObj = {
-    tabsTitle: $('.item_wrapper .item'),
-
-    people: $('#people'),
-    event: $('#event'),
-    location: $('#location'),
-    tool: $('#tool'),
-
-    closeBtn: $('.result_wrapper .close_btn'),
-
-    currentTab: null,
-
-    init: function () {
-        var that = this;
-        that.bindEvent();
-    },
-    bindEvent: function () {
-        var that = this;
-        // 切换Tab事件
-        that.tabsTitle.click(function () {
-            var s = this.dataset.tab;
-            if (s !== that.currentTab) {
-                that.closeTip();
-                that.showTip(s);
-                return;
-            }
-            that.closeTip();
-            $(this).removeClass('active');
-        });
-        //关闭tab事件
-        that.closeBtn.click(function () {
-            that.closeTip();
-        });
-        //
-    },
-    bindSearchEvent: function () {
-        var that = this;
-        $('#search_people').click(function () {
-
-        });
-
-
-    },
-    requestPeople: function () {
-        var that = this;
-        $.ajax();
-    },
-    showTip: function (currentTab) {
-        var that = this;
-        if (!currentTab) {
-            return;
-        }
-        $('#' + currentTab + '_title').addClass('active');
-        that[currentTab].removeClass('hide');
-        that.currentTab = currentTab;
-    },
-    closeTip: function () {
-        var that = this;
-        if (!that.currentTab) {
-            return;
-        }
-        $('#' + that.currentTab + '_title').removeClass('active');
-        that[that.currentTab].addClass('hide');
-        that.currentTab = null;
-    }
-};
-
-tabObj.init();
 
 /*var data = {
     "success": 1,
@@ -266,6 +197,7 @@ var playerObj = {
     $time_now: $('.player_wrapper .time_line .time_now'),
     $line_bar: $('.player_wrapper .time_line .line_bar'),
     $mask_bar: $('.player_wrapper .time_line .mask_bar'),
+    $event_line: $('.player_wrapper .time_line .event_line'),
 
     lineLength: $('.player_wrapper .time_line .line_bar').width(),
     timer: null, //定时器
@@ -305,7 +237,7 @@ var playerObj = {
             that.isBindEvent = true;
         }
         $('.player_wrapper').css('display', 'block');
-        that.$btn_play.removeClass('active');
+        that.$btn_play.addClass('active');
         that.$speed.removeClass('active').eq(1).addClass('active');
         mapObj.$bdMap.clearOverlays();
 
@@ -326,6 +258,7 @@ var playerObj = {
         /* 关闭播放器 */
         that.$close.click(function () {
             that.close_player();
+            inspectObj.openInspect();
         });
         /* 选择播放速度 */
         that.$speed.click(function () {
@@ -407,9 +340,13 @@ var playerObj = {
         _timeNow = _timeNow - 8 * 3600 * 1000;
         that.$rangeNow.html(new Date(_timeNow).Format('HH:mm:ss'));
     },
-    requestRoutePoint: function (s) {
+    play: function (s, flag) {
         var that = this;
-        var s = s ? s : 'c2f52b27-a888-40b7-824d-3abc7c056281';
+        that.requestRoutePoint(s, flag);
+    },
+    requestRoutePoint: function (s, flag) {
+        var that = this;
+        //var s = s ? s : 'c2f52b27-a888-40b7-824d-3abc7c056281';
         that.close_player();
 
         $.ajax({
@@ -426,17 +363,18 @@ var playerObj = {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
-
+                if (data.rows.length === 0) {
+                    xxwsWindowObj.xxwsAlert('当前巡检记录无轨迹点！')
+                    return;
+                }
                 that.requestEventInfo(s);
-
                 that.init();
-
                 that.aData = data.rows;
                 that.beginTime = that.aData[0].createTime;
                 that.endTime = that.aData[that.aData.length - 1].createTime;
                 that.allTime = that.endTime - that.beginTime;
                 that.render();
-                that.drawRoute(that.aData);
+                that.drawRoute(that.aData, flag);
                 that.movePerson(that.aData);
             },
             statusCode: {
@@ -445,32 +383,9 @@ var playerObj = {
                 }
             }
         });
-
-        /*setTimeout(function () {
-
-            that.init();
-
-            that.aData = data.rows;
-            that.beginTime = that.aData[0].createTime;
-            that.endTime = that.aData[that.aData.length - 1].createTime;
-            that.allTime = that.endTime - that.beginTime;
-            that.render();
-            that.drawRoute(that.aData);
-            that.movePerson(that.aData);
-        }, 2000);*/
     },
     requestEventInfo: function (s) {
         var that = this;
-        console.log({
-                "status": "20,21,30", //处理状态 固定为”20,21,30”查询所有
-                "type": "1,2,3", //固定为空”1,2,3”查询所有
-                "startDate": "", //固定为空字符串
-                "endDate": "", //固定为空字符串
-                "keyword": "", // 固定为空字符串
-                "inspRecordId": s, //巡检记录ID
-                "pageNum": 1, //第几页 固定为1
-                "pageSize": 1000 //每页记录数 固定为100
-            })
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/eventInfo/web/v1/getPageList?token=" + lsObj.getLocalStorage('token'),
@@ -487,12 +402,17 @@ var playerObj = {
             }),
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 if (data.success != 1) {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1');
                     return;
                 }
-                console.log(data.rows);
+                var aData = data.rows;
+                if (aData.length === 0) {
+                    return;
+                }
+                eventObj.setEventPointsMarker(aData);
+                //that.drawEventOnLine(aData);
             },
             statusCode: {
                 404: function () {
@@ -501,11 +421,7 @@ var playerObj = {
             }
         });
     },
-    play: function () {
-        var that = this;
-        that.requestRoutePoint();
-    },
-    drawRoute: function (data) {
+    drawRoute: function (data, flag) {
         // var obj = mapObj.getMaxPointAndMinPoint(data);
         // var level = mapObj.getCenterPointAndZoomLevel(obj.maxLon, obj.maxLat, obj.minLon, obj.minLat);
         // mapObj.$bdMap.centerAndZoom(level.centerPoint, level.zoomlevel);
@@ -532,8 +448,23 @@ var playerObj = {
             })
         });
         mapObj.$bdMap.addOverlay(startMarker);
-        mapObj.$bdMap.addOverlay(endMarker);
+        if (+flag === 1) {
+            mapObj.$bdMap.addOverlay(endMarker);
+        }
         mapObj.$bdMap.addOverlay(polyline);
+    },
+    drawEventOnLine: function (data) {
+        var that = this;
+        var s = '';
+        console.log(data)
+        data.forEach(function (item, index) {
+            var l = that.getDateFromDateString(item.createTime).getTime();
+            var rate = (l - that.beginTime) / that.allTime;
+            rate = rate > 1 ? 1 : rate;
+            rate = rate < 0 ? 0 : rate;
+            s += '<div class="item dis1" style="left:' + that.lineLength * rate + 'px"></div>';
+        });
+        that.$event_line.html(s);
     },
     movePerson: function (data) {
         var that = this;
@@ -541,9 +472,10 @@ var playerObj = {
             icon: new BMap.Icon("/src/images/map/icon_person.png", new BMap.Size(30, 42))
         });
         mapObj.$bdMap.addOverlay(that.personMarker);
-        //console.log(data[0])
-        that.$btn_play.removeClass('active');
-        that.setTimer(true);
+        that.renderTimeLine()
+            //console.log(data[0])
+            //that.$btn_play.removeClass('active');
+            //that.setTimer();
     },
     setTimer: function (bool) {
         /*
@@ -597,10 +529,93 @@ var playerObj = {
         var lon = that.lastPt.bdLon + (that.nextPt.bdLon - that.lastPt.bdLon) * rate;
         that.personMarker.setPosition(new BMap.Point(lon, lat));
     },
-    close_player: function () {
+    close_player: function (fn) {
         var that = this;
         that.setTimer();
         mapObj.$bdMap.clearOverlays();
         $('.player_wrapper').css('display', 'none');
+        if (Object.prototype.toString.call(fn) === '[object Function]') {
+            fn();
+        }
+    },
+    getDateFromDateString: function (s) {
+        // s = '2015-01-01 12:14'
+        var date = new Date();
+        date.setFullYear(s.slice(0, 4));
+        date.setMonth(+s.slice(5, 7) - 1);
+        date.setDate(s.slice(8, 10));
+        date.setHours(+s.slice(11, 13));
+        date.setMinutes(+s.slice(14, 16));
+        date.setSeconds(0);
+        return date;
     }
 };
+
+var searchObj = {
+    $ul: $('.location ul'),
+    $input: $('#location_search'),
+    init: function () {
+        this.bindEvent();
+    },
+    bindEvent: function () {
+        var that = this;
+        var ac = new BMap.Autocomplete({
+            "input": "location_search",
+            "location": mapObj.$bdMap,
+            "onSearchComplete": function (re) {
+                //console.log(re)
+                    // ac.hide();
+            }
+        });
+        ac.addEventListener("onhighlight", function (e) { //鼠标放在下拉列表上的事件
+            var str = "";
+            var _value = e.fromitem.value;
+            var value = "";
+            if (e.fromitem.index > -1) {
+                value = _value.province + _value.city + _value.district + _value.street + _value.business;
+            }
+            str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+            value = "";
+            if (e.toitem.index > -1) {
+                _value = e.toitem.value;
+                value = _value.province + _value.city + _value.district + _value.street + _value.business;
+            }
+            str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+            //G("searchResultPanel").innerHTML = str;
+        });
+        var myValue;
+        ac.addEventListener("onconfirm", function (e) { //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+            myValue = _value.province + _value.city + _value.district + _value.street + _value.business;
+            setPlace();
+        });
+
+        function setPlace() {
+            if(that.lastPoint){
+                mapObj.$bdMap.removeOverlay(that.lastPoint);
+            }
+            var local = new BMap.LocalSearch(mapObj.$bdMap, { //智能搜索
+                onSearchComplete: function(){
+                    if(!local.getResults().getPoi(0)){
+                        xxwsWindowObj.xxwsAlert('未找到该点，请重新搜索')
+                        return;
+                    }
+                    var pp = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+                    //mapObj.$bdMap.setCenter(pp);
+                    mapObj.$bdMap.centerAndZoom(pp, 18);
+                    that.lastPoint = new BMap.Marker(pp);
+                    mapObj.$bdMap.addOverlay(that.lastPoint); //添加标注
+                }
+            });
+            local.search(myValue);
+        }
+
+    },
+    renderResult: function () {
+
+    }
+};
+$(function () {
+    searchObj.init();
+});

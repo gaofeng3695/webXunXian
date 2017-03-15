@@ -64,33 +64,24 @@ function load_event(eventId) {
     });
 }
 
-function bigger(e) {
-    $(".show_pic").css("width", "200px");
-    $(".show_pic").css("height", "200px");
-}
 
-function smaller(e) {
-    $(".show_pic").css("width", "64px");
-    $(".show_pic").css("height", "64px");
-}
 //进行详情展示
 function view_detail() {
     $("#details").modal(); //打开详情模态框
     setTimeout(function() {
         load_event(currenteventid);
-        // load_task();
+        load_task(currenteventid);
     }, 1000);
 }
 //加载任务
 function load_task(eventId) {
     $.ajax({
         type: 'GET',
-        url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + eventId,
+        url: "/cloudlink-inspection-task/dispose/getPageListByEventId?bizId=" + eventId + "&token=" + lsObj.getLocalStorage('token'),
         contentType: "application/json",
         dataType: "json",
         success: function(data, status) {
-            alert(JSON.stringify(data));
-            var msgAll = data.rows;
+            var msgAll = data.rows[0].disposeList;
             $(".dispose_content").html("");
             var txt = '';
             var tempArry = [];
@@ -293,7 +284,7 @@ function show_point() {
         "startDate": "2016-10-01",
         "endDate": new Date().Format('yyyy-MM-dd'),
         "keyword": "",
-        "userIds": "e0d3d031-da99-4bea-853a-9315664a824b",
+        "userIds": JSON.parse(lsObj.getLocalStorage('userBo')).objectId,
         "pageNum": 1,
         "pageSize": 10000
     }
@@ -312,6 +303,7 @@ function show_point() {
                 return x
             }).ToArray();
             $(".newevent").text(_obj.length); //今日新增事件
+            $(".Allevent").html("");
             if (event_data.length > 0) {
                 var html = "<ul>";
                 for (var i = 0; i < event_data.length; i++) {
@@ -322,7 +314,7 @@ function show_point() {
                     eventListAndbiaozhu(event_data[i]);
                 }
                 html += "</ul>";
-                $(".event01").append(html);
+                $(".Allevent").append(html);
             }
         }
     });
@@ -338,7 +330,7 @@ function quite() {
     }).ToArray();
     Mapobj.clearOverlays(); //清除
     if (_obj.length > 0) {
-        $(".event01").html("");
+        $(".Allevent").html("");
         var html = "<ul>";
         for (var i = 0; i < _obj.length; i++) {
             html += '<li class=""><div class="line01"> <span class="type">' + _obj[i].fullTypeName +
@@ -348,12 +340,19 @@ function quite() {
             eventListAndbiaozhu(_obj[i]);
         }
         html += "</ul>";
-        $(".event01").append(html);
+        $(".Allevent").append(html);
     }
 }
 
 function eventListAndbiaozhu(data) {
-    var myIcons = new BMap.Icon("/src/images/map/event.png", new BMap.Size(20, 20));
+    var myIcons = "";
+    if (data.parentTypeId == 1) {
+        myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+    } else if (data.parentTypeId == 2) {
+        myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+    } else if (data.parentTypeId == 3) {
+        myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
+    }
     var eventId = data.objectId;
     var point = new BMap.Point(data.bdLon, data.bdLat);
     var marKer = new BMap.Marker(point, {

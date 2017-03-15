@@ -1,13 +1,18 @@
 /* Common Wrapper*/
 
+html,body{
+    height: 100%;
+}
+
 body {
-    margin-top: 100px;
+    overflow: hidden;
+    padding-top: 121px;
     background-color: #222;
 }
 
 @media(min-width:768px) {
     body {
-        margin-top: 50px;
+        padding-top: 61px;
     }
 }
 
@@ -22,10 +27,12 @@ body {
 }
 
 .huge {
-    font-size: 50px;
+    font-size: 60px;
     line-height: normal;
 }
-
+    #wrapper,#page-wrapper {
+        height: 100%;
+    }
 @media(min-width:768px) {
     #wrapper {
         padding-left: 200px;
@@ -38,15 +45,23 @@ body {
 
 /* Top Navigation */
 
+
 #wrapper .navbar,
 #wrapper .nav {
     background-color: #344052;
     border-color: #080808;
 }
 
+.navbar-header{
+    height: 60px;
+}
+
 #wrapper .navbar-inverse .navbar-brand {
-    color: white;
+    width :425px;
     font-size: 20px;
+    height: 60px;
+    background: url(/src/images/main/logo.png) no-repeat 15px center;
+    background-size:  auto 30px;
 }
 
 .top-nav {
@@ -66,6 +81,7 @@ body {
 .top-nav>li>a {
     /*padding-top: 15px;
     padding-bottom: 15px;*/
+    padding: 15px 15px;
     line-height: 20px;
     color: #999;
 }
@@ -76,7 +92,7 @@ body {
 .top-nav>.open>a:hover,
 .top-nav>.open>a:focus {
     color: #fff;
-    background-color: #000;
+    background-color: #434e62;
 }
 
 .top-nav>.open>.dropdown-menu {
@@ -93,6 +109,13 @@ body {
 
 .top-nav>.open>.dropdown-menu>li>a {
     white-space: normal;
+}
+
+.dropdown-menu>li>a:hover,
+.dropdown-menu>li>a:focus {
+    color: white;
+    text-decoration: none;
+    background-color: #434e62;
 }
 
 ul.message-dropdown {
@@ -126,7 +149,7 @@ ul.alert-dropdown {
 @media(min-width:768px) {
     .side-nav {
         position: fixed;
-        top: 51px;
+        top: 61px;
         left: 200px;
         width: 200px;
         margin-left: -200px;
@@ -139,14 +162,32 @@ ul.alert-dropdown {
         padding-bottom: 40px;
     }
     .side-nav>li>a {
+        border-left: 4px solid #344052;
         width: 200px;
     }
+     /*{
+        border-left: 4px solid #434e62;
+        color: white;
+        outline: none;
+        background-color: #434e62 !important;
+    }*/
     .side-nav li a:hover,
     .side-nav li a.active {
+        border-left: 4px solid #58b7f7;
+        color: white;
         outline: none;
-        background-color: #000 !important;
+        background-color: #434e62 !important;
     }
-
+    /*.side-nav li a.active:before {
+        content: '';
+        height: 50px;
+        width: 4px;
+        float: left;
+        background: #58b7f7;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }*/
 }
 
 .side-nav>li>ul {

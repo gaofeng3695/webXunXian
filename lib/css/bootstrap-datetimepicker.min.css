@@ -145,7 +145,7 @@
 
 .datetimepicker table tr td.old,
 .datetimepicker table tr td.new {
-    color: #999999;
+    /*color: #999999;*/
 }
 
 .datetimepicker table tr td.disabled,
@@ -361,7 +361,7 @@
 }
 
 .datetimepicker table tr td span.old {
-    color: #999999;
+    /*color: #999999;*/
 }
 
 .datetimepicker th.switch {

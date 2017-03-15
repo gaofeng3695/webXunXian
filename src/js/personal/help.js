@@ -182,3 +182,7 @@ function creatuuid() {
     var uuid = s.join("");
     return uuid;
 }
+
+$(".return").click(function() {
+    parent.location.href = '../../main.html';
+});

@@ -152,7 +152,8 @@ var Resize = new Class({
     },
     turnUp: function(e) {
         Css(this.obj, {
-            top: e.clientY + 'px',
+            // top: e.clientY + 'px',
+            top: 0 + 'px',
             height: this.original[3] - e.clientY + 'px'
         });
     },

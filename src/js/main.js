@@ -1,17 +1,11 @@
-$(document).ready(function() {
-    resizeMain();
+$(document).ready(function () {
     menuListListener();
     initPersonal(); //首次登录进来，进行初始化个人的基本信息
     routerObj.init()
 });
-var resizeMain = function() {
-    document.getElementById("page-wrapper").style.height = document.documentElement.clientHeight - 55 + 'px';
-}
-window.onresize = function() {
-    resizeMain();
-}
-var menuListListener = function() {
-    $(".nav.navbar-right.top-nav>li").on("click", function() {
+
+var menuListListener = function () {
+    $(".nav.navbar-right.top-nav>li").on("click", function () {
         var menuid = $(this).attr("menuid");
         switch (menuid) {
             /*case 'help':
@@ -26,71 +20,110 @@ var menuListListener = function() {
     });
 }
 
-var loadRelativePage = function(_url) {
-        document.getElementById("page-wrapper").src = _url;
-        var $domArr = $('.side-nav li a');
-        $domArr.removeClass('active');
-        for (var i = 0; i < $domArr.length; i++) {
-            var _this = $domArr[i];
-            if (_this.hash === location.hash) {
-                //console.log($(_this))
-                $(_this).addClass('active');
-                return;
-            }
+var loadRelativePage = function (_url) {
+    document.getElementById("page-wrapper").src = _url;
+    var $domArr = $('.side-nav li a');
+    $domArr.removeClass('active');
+    for (var i = 0; i < $domArr.length; i++) {
+        var _this = $domArr[i];
+        if (_this.hash === location.hash) {
+            //console.log($(_this))
+            $(_this).addClass('active');
+            return;
         }
     }
-    /*进行个人信息初始化 */
-var initPersonal = function() {
-        var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
-        $(".userName").text(userBo.userName);
-        if (userBo.profile_photo != null && userBo.profile_photo != "") {
-            $(".person-img").attr('src', "/cloudlink-core-file/file/getImageBySize?fileId=" + userBo.profile_photo + "&viewModel=fill&width=500&hight=500");
-        }
+}
+/*进行个人信息初始化 */
+var initPersonal = function () {
+    var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
+    $(".userName").text(userBo.userName);
+    if (userBo.profilePhoto != null && userBo.profilePhoto != "") {
+        $(".person-img").attr('src', "/cloudlink-core-file/file/getImageBySize?fileId=" + userBo.profilePhoto + "&viewModel=fill&width=500&hight=500");
     }
-    /* 前端路由模块 */
+}
+/* 前端路由模块 */
 var routerObj = {
     router: null,
-    init: function() {
+    init: function () {
         var that = this;
         that.router = Router({
-            '/index': function() {
+            '/index': function () {
                 loadRelativePage("/src/html/index.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击首页');
+                }
             },
-            '/event': function() {
+            '/event': function () {
                 loadRelativePage("/src/html/event.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击事件管理');
+                }
             },
-            '/task': function() {
+            '/task': function () {
                 loadRelativePage("/src/html/task.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击任务管理');
+                }
             },
-            '/track': function() {
+            '/track': function () {
                 loadRelativePage("/src/html/track.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击巡线记录');
+                }
             },
-            '/map': function() {
+            '/map': function () {
                 loadRelativePage("/src/html/map.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击一张图');
+                }
             },
-            '/equipment': function() {
+            '/equipment': function () {
                 loadRelativePage("/src/html/none.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击设备管理');
+                }
             },
-            '/statistics': function() {
+            '/statistics': function () {
                 loadRelativePage("/src/html/none.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击统计分析');
+                }
             },
-            '/management': function() {
+            '/management': function () {
                 loadRelativePage("/src/html/none.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击企业管理');
+                }
             },
-            '/news': function() {
+            '/news': function () {
                 loadRelativePage("/src/html/none.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击消息中心');
+                }
             },
-            '/personal': function() {
+            '/personal': function () {
                 loadRelativePage("/src/html/personal.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击个人资料');
+                }
             },
-            '/updatepass': function() {
+            '/updatepass': function () {
                 loadRelativePage("/src/html/forgetPassword.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击修改密码');
+                }
             },
-            '/setLogin': function() {
+            '/setLogin': function () {
                 loadRelativePage("/src/html/setLogin.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击登陆设置');
+                }
             },
-            '/help': function() {
+            '/help': function () {
                 loadRelativePage("/src/html/help.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击帮助中心');
+                }
             }
         });
         that.router.init('/index');

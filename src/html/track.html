@@ -20,15 +20,15 @@
             <div class="top">
                 <div class="row search_title">
                     <div class="col-lg-6 col-xs-12 btn_wrapper">
-                        <div class="col-xs-6" data-class="date">
-                            <div class="item col-xs-4" data-value="day">今天</div>
-                            <div class="item col-xs-4" data-value="week">本周</div>
-                            <div class="item col-xs-4" data-value="month">本月</div>
-                        </div>
                         <div class="col-xs-6" data-class="status">
                             <div class="item col-xs-4" data-value="1,0">全部</div>
                             <div class="item col-xs-4" data-value="1">有事件</div>
                             <div class="item col-xs-4" data-value="0">无事件</div>
+                        </div>
+                        <div class="col-xs-6" data-class="date">
+                            <div class="item col-xs-4" data-value="day">今天</div>
+                            <div class="item col-xs-4" data-value="week">本周</div>
+                            <div class="item col-xs-4" data-value="month">本月</div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xs-12 right_wrapper">
@@ -151,7 +151,7 @@
                             <tr>
                                 <td class="key bg">巡线总时(小时)</td>
                                 <td class="value wholeTime">--</td>
-                                <td class="key bg">巡线里程(km)</td>
+                                <td class="key bg">巡线里程(公里)</td>
                                 <td class="value distance">--</td>
                             </tr>
                         </table>
@@ -194,7 +194,6 @@
                                 <td class="else_desc"></td>
                             </tr>
                         </table>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -205,7 +204,6 @@
         </div>
     </div>
     <!--details end-->
-
     <div id="gf_people" class="modal big_modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -225,7 +223,6 @@
             </div>
         </div>
     </div>
-
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
     <script src="/lib/js/jquery.ztree.all.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
@@ -235,9 +232,8 @@
     <script src="/src/js/common/common.js"></script>
     <script src="/src/js/common/bootstrap.modal.alert.js"></script>
     <script src="/src/js/common/html5-storage.js"></script>
+    <script src="/src/js/common/zhuge.js"></script>
     <script src="/src/js/track.js"></script>
-
-
 </body>
 
 </html>

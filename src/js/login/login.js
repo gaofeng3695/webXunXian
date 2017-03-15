@@ -3,7 +3,7 @@
     nameImg1: "url(src/images/loginImg/nameImg1.png)",
     passwordImg: "url(src/images/loginImg/password1.png)",
     passwordImg1: "url(src/images/loginImg/password.png)",
-    focus: function(obj, imgSrc) {
+    focus: function (obj, imgSrc) {
         obj.css({
             background: "#ECF7FF",
             border: "1px solid #5EB6F9"
@@ -12,7 +12,7 @@
         obj.find('.common').css("border-left", "1px solid #5EB6F9");
         obj.find('.bg').css("background-image", imgSrc);
     },
-    blur: function(obj, imgSrc) {
+    blur: function (obj, imgSrc) {
         obj.css({
             background: "#fff",
             border: "1px solid #bbb"
@@ -22,20 +22,20 @@
         obj.find('.bg').css("background-image", imgSrc);
     }
 }
-$(".name input").focus(function() {
+$(".name input").focus(function () {
     Obj.focus($(".name"), Obj.nameImg);
-}).blur(function() {
+}).blur(function () {
     Obj.blur($(".name"), Obj.nameImg1);
 });
-$(".password input").focus(function() {
+$(".password input").focus(function () {
     Obj.focus($(".password"), Obj.passwordImg);
-}).blur(function() {
+}).blur(function () {
     Obj.blur($(".password"), Obj.passwordImg1);
 })
 var passwordVal = null;
 var nameVal = null;
 //确认登录
-$('.btn').click(function() {
+$('.btn').click(function () {
     nameVal = $(".name input").val().trim();
     passwordVal = MD5($(".password input").val().trim());
     var phoneReg = /^1\d{10}$/;
@@ -54,7 +54,6 @@ $('.btn').click(function() {
         $('.hidkuai1 span').text('');
         $('.hidkuai2 span').text('');
         accountNumber();
-
     }
 });
 // 验证手机号是否注册接口开始
@@ -68,10 +67,16 @@ function accountNumber() {
         contentType: "application/json",
         data: _data,
         dataType: "json",
-        success: function(data, status) {
+        success: function (data, status) {
             var res = data.rows.isExist;
             if (res == 0) {
                 $('.hidkuai1 span').text('账号未注册');
+                if (zhugeSwitch == 1) {
+                    zhuge.track('登陆失败', {
+                        '手机号': nameVal,
+                        '原因': '账号未注册'
+                    });
+                }
                 return false;
             } else {
                 requestData();
@@ -93,7 +98,7 @@ function requestData() {
         contentType: "application/json",
         data: JSON.stringify(_data),
         dataType: "json",
-        success: function(data) {
+        success: function (data) {
             var success = data.success;
             if (success == 1) {
                 var row = data.rows;
@@ -105,10 +110,22 @@ function requestData() {
             } else {
                 if (data.code == "U01") {
                     $('.hidkuai2 span').text('用户名和密码不一致');
+                    if (zhugeSwitch == 1) {
+                        zhuge.track('登陆失败', {
+                            '手机号': nameVal,
+                            '原因': '用户名和密码不一致'
+                        });
+                    }
                     return;
                 }
                 if (data.code == "U02") {
                     $('.hidkuai2 span').text('该用户未注册');
+                    if (zhugeSwitch == 1) {
+                        zhuge.track('登陆失败', {
+                            '手机号': nameVal,
+                            '原因': '该用户未注册'
+                        });
+                    }
                     return;
                 }
                 if (data.code == "U03") {
@@ -130,7 +147,7 @@ function requestData() {
             }
 
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);
@@ -148,7 +165,7 @@ function getDefaultEnterpriseId(_userId) {
             userId: _userId
         }),
         dataType: "json",
-        success: function(data) {
+        success: function (data) {
             var success = data.success;
             if (success == 1) {
                 // alert(JSON.stringify(data));
@@ -163,7 +180,7 @@ function getDefaultEnterpriseId(_userId) {
                 }
             }
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);
@@ -183,7 +200,7 @@ function joinDefaultEnterprise(_enterpriseId) {
             enterpriseId: _enterpriseId
         }),
         dataType: "json",
-        success: function(data) {
+        success: function (data) {
             // alert(JSON.stringify(data));
             var success = data.success;
             if (success == 1) {
@@ -192,33 +209,82 @@ function joinDefaultEnterprise(_enterpriseId) {
                 lsObj.setLocalStorage('token', token);
                 lsObj.setLocalStorage('userBo', JSON.stringify(row[0]));
                 lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
+                if (zhugeSwitch == 1) {
+                    zhugeIdentify(row[0]);
+                    zhuge.track('登陆成功');
+                }
                 location.href = 'main.html';
             } else {
                 switch (data.code) {
                     case "400":
                         $('.hidkuai2 span').text('服务异常');
+                        if (zhugeSwitch == 1) {
+                            zhuge.track('登陆失败', {
+                                '手机号': _userBo.mobileNum,
+                                '原因': '服务异常'
+                            });
+                        }
                         break;
                     case "401":
                         $('.hidkuai2 span').text('参数异常');
+                        if (zhugeSwitch == 1) {
+                            zhuge.track('登陆失败', {
+                                '手机号': _userBo.mobileNum,
+                                '原因': '参数异常'
+                            });
+                        }
                         break;
                     case "E01":
                         $('.hidkuai2 span').text('您的账户已被该企业冻结');
+                        if (zhugeSwitch == 1) {
+                            zhuge.track('登陆失败', {
+                                '手机号': _userBo.mobileNum,
+                                '原因': '您的账户已被该企业冻结'
+                            });
+                        }
                         break;
                     case "E02":
                         $('.hidkuai2 span').text('您的账户已被该企业移除');
+                        if (zhugeSwitch == 1) {
+                            zhuge.track('登陆失败', {
+                                '手机号': _userBo.mobileNum,
+                                '原因': '您的账户已被该企业移除'
+                            });
+                        }
                         break;
                     case "E03":
                         $('.hidkuai2 span').text('该企业不存在');
+                        if (zhugeSwitch == 1) {
+                            zhuge.track('登陆失败', {
+                                '手机号': _userBo.mobileNum,
+                                '原因': '该企业不存在'
+                            });
+                        }
                         break;
                     default:
                         break;
                 }
             }
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);
         }
+    });
+}
+
+
+function zhugeIdentify(_userBo) {
+    zhuge.identify(_userBo.objectId, {
+        name: _userBo.userName,
+        gender: _userBo.sex,
+        age: _userBo.age,
+        email: _userBo.email,
+        qq: _userBo.qq,
+        weixin: _userBo.wechat,
+        'mobile': _userBo.mobileNum,
+        '企业名称': _userBo.enterpriseName == null ? "" : _userBo.enterpriseName,
+        '部门名称': _userBo.orgName == null ? "" : _userBo.orgName
     });
 }

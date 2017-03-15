@@ -57,7 +57,11 @@
           })
       }
       // 短信验证码校验接口调用开始
-      var _data = { "sendNum": mobileNum, "sendMode": 1, "verifyCode": SMScodeval };
+      var _data = {
+          "sendNum": mobileNum,
+          "sendMode": 1,
+          "verifyCode": SMScodeval
+      };
       $.ajax({
           type: "GET",
           url: "/cloudlink-core-framework/login/checkVerifyCode",
@@ -65,7 +69,6 @@
           data: _data,
           dataType: "json",
           success: function(data, status) {
-              //   alert("人家好着呢")
               var success = data.success;
               if (success == 1) {
                   $('.top img').attr('src', '/src/images/enrollImg/2.png')
@@ -79,6 +82,9 @@
                   d = false;
                   g = false;
                   f = false;
+                  if (zhugeSwitch == 1) {
+                      zhuge.track('注册填写手机信息完成');
+                  }
               } else {
                   $('.SMScodeMsg').css({
                       display: 'block'
@@ -143,6 +149,9 @@
       f = false;
       g = false;
       h = false;
+      if (zhugeSwitch == 1) {
+          zhuge.track('注册信息完善完成');
+      }
   });
   $('.btn3').click(function() {
       var mobileNum = $('.phone').val().trim();
@@ -187,7 +196,14 @@
           })
       }
       // 注册接口调用开始
-      var _data = { "mobileNum": mobileNum, "userName": userName, "password": password, "enterpriseName": enterpriseName, "enterpriseScale": Scale, "roleIds": Role };
+      var _data = {
+          "mobileNum": mobileNum,
+          "userName": userName,
+          "password": password,
+          "enterpriseName": enterpriseName,
+          "enterpriseScale": Scale,
+          "roleIds": Role
+      };
       //var _userBo = JSON.parse(lsObj.getLocalStorage('userBo'));
       $.ajax({
           url: "/cloudlink-core-framework/login/registAndLogin",
@@ -205,8 +221,15 @@
                   lsObj.setLocalStorage('token', token);
                   lsObj.setLocalStorage('userBo', JSON.stringify(row[0]));
                   lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
+                  if (zhugeSwitch == 1) {
+                      zhugeIdentify(row[0]);
+                      zhuge.track('注册完成并登陆成功');
+                  }
               } else {
                   xxwsWindowObj.xxwsAlert("注册失败");
+                  if (zhugeSwitch == 1) {
+                      zhuge.track('注册失败');
+                  }
                   // xxwsWindowObj.xxwsAlert("注册失败");
               }
 
@@ -249,7 +272,9 @@
               display: 'none'
           });
           // 手机号是否注册过接口调用开始
-          var _data = { "registNum": val };
+          var _data = {
+              "registNum": val
+          };
           $.ajax({
               url: "/cloudlink-core-framework/login/isExist",
               type: "GET",
@@ -302,12 +327,9 @@
   //图片验证
   $('.imgCode').blur(function() {
       var val = $(this).val().trim();
-      var imgReg = new RegExp(imgStr, "i");
+      var imgReg = new RegExp("^" + imgStr + "$", "gi");
+      console.log(imgReg)
       if (val == '' || val == null) {
-          // $('.imgMeg').css({
-          //     display: 'block'
-          // });
-          // $('.imgMeg span').text('图片验证码不能为空');
           f = false;
           return;
       } else if (!imgReg.test(val)) {
@@ -326,7 +348,6 @@
                   background: '#49CB86'
               })
           }
-
           f = true;
       }
   });
@@ -334,10 +355,6 @@
   $('.SMScode').blur(function() {
       var val = $(this).val().trim();
       if (val == "" || val == null) {
-          // $('.SMScodeMsg').css({
-          //     display: 'block'
-          // });
-          // $('.SMScodeMsg span').text('短信验证码不能为空');
           d = false;
           return;
       } else {
@@ -367,6 +384,7 @@
           return;
       }
       $('.imgCode').blur();
+      console.log("aaaaaaaaa")
       if (!f || g || !e) {
           return;
       }
@@ -378,7 +396,11 @@
       f = false;
       //ajax发送手机号，接受验证码
       var number = $('.phone').val();
-      var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
+      var _data = {
+          "sendNum": number,
+          "sendMode": 1,
+          "useMode": 3
+      }
       $.ajax({
           url: "/cloudlink-core-framework/login/getVerifyCode",
           type: "GET",
@@ -524,7 +546,9 @@
               display: 'none'
           });
           // 验证企业名称是否存在接口调用开始
-          var _data = { "enterpriseName": val };
+          var _data = {
+              "enterpriseName": val
+          };
           $.ajax({
               url: "/cloudlink-core-framework/enterprise/isExist",
               type: "POST",
@@ -564,3 +588,18 @@
           $('.jumpTo').text(a);
       }, 1000)
   };
+
+
+  function zhugeIdentify(_userBo) {
+      zhuge.identify(_userBo.objectId, {
+          name: _userBo.userName,
+          gender: _userBo.sex,
+          age: _userBo.age,
+          email: _userBo.email,
+          qq: _userBo.qq,
+          weixin: _userBo.wechat,
+          'mobile': _userBo.mobileNum,
+          '企业名称': _userBo.enterpriseName == null ? "" : _userBo.enterpriseName,
+          '部门名称': _userBo.orgName == null ? "" : _userBo.orgName
+      });
+  }

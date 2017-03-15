@@ -119,13 +119,28 @@ var trackObj = {
         /* 导出数据 */
         $('#export_all').click(function () {
             that.requestOutput(0);
+            if (zhugeSwitch == 1) {
+                zhuge.track('导出巡检记录', {
+                    'action': '导出全部'
+                });
+            }
         });
         $('#export_choice').click(function () {
             that.requestOutput(2);
+            if (zhugeSwitch == 1) {
+                zhuge.track('导出巡检记录', {
+                    'action': '导出已选'
+                });
+            }
         });
         /* 模态框导出数据 */
         $('#modal_output').click(function () {
             that.requestOutput(1, that.sCurrentTrackId);
+            if (zhugeSwitch == 1) {
+                zhuge.track('导出巡检记录', {
+                    'action': '模态框导出'
+                });
+            }
         });
     },
     bindPeopleEvent: function () {
@@ -237,7 +252,7 @@ var trackObj = {
     refreshTable: function () {
         var that = this;
         that.querryObj.keyword = that.$searchInput.val();
-        that.querryObj.pageNum = '1';/**/
+        that.querryObj.pageNum = '1'; /**/
         $('#gf_table').bootstrapTable('refreshOptions', {
             pageNumber: +that.querryObj.pageNum,
             pageSize: +that.querryObj.pageSize,
@@ -285,14 +300,14 @@ var trackObj = {
         var date = new Date(aDate[0], (+aDate[1]) - 1, aDate[2]);
         var cDay = date.getChinaDay();
         var sBeginTime = date.Format('yyyy年MM月dd日') + '&nbsp;&nbsp;&nbsp;' + '星期' + cDay;
-        $('#gf_detail .beginTime_title').html(sBeginTime)
-        $('#gf_detail .orgName').html(obj.orgName)
-        $('#gf_detail .inspectorName').html(obj.inspectorName)
-        $('#gf_detail .eventCount').html(obj.eventCount)
-        $('#gf_detail .beginTime').html(obj.beginTime)
-        $('#gf_detail .endTime').html(obj.endTime)
-        $('#gf_detail .wholeTime').html(obj.wholeTime)
-        $('#gf_detail .distance').html(obj.distance)
+        $('#gf_detail .beginTime_title').html(sBeginTime);
+        $('#gf_detail .orgName').html(obj.orgName);
+        $('#gf_detail .inspectorName').html(obj.inspectorName);
+        $('#gf_detail .eventCount').html(obj.eventCount);
+        $('#gf_detail .beginTime').html(obj.beginTime);
+        $('#gf_detail .endTime').html(obj.endTime);
+        $('#gf_detail .wholeTime').html(obj.wholeTime);
+        $('#gf_detail .distance').html((obj.distance / 1000).toFixed(2));
         var aHappen = $('#gf_detail .happen');
         var aNone = $('#gf_detail .none');
         var aDesc = $('#gf_detail .event_desc');
@@ -306,7 +321,6 @@ var trackObj = {
             }
         });
         setTimeout(function () {
-            console.log(123);
             $('#details_content').scrollTop(0)
         }, 1000)
 
@@ -442,77 +456,83 @@ var trackObj = {
             },*/
             //表格的列
             columns: [{
-                field: 'state', //域值
-                checkbox: true, //复选框
-                align: 'center',
-                valign: 'middle',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '5%',
-            }, {
-                field: 'name', //域值
-                title: '巡线编号', //标题
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '15%',
-                editable: true,
-            }, {
-                field: 'beginTime', //域值
-                title: '开始时间', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '15%',
-                editable: true,
-            }, {
-                field: 'endTime', //域值
-                title: '结束时间', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '15%',
-                editable: true,
-            }, {
-                field: 'inspectorName', //域值
-                title: '巡线人', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'wholeTime', //域值
-                title: '巡线总时长', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'distance', //域值
-                title: '巡线里程', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'eventCount', //域值
-                title: '事件上报', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: true, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'operate',
-                title: '操作',
-                align: 'center',
-                events: that.tabelEventObj(),
-                width: '10%',
-                formatter: that.table_operateFormatter
-            }]
+                    field: 'state', //域值
+                    checkbox: true, //复选框
+                    align: 'center',
+                    valign: 'middle',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '5%',
+                }, {
+                    field: 'name', //域值
+                    title: '巡线编号', //标题
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: true,
+                }, {
+                    field: 'beginTime', //域值
+                    title: '开始时间', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: true,
+                }, {
+                    field: 'endTime', //域值
+                    title: '结束时间', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '15%',
+                    editable: true,
+                }, {
+                    field: 'inspectorName', //域值
+                    title: '巡线人', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '10%',
+                    editable: true,
+                }, {
+                    field: 'wholeTime', //域值
+                    title: '巡线总时长', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '10%',
+                    editable: true,
+                }, {
+                    field: 'distance', //域值
+                    title: '巡线里程（公里）', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '10%',
+                    editable: true,
+                    formatter: function (value, row, index) {
+                        return (value / 1000).toFixed(2);
+                    }
+                },
+                {
+                    field: 'eventCount', //域值
+                    title: '事件上报', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: true, //启用排序
+                    width: '10%',
+                    editable: true,
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: that.tabelEventObj(),
+                    width: '10%',
+                    formatter: that.table_operateFormatter
+                }
+            ]
         });
         that.table_bindEvent();
     },
@@ -541,7 +561,7 @@ var trackObj = {
             '<a class="see" href="javascript:void(0)" title="查看">',
             '<i class="glyphicon glyphicon-eye-open"></i>',
             '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
-            '<a class="out" href="javascript:void(0)" title="查看">',
+            '<a class="out" href="javascript:void(0)" title="导出">',
             '<i class="glyphicon glyphicon-new-window"></i>',
             '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
         ].join('');

@@ -9,6 +9,12 @@ $(function() {
         }, 0);
     });
 
+    $(document).on('hidden.bs.modal', '.modal', function(event) {
+        if ($('.modal:visible').length > 0) {
+            $("body").addClass("modal-open");
+        }
+    });
+
     //上传图片-点击事件
     $(".addImg").click(function() {
         var imgNum = $(".feedback_img_list").find(".feedback_images").length;

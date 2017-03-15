@@ -1,12 +1,12 @@
 $(function() {
-    initUser(); //进行个人资料的查找
+    getNewUserBo(); //进行服务获取最新的userBo
 });
 var personalImg_fileId = null; //进行存储头像的文件ID
 var upload_fileId = null;
 /*初始化个人资料基本信息 */
 function initUser() {
     token = lsObj.getLocalStorage('token');
-    user = JSON.parse(lsObj.getLocalStorage("userBo"));
+    var user = JSON.parse(lsObj.getLocalStorage('userBo'));
     if (user.userName != "" && user.userName != null) {
         $("#name").val(user.userName);
     }
@@ -35,9 +35,10 @@ function initUser() {
         $("#email").val(user.email);
     }
     // /*初始化图像 */
-    if (user.profile_photo != "" && user.profile_photo != null) {
-        personalImg_fileId = user.profile_photo;
+    if (user.profilePhoto != "" && user.profilePhoto != null) {
+        personalImg_fileId = user.profilePhoto;
         var path = "/cloudlink-core-file/file/getImageBySize?fileId=" + personalImg_fileId + "&viewModel=fill&width=500&hight=500";
+        // alert(path);
         $('#userImg').attr('src', path);
         $('#userImg').attr('alt', '预览');
     }
@@ -55,6 +56,27 @@ function initUser() {
             $('#userImg').removeAttr('alt');
             window.URL.revokeObjectURL(this.src); //图片加载后，释放object URL
         };
+    });
+}
+/*获取新的userBo */
+function getNewUserBo() {
+    var _olduser = JSON.parse(lsObj.getLocalStorage("userBo"));
+    $.ajax({
+        type: "GET",
+        url: "/cloudlink-core-framework/user/getById?objectId=" + _olduser.objectId + "&token=" + lsObj.getLocalStorage('token') + "&enterpriseId=" + _olduser.enterpriseId,
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data) {
+            if (data.success == 1) {
+                /*此处针对BO进行重新存储*/
+                lsObj.setLocalStorage("userBo", JSON.stringify(data.rows[0]));
+                initUser();
+                parent.initPersonal(); //调用父级方法，进行主页内容的修改
+            } else {
+                initUser();
+                parent.initPersonal(); //调用父级方法，进行主页内容的修改
+            }
+        }
     });
 }
 /*上传图片*/
@@ -89,7 +111,6 @@ function upload_Img() {
             var result = data.success;
             if (result == 1) {
                 updateUserBoImg();
-
             } else {
                 xxwsWindowObj.xxwsAlert("当前网络不稳定，请稍候重试");
             }
@@ -138,7 +159,7 @@ function base_personal() {
         }
     }
     if (upload_fileId != null && upload_fileId != "") {
-        _updateUserBo.profile_photo = upload_fileId;
+        _updateUserBo.profilePhoto = upload_fileId;
         _data.profile_photo = upload_fileId;
     }
     /*点击进行个人资料信息的验证 */
@@ -168,23 +189,21 @@ function base_personal() {
 }
 
 function deleteAnduploadImg() {
-    var _data = {
-            "businessId": JSON.parse(lsObj.getLocalStorage("userBo")).objectId,
-            "bizType": 'pic',
-            "fileId": personalImg_fileId
-        }
-        /*进行文件的删除*/
-    $.ajax({
-        type: "POST",
-        url: "/cloudlink-core-file/attachment/deleteByBizIdAndBizAttrAndFileId?token=" + lsObj.getLocalStorage('token'),
-        contentType: "application/json",
-        data: JSON.stringify(_data),
+    /*进行文件的删除*/
+    var user = JSON.parse(lsObj.getLocalStorage("userBo"));
+    var token = lsObj.getLocalStorage('token');
+    var fileId = $('input[type="file"]').attr('id');
+    $.ajaxFileUpload({
+        url: "/cloudlink-core-file/attachment/update?businessId=" + user.objectId + "&bizType=pic&token=" + lsObj.getLocalStorage('token') + "&fileId=" + personalImg_fileId,
+        secureuri: false,
+        fileElementId: fileId, //上传input的id
         dataType: "json",
+        type: "POST",
+        async: false,
         success: function(data) {
             if (data.success == 1) {
-                upload_Img();
-            } else {
-                xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
+                upload_fileId = data.rows[0].fileId; //返回来的fileid
+                base_personal();
             }
         }
     });
@@ -212,35 +231,6 @@ function updateUserBoImg() {
             }
         }
     });
-    // var partURL = "cloudlink-core-file/attachment/getFileIdListByBizIdAndBizAttr?businessId=" + userBo.objectId + "&bizType=pic";
-    // jasHttpRequest.jasHttpGet(partURL, function(id, state, dbSource) {
-    //     if (dbSource == "") {
-    //         baseOperation.alertToast("网关异常，请稍候尝试。。。");
-    //         return;
-    //     }
-    //     var dataobj = JSON.parse(dbSource);
-    //     if (dataobj.rows.length > 0) {
-    //         fileid = dataobj.rows[0].fileId; //返回来的fileid
-    //         var partURL = "cloudlink-core-framework/user/update";
-    //         jasHttpRequest.jasHttpPost(partURL, function(id, state, data) {
-    //             if (data == "") {
-    //                 baseOperation.alertToast("网关异常，请稍候尝试。。。");
-    //                 return;
-    //             }
-    //             var obj = JSON.parse(data);
-    //             if (obj.success == 1) {
-    //                 userBo.profilePhoto = fileid;
-    //                 appcan.locStorage.remove("userBo");
-    //                 appcan.locStorage.setVal("userBo", userBo);
-    //                 appcan.window.evaluatePopoverScript("updateadmininformation", "content", 'relaodUserInfo()');
-    //                 baseOperation.closeToast();
-    //             }
-    //         }, JSON.stringify({
-    //             "objectId": userBo.objectId,
-    //             "profile_photo": fileid
-    //         }));
-    //     }
-    // });
 }
 
 function vialidForm() {

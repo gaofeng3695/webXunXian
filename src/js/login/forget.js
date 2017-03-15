@@ -66,7 +66,11 @@ $(".btn1").click(function() {
     // 短信验证码校验接口调用开始
     var number = $('.phone').val().trim();
     var verifyCode = $('.SMScode').val().trim();
-    var _data = { "sendNum": number, "sendMode": 1, "verifyCode": verifyCode };
+    var _data = {
+        "sendNum": number,
+        "sendMode": 1,
+        "verifyCode": verifyCode
+    };
     $.ajax({
         type: "GET",
         url: "/cloudlink-core-framework/login/checkVerifyCode",
@@ -135,7 +139,11 @@ $(".btn2").click(function() {
         return;
     }
     //重置密码
-    var _data = { "mobileNum": mobileNum, "password": password1, "verifyCode": verifyCode }
+    var _data = {
+        "mobileNum": mobileNum,
+        "password": password1,
+        "verifyCode": verifyCode
+    }
     $.ajax({
         url: "/cloudlink-core-framework/login/resetPassword",
         type: "POST",
@@ -143,13 +151,18 @@ $(".btn2").click(function() {
         data: JSON.stringify(_data),
         dataType: "json",
         success: function(data, status) {
-            $('.top img').attr('src', 'src/images/forgetImg/3.png')
+            $('.top img').attr('src', 'src/images/forgetImg/3.png');
             $('.bottom2').css({
                 display: "none"
-            })
+            });
             $('.bottom3').css({
                 display: "block"
-            })
+            });
+            if (zhugeSwitch == 1) {
+                zhuge.track('重置密码成功', {
+                    '手机号': mobileNum
+                });
+            }
         }
     });
 })
@@ -193,7 +206,9 @@ $('.phone').blur(function() {
                 display: 'none'
             });
             // 手机号是否注册过接口调用开始
-            var _data = { "registNum": val };
+            var _data = {
+                "registNum": val
+            };
             $.ajax({
                 url: "/cloudlink-core-framework/login/isExist",
                 type: "GET",
@@ -222,7 +237,7 @@ $('.phone').blur(function() {
     //图片验证
 $('.imgCode').blur(function() {
         var val = $(this).val().trim();
-        var imgReg = new RegExp(imgStr, "i");
+        var imgReg = new RegExp("^" + imgStr + "$", "gi");
         if (val == '' || val == null) {
             f = false;
             return;
@@ -292,7 +307,11 @@ $('.styles').click(function() {
         f = false;
         //ajax发送手机号，接受验证码
         var number = $('.phone').val().trim();
-        var _data = { "sendNum": number, "sendMode": 1, "useMode": 3 }
+        var _data = {
+            "sendNum": number,
+            "sendMode": 1,
+            "useMode": 3
+        }
         $.ajax({
             url: "/cloudlink-core-framework/login/getVerifyCode",
             type: "GET",

@@ -1,19 +1,20 @@
 #dispose {
-    top: 50%;
-    left: 50%;
-    width: 800px;
-    margin-left: -400px;
-    height: 600px;
-    margin-top: -300px;
+    // top: 50%;
+    // left: 50%;
+    // width: 800px;
+    // margin-left: -400px;
+    // height: 600px;
+    // margin-top: -300px;
     border-radius: 8px;
     font-size: 14px;
-    overflow: hidden;
+    // overflow: hidden;
     .modal-lg {
-        margin: 0;
-        width: 100%;
+        // margin: 0;
+        // width: 100%;
         .modal-content {
             width: 800px;
             height: 600px;
+            margin: 0 auto;
             .modal-header {
                 height: 40px;
                 background: #344052;
@@ -56,6 +57,9 @@
                             padding-right: 38px;
                             background: #fff;
                             cursor: pointer;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            overflow: hidden;
                         }
                         .form-control-feedback {
                             right: 20px;
@@ -231,11 +235,7 @@
 
 #stakeholder {
     @extend #dispose;
-    width: 500px;
-    margin-left: -250px;
     .modal-lg {
-        margin: 0;
-        width: 100%;
         .modal-content {
             width: 500px;
         }

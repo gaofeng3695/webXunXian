@@ -98,21 +98,26 @@ var detailsObj = {
 
 //录音文件的播放
 function playAmrAudio(_fileId, e) {
-    $.ajax({
-        type: 'GET',
-        url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + _fileId,
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data, status) {
-            var relativePath = data.rows[0].fileUrl.replace(/^.*?\:\/\/[^\/]+/, "");
-            fetchBlob('/audio' + relativePath, function(blob) {
-                playAmrBlob(blob);
-            });
+    if (!!window.ActiveXObject || "ActiveXObject" in window) {
+        xxwsWindowObj.xxwsAlert("IE浏览器暂不支持录音文件的播放，建议使用Chrome、Firefox等浏览器！");
+        return true;
+    } else {
+        $.ajax({
+            type: 'GET',
+            url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + _fileId,
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data, status) {
+                var relativePath = data.rows[0].fileUrl.replace(/^.*?\:\/\/[^\/]+/, "");
+                fetchBlob('/audio' + relativePath, function(blob) {
+                    playAmrBlob(blob);
+                });
 
-            $(e).attr("class", "audioPlayIn");
-            setTimeout(function() {
-                $(e).attr("class", "audioPlay");
-            }, 10000);
-        }
-    });
+                $(e).attr("class", "audioPlayIn");
+                setTimeout(function() {
+                    $(e).attr("class", "audioPlay");
+                }, 10000);
+            }
+        });
+    }
 }

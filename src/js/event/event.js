@@ -211,7 +211,7 @@ var eventObj = {
                 // console.log(JSON.stringify(data));
                 var peopleAllArr = data.rows;
                 if (data.success != 1) {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！')
+                    xxwsWindowObj.xxwsAlert('网络连接出错！');
                     return;
                 }
 
@@ -328,9 +328,9 @@ var mapAddObj = { //上报事件地图
             type: BMAP_NAVIGATION_CONTROL_SMALL
         });
         //地图加载控件
-        this.$map.addControl(bottom_left_ScaleControl);
-        this.$map.addControl(bottom_right_navigation);
-        this.$map.addControl(new BMap.MapTypeControl());
+        // this.$map.addControl(bottom_left_ScaleControl);
+        // this.$map.addControl(bottom_right_navigation);
+        // this.$map.addControl(new BMap.MapTypeControl());
 
 
         var _this = this;
@@ -400,7 +400,7 @@ var addListenEventHandle = function() {
         if (selectedPointItems.length > 0) {
             mapObj.setPointsMarkerWithCenterPointAndZoomLevel(selectedPointItems);
         } else {
-            xxwsWindowObj.xxwsAlert("请选择地图展示的数据。");
+            xxwsWindowObj.xxwsAlert("请选择您要展示的信息！");
         }
     });
 
@@ -436,6 +436,11 @@ var addListenEventHandle = function() {
         setTimeout(function() {
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
         }, 0);
+    });
+    $(document).on('hidden.bs.modal', '.modal', function(event) {
+        if ($('.modal:visible').length > 0) {
+            $("body").addClass("modal-open");
+        }
     });
 }
 
@@ -489,10 +494,18 @@ var mapObj = {
         this.$bdMap.clearOverlays(); //清除地图上已经标注的点
 
         this.aCurrentPoints = [];
-        var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
+        //var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
         // xxwsWindowObj.xxwsAlert(JSON.stringify(maxPointAndMinPointObj));
-        var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
-        this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
+        //var centerPointAndZoomLevel = this.getCenterPointAndZoomLevel(maxPointAndMinPointObj.maxLon, maxPointAndMinPointObj.maxLat, maxPointAndMinPointObj.minLon, maxPointAndMinPointObj.minLat);
+        //this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点坐标和地图级别
+
+        //计算中心点及缩放的新方法
+        var arr = data.map(function(item, index, arr) {
+            return new BMap.Point(item.bdLon, item.bdLat);
+        });
+        this.$bdMap.setViewport(arr, {
+            zoomFactor: -1
+        });
         this.setPointsMarker(data);
     },
     //地图打点(多个点)
@@ -729,13 +742,19 @@ var searchObj = {
             }
             if (key === 'typeParent') {
                 if (obj[key] == '1') {
-                    that.renderActive({ "type": "4,5,6,7,8,9,10" });
+                    that.renderActive({
+                        "type": "4,5,6,7,8,9,10"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else if (obj[key] == '2') {
-                    that.renderActive({ "type": "11,12,13,14,15,16,17" });
+                    that.renderActive({
+                        "type": "11,12,13,14,15,16,17"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else if (obj[key] == '3') {
-                    that.renderActive({ "type": "18,19" });
+                    that.renderActive({
+                        "type": "18,19"
+                    });
                     $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
                 } else {
                     $(".item2_id").hide();
@@ -1048,7 +1067,9 @@ window.operateEvents = {
             $(this).find('i').attr("class", "active");
             mapObj.singlePointLocation(row);
         }
-        $('body,html').animate({ scrollTop: 0 }, 500);
+        $('body,html').animate({
+            scrollTop: 0
+        }, 500);
         return false;
     },
     //查看详情
@@ -1099,7 +1120,11 @@ var exportFileObj = {
         this.$exportAll.click(function() {
             _this.expoerObj.ids = '';
             _this.expoerCondition();
-            console.log(_this.expoerObj)
+            if (zhugeSwitch == 1) {
+                zhuge.track('导出事件列表', {
+                    'action': '导出全部'
+                });
+            }
         });
         this.$exportChoice.click(function() {
             var selectionsData = $('#table').bootstrapTable('getSelections');
@@ -1115,7 +1140,11 @@ var exportFileObj = {
 
                 _this.expoerCondition();
 
-                console.log(_this.expoerObj)
+                if (zhugeSwitch == 1) {
+                    zhuge.track('导出事件列表', {
+                        'action': '导出已选'
+                    });
+                }
             }
         });
     },
@@ -1138,7 +1167,9 @@ var exportFileObj = {
         this.downLoadFile(options);
     },
     downLoadFile: function(options) {
-        var config = $.extend(true, { method: 'post' }, options);
+        var config = $.extend(true, {
+            method: 'post'
+        }, options);
         var $iframe = $('<iframe id="down-file-iframe" />');
         var $form = $('<form target="down-file-iframe" method="' + config.method + '" />');
         $form.attr('action', config.url);

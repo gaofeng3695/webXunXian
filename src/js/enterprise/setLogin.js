@@ -145,7 +145,7 @@ function joinDefaultEnterprise(_enterpriseId) {
                 var token = data.token;
                 lsObj.setLocalStorage('token', token);
                 lsObj.setLocalStorage('userBo', JSON.stringify(row[0]));
-                lsObj.setLocalStorage('timeOut', new Date().getTime() + (0.1 * 60 * 60 * 1000));
+                lsObj.setLocalStorage('timeOut', new Date().getTime() + (23 * 60 * 60 * 1000));
                 parent.location.href = '../../main.html';
             } else {
                 switch (data.code) {

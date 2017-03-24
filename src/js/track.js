@@ -559,10 +559,10 @@ var trackObj = {
     table_operateFormatter: function (value, row, index) {
         return [
             '<a class="see" href="javascript:void(0)" title="查看">',
-            '<i class="glyphicon glyphicon-eye-open"></i>',
+            '<i class=""></i>',
             '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
             '<a class="out" href="javascript:void(0)" title="导出">',
-            '<i class="glyphicon glyphicon-new-window"></i>',
+            '<i class=""></i>',
             '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
         ].join('');
     },

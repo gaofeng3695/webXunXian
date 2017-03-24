@@ -29,9 +29,11 @@ html {
         // margin: auto;
         // background: red;
         position: absolute;
-        top: 30%;
+        top: 40%;
         left: 50%;
-        transform: translate(-50%, -30%);
+        margin-left: -380px;
+        margin-top: -255px;
+        // transform: translate(-50%, -30%);
         .title {
             width: 760px;
             height: 40px;
@@ -136,9 +138,9 @@ html {
         font-size: 14px;
         color: #666;
         position: absolute;
-        left: 50%;
+        // left: 50%;
         bottom: 30px;
-        transform: translateX(-50%);
+        // transform: translateX(-50%);
         span {
             vertical-align: middle;
             font-size: 26px;

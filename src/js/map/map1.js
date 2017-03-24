@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
     eventObj.init(); //事件信息初始化
     inspectObj.init(); //巡检信息初始化
     tabObj.init(); //左上角tab操作对象
@@ -28,13 +28,13 @@ var eventObj = {
         "pageSize": 100 //每页记录数
     },
     // $distance: $(".distance"), //测距离
-    init: function () {
+    init: function() {
         var _this = this;
         //初始化获取事件信息
         this.getEventData();
 
         //事件点的开关
-        this.$eventBtn.click(function () {
+        this.$eventBtn.click(function() {
             if ($(this).hasClass("active")) {
                 _this.closeEvent();
             } else {
@@ -42,45 +42,45 @@ var eventObj = {
             }
         });
         //关闭事件详情窗口
-        this.$eventClosed.click(function () {
+        this.$eventClosed.click(function() {
             $(".event_list").hide();
             for (var i = 0; i < _this.eventPoints.length; i++) {
                 _this.eventPoints[i].value.setAnimation();
             }
         });
         //点击搜索
-        this.$searchEvent.click(function () {
+        this.$searchEvent.click(function() {
             var querry = _this.$searchEventText.val().trim();
             _this.searchData(querry);
         });
 
         //事件列表点击查看详情
-        $("#_event .event").on("click", "li", function () {
+        $("#_event .event").on("click", "li", function() {
             var eventId = $(this).find("input[type=hidden]").val();
             _this.eventTabListClick(eventId);
             // console.log($(this).find("input[type=hidden]").val());
         });
         //左上角事件tab关闭
-        this.$tabEventClosed.click(function () {
+        this.$tabEventClosed.click(function() {
             inspectObj.resetInspect();
             _this.resetevent();
         });
     },
-    closeEvent: function () {
+    closeEvent: function() {
         this.$eventBtn.removeClass("active");
         this.removePoints();
         this.$eventInformation.hide();
     },
-    openEvent: function () {
+    openEvent: function() {
         this.$eventBtn.addClass("active");
         this.addPoints();
     },
-    assignmentPoints: function () { //初始化事件点信息
+    assignmentPoints: function() { //初始化事件点信息
         for (var i = 0; i < this.eventPoints.length; i++) {
             this.eventStartPoints[i] = this.eventPoints[i];
         }
     },
-    setEventPointsMarker: function (data) { //设置地图事件点
+    setEventPointsMarker: function(data) { //设置地图事件点
         // mapObj.$bdMap.clearOverlays(); //清除地图上已经标注的点
         //清空事件点
         // debugger;
@@ -122,14 +122,14 @@ var eventObj = {
                 'value': markers
             });
             //添加点击事件
-            markers.addEventListener("click", function (e) {
+            markers.addEventListener("click", function(e) {
                 _this.eventPointClick(e);
             });
         }
         this.addPoints();
 
     },
-    eventPointClick: function (e) { //事件标注点的点击事件
+    eventPointClick: function(e) { //事件标注点的点击事件
         var _this = this;
         // debugger;
         for (var i = 0; i < this.eventPoints.length; i++) {
@@ -147,7 +147,7 @@ var eventObj = {
             }
         }
     },
-    eventTabListClick: function (eventId) { //事件列表点击事件
+    eventTabListClick: function(eventId) { //事件列表点击事件
         var _this = this;
         this.addPoints();
         for (var i = 0; i < inspectObj.inspectPoints.length; i++) {
@@ -163,7 +163,7 @@ var eventObj = {
         this.getEventDetails(eventId);
         this.$eventBtn.addClass("active");
     },
-    setEventTab: function (data) { //事件列表
+    setEventTab: function(data) { //事件列表
         this.$eventBtn.addClass("active");
         $("#_event .event ul").html("");
         var txt = null;
@@ -191,13 +191,13 @@ var eventObj = {
         }
 
     },
-    eventInit: function () { //事件初始化获取需要数据
+    eventInit: function() { //事件初始化获取需要数据
         var leng = this._eventData.rows.length;
         $(".eventAll").text(leng);
         this.assignmentPoints();
         this.setEventTab(this._eventData.rows);
     },
-    searchData: function (querry) { //模糊查询的结果
+    searchData: function(querry) { //模糊查询的结果
         var querryArr = jsonFuzzyQuery(this._eventData.rows, querry, "fullTypeName,inspectorName,occurrenceTime,address");
         // console.log(querryArr);
         this.setEventPointsMarker(querryArr);
@@ -206,7 +206,7 @@ var eventObj = {
         mapObj.setPointsMarkerWithCenterPointAndZoomLevel(querryArr);
         this.$eventBtn.addClass("active");
     },
-    resetevent: function () { //重置事件信息
+    resetevent: function() { //重置事件信息
         this.$eventInformation.hide();
         this.$searchEventText.val("");
         this.setEventPointsMarker(this._eventData.rows);
@@ -214,7 +214,7 @@ var eventObj = {
         mapObj.setPointsMarkerWithCenterPointAndZoomLevel(this._eventData.rows);
         this.$eventBtn.addClass("active");
     },
-    getEventData: function () { //获取所有未处理的事件
+    getEventData: function() { //获取所有未处理的事件
         var _this = this;
         $.ajax({
             type: 'POST',
@@ -222,7 +222,7 @@ var eventObj = {
             contentType: "application/json",
             data: JSON.stringify(_this.eventConditionObj),
             dataType: 'json',
-            success: function (data, status) {
+            success: function(data, status) {
                 _this._eventData = data;
                 _this.eventInit();
                 eventObj.setEventPointsMarker(_this._eventData.rows);
@@ -230,7 +230,7 @@ var eventObj = {
             }
         })
     },
-    getEventDetails: function (eventId) { //根据事件id获取事件详情
+    getEventDetails: function(eventId) { //根据事件id获取事件详情
         var _this = this;
         inspectObj.$inspectInformation.hide();
         _this.$eventInformation.show();
@@ -239,11 +239,11 @@ var eventObj = {
             url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 var msg = data.rows;
                 // console.log(msg[0]);
                 var images = msg[0].pic;
-                $(".eventpic_list").html(''); //初始化的时候，将图片进行清空
+                $(".eventpic_list ul").html(''); //初始化的时候，将图片进行清空
                 $(".event_code").text(msg[0].eventCode);
                 $(".event_type").text(msg[0].fullTypeName); //事件类型
                 $(".report_man").text(msg[0].inspectorName); //上报人
@@ -255,12 +255,12 @@ var eventObj = {
                 $(".pic_des").html("");
                 if (images.length > 0) {
                     for (var i = 0; i < images.length; i++) {
-                        pic_scr += '<img class="show_pic" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=64&hight=64" id="imagesPic' + i + '" alt=""/>';
+                        pic_scr += '<li><img data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=64&hight=64" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/></li>';
                     }
                 } else {
                     $(".pic_des").html("无");
                 }
-                $(".eventpic_list").append(pic_scr);
+                $(".eventpic_list ul").append(pic_scr);
                 $(".event_audio_list").html("");
                 if (msg[0].audio.length == 0) {
                     $(".event_audio_list").html("无");
@@ -271,12 +271,12 @@ var eventObj = {
             }
         });
     },
-    addPoints: function () { //添加事件点
+    addPoints: function() { //添加事件点
         for (var i = 0; i < this.eventPoints.length; i++) {
             mapObj.$bdMap.addOverlay(this.eventPoints[i].value);
         }
     },
-    removePoints: function () { //删除事件点
+    removePoints: function() { //删除事件点
         for (var i = 0; i < this.eventPoints.length; i++) {
             mapObj.$bdMap.removeOverlay(this.eventPoints[i].value);
         }
@@ -318,7 +318,7 @@ var inspectObj = {
         "pageSize": 100 //每页记录数
     },
     inspectSearchObj: {}, //搜索巡检请求的参数
-    init: function () {
+    init: function() {
         var _this = this;
         this.getInspectData();
         this.getNewestData();
@@ -326,13 +326,13 @@ var inspectObj = {
         this.bindDateDiyEvent();
         this.getCurrentTime();
         //点击搜索
-        this.$search.click(function () {
+        this.$search.click(function() {
             var querry = _this.$searchText.val().trim();
             _this.searchData(querry);
         });
 
         //巡检点的开关
-        this.$inspectBtn.click(function () {
+        this.$inspectBtn.click(function() {
             if ($(this).hasClass("active")) {
                 _this.closeInspect();
             } else {
@@ -341,7 +341,7 @@ var inspectObj = {
         });
 
         //事件列表点击查看详情
-        $("#people .people").on("click", "li", function () {
+        $("#people .people").on("click", "li", function() {
             var inspectId = $(this).find("input[name=inspect_id]").val();
             var isOnline = $(this).find("input[name=is_online]").val();
             _this.inspectTabListClick(inspectId, isOnline);
@@ -349,7 +349,7 @@ var inspectObj = {
         });
 
         //关闭人员详情窗口
-        this.$inspectClosed.click(function () {
+        this.$inspectClosed.click(function() {
             _this.$inspectInformation.hide();
             for (var i = 0; i < _this.inspectPoints.length; i++) {
                 _this.inspectPoints[i].value.setAnimation();
@@ -357,26 +357,26 @@ var inspectObj = {
         });
 
         //左上角人员tab关闭
-        this.$tabInspectClosed.click(function () {
+        this.$tabInspectClosed.click(function() {
             _this.resetInspect();
             eventObj.resetevent();
         });
     },
-    closeInspect: function () {
+    closeInspect: function() {
         this.$inspectBtn.removeClass("active");
         this.removePoints();
         this.$inspectInformation.hide();
     },
-    openInspect: function () {
+    openInspect: function() {
         this.$inspectBtn.addClass("active");
         this.addPoints();
     },
-    assignmentPoints: function () { //初始化在线巡检员信息
+    assignmentPoints: function() { //初始化在线巡检员信息
         for (var i = 0; i < this.inspectPoints.length; i++) {
             this.inspectStartPoints[i] = this.inspectPoints[i];
         }
     },
-    setInspectPointsMarker: function (data) { //巡检人员添加设置标注点
+    setInspectPointsMarker: function(data) { //巡检人员添加设置标注点
         this.removePoints();
         var _this = this;
         var myIcons = null;
@@ -402,13 +402,13 @@ var inspectObj = {
                 "isOnline": data[i].isOnline
             });
             //添加点击事件
-            markers.addEventListener("click", function (e) {
+            markers.addEventListener("click", function(e) {
                 _this.inspectPointClick(e);
             });
         }
         this.addPoints();
     },
-    inspectPointClick: function (e) { //巡检人员标注点的点击事件
+    inspectPointClick: function(e) { //巡检人员标注点的点击事件
         var _this = this;
         for (var i = 0; i < eventObj.eventPoints.length; i++) {
             eventObj.eventPoints[i].value.setAnimation();
@@ -425,16 +425,16 @@ var inspectObj = {
             }
         }
     },
-    inspectTabListClick: function (inspectId, isOnline) { //事件列表点击事件
+    inspectTabListClick: function(inspectId, isOnline) { //事件列表点击事件
         var _this = this;
         // mapObj.$bdMap.clearO
         playerObj.close_player();
         this.addPoints();
         this.$inspectBtn.addClass("active");
         //巡检员信息
-        var peopleLeave = Enumerable.From(this._inspectData.rows).Where(function (x) {
+        var peopleLeave = Enumerable.From(this._inspectData.rows).Where(function(x) {
             return x.objectId == inspectId
-        }).Select(function (x) {
+        }).Select(function(x) {
             return x
         }).ToArray();
         var isExist = 0;
@@ -468,22 +468,22 @@ var inspectObj = {
                 "isOnline": peopleLeave[0].isOnline
             });
             //添加点击事件
-            _marker.addEventListener("click", function (e) {
+            _marker.addEventListener("click", function(e) {
                 _this.inspectPointClick(e);
             });
         }
     },
-    inspectOnline: function (data) { //巡检在线人员标地图点
+    inspectOnline: function(data) { //巡检在线人员标地图点
         //所有的人员
-        var peopelAllArr = Enumerable.From(data).Where(function (x) {
+        var peopelAllArr = Enumerable.From(data).Where(function(x) {
             return x.isOnline !== -1
-        }).Select(function (x) {
+        }).Select(function(x) {
             return x
         }).ToArray();
         //在线人员
-        var onlineArr = Enumerable.From(data).Where(function (x) {
+        var onlineArr = Enumerable.From(data).Where(function(x) {
             return x.isOnline == 1
-        }).Select(function (x) {
+        }).Select(function(x) {
             return x
         }).ToArray();
         $(".inspectOnline").text(onlineArr.length);
@@ -491,11 +491,11 @@ var inspectObj = {
         //mapObj.setPointsMarkerWithCenterPointAndZoomLevel(onlineArr);
         this.setInspectPointsMarker(peopelAllArr);
     },
-    inspectInit: function () { //巡检初始化获取需要数据
+    inspectInit: function() { //巡检初始化获取需要数据
         //巡线人员数组
-        var patrolArr = Enumerable.From(this._inspectData.rows).Where(function (x) {
+        var patrolArr = Enumerable.From(this._inspectData.rows).Where(function(x) {
             return x.roleNames == '巡检工作人员'
-        }).Select(function (x) {
+        }).Select(function(x) {
             return x
         }).ToArray();
         $(".patrolNum").text(patrolArr.length);
@@ -503,7 +503,7 @@ var inspectObj = {
         this.setInspectTab(this._inspectData.rows);
         // console.log(patrolArr.length);
     },
-    searchData: function (querry) { //模糊查询的结果
+    searchData: function(querry) { //模糊查询的结果
         var querryArr = jsonFuzzyQuery(this._inspectData.rows, querry, "userName,orgName,roleNames");
         // console.log(querryArr);
         this.inspectOnline(querryArr);
@@ -512,7 +512,7 @@ var inspectObj = {
         mapObj.setPointsMarkerWithCenterPointAndZoomLevel(querryArr);
         this.$inspectBtn.addClass("active");
     },
-    resetInspect: function () { //重置事件信息
+    resetInspect: function() { //重置事件信息
         this.$inspectInformation.hide();
         this.$searchText.val("");
         this.inspectOnline(this._inspectData.rows);
@@ -520,7 +520,7 @@ var inspectObj = {
         // mapObj.setPointsMarkerWithCenterPointAndZoomLevel(this._inspectData.rows);
         this.$inspectBtn.addClass("active");
     },
-    setInspectTab: function (data) { //人员信息列表
+    setInspectTab: function(data) { //人员信息列表
         $("#people .people ul").html("");
         var txt = null;
         try {
@@ -546,14 +546,14 @@ var inspectObj = {
         }
 
     },
-    getInspectData: function () { //获取巡检数据
+    getInspectData: function() { //获取巡检数据
         var _this = this;
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-event/inspectionMonitor/getListAuthority?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data, status) {
+            success: function(data, status) {
                 _this._inspectData = data;
                 console.log(_this._inspectData);
                 _this.inspectInit();
@@ -561,20 +561,20 @@ var inspectObj = {
             }
         })
     },
-    getNewestData: function () { //获取当前最新数据
+    getNewestData: function() { //获取当前最新数据
         var _this = this;
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-analysis/patrolStatistical/getPatrolStatisticsData?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data, status) {
+            success: function(data, status) {
                 $(".eventNew").text(data.rows[0].eventCountToday);
                 // console.log(data);
             }
         })
     },
-    getInspectDetails: function (inspectId, isOnline) { //根据巡检id获取事件详情
+    getInspectDetails: function(inspectId, isOnline) { //根据巡检id获取巡检员详情
         var _this = this;
         eventObj.$eventInformation.hide();
         _this.$inspectInformation.show();
@@ -583,7 +583,7 @@ var inspectObj = {
             url: "/cloudlink-inspection-analysis/mapStatistical/getUserStatistics?token=" + lsObj.getLocalStorage('token') + "&inspectorId=" + inspectId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 // 头像
                 if (data.rows[0].profilePhoto != null && data.rows[0].profilePhoto != "") {
                     $(".inspectImg").attr('src', "/cloudlink-core-file/file/getImageBySize?fileId=" + data.rows[0].profilePhoto + "&viewModel=fill&width=500&hight=500");
@@ -621,17 +621,17 @@ var inspectObj = {
             }
         });
     },
-    addPoints: function () { //添加巡检点
+    addPoints: function() { //添加巡检点
         for (var i = 0; i < this.inspectPoints.length; i++) {
             mapObj.$bdMap.addOverlay(this.inspectPoints[i].value);
         }
     },
-    removePoints: function () { //删除巡检点
+    removePoints: function() { //删除巡检点
         for (var i = 0; i < this.inspectPoints.length; i++) {
             mapObj.$bdMap.removeOverlay(this.inspectPoints[i].value);
         }
     },
-    getEventPageList: function () { //加载人员下的事件记录分页信息
+    getEventPageList: function() { //加载人员下的事件记录分页信息
         var _this = this;
         $.ajax({
             type: 'POST',
@@ -639,7 +639,7 @@ var inspectObj = {
             contentType: "application/json",
             data: JSON.stringify(_this.eventSearchObj),
             dataType: 'json',
-            success: function (data, status) {
+            success: function(data, status) {
                 // console.log(data);
                 if (data.success == 1) {
                     $(".eventListPage").html("");
@@ -667,7 +667,7 @@ var inspectObj = {
         })
 
     },
-    getInspectionPageList: function () { //加载人员下的巡检记录事件分页信息
+    getInspectionPageList: function() { //加载人员下的巡检记录事件分页信息
         var _this = this;
         $.ajax({
             type: 'POST',
@@ -675,7 +675,7 @@ var inspectObj = {
             contentType: "application/json",
             data: JSON.stringify(_this.inspectSearchObj),
             dataType: 'json',
-            success: function (data, status) {
+            success: function(data, status) {
                 if (data.success == 1) {
                     var peopleHtml = "";
                     var inspectStatus = null;
@@ -723,7 +723,7 @@ var inspectObj = {
             }
         });
     },
-    getAllDetails: function (inspectId, isOnline) { //获取人员图标的所有信息
+    getAllDetails: function(inspectId, isOnline) { //获取人员图标的所有信息
         $.extend(this.inspectSearchObj, this.inspectParameterObj);
         this.inspectSearchObj.userIds = inspectId;
         $.extend(this.eventSearchObj, this.eventParameterObj);
@@ -734,14 +734,14 @@ var inspectObj = {
         this.searchlineByDate(); //确定根据时间进行巡线记录的搜索
         this.getInspectionPageList();
     },
-    eventSearchList: function () { //搜索查询事件列表
+    eventSearchList: function() { //搜索查询事件列表
         this.getEventPageList();
     },
-    InspectSearchList: function () { //搜索查询巡检列表
+    InspectSearchList: function() { //搜索查询巡检列表
         this.getInspectionPageList();
     },
-    eventInspectLinkage: function () { //事件与巡检相关的联动
-        $(".panel-heading").click(function () {
+    eventInspectLinkage: function() { //事件与巡检相关的联动
+        $(".panel-heading").click(function() {
             var thisDiv = $(this).closest(".panel-default");
             var otherDiv = $(this).closest(".panel-default").siblings(".panel-default");
             if (thisDiv.find("div.collapse").is(":hidden")) {
@@ -755,13 +755,13 @@ var inspectObj = {
             otherDiv.find(".panel-heading span").removeClass('glyphicon-menu-up').addClass("glyphicon-menu-down");
         })
     },
-    bindDateDiyEvent: function () { //时间控件
+    bindDateDiyEvent: function() { //时间控件
         $("#datetimeStartEvent").datetimepicker({
             format: 'yyyy-mm-dd',
             minView: 'month',
             language: 'zh-CN',
             autoclose: true,
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeStartEvent").datetimepicker("setEndDate", $("#datetimeEndEvent").val());
         });
         $("#datetimeEndEvent").datetimepicker({
@@ -769,7 +769,7 @@ var inspectObj = {
             minView: 'month',
             language: 'zh-CN',
             autoclose: true,
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeEndEvent").datetimepicker("setStartDate", $("#datetimeStartEvent").val());
             $("#datetimeEndEvent").datetimepicker("setEndDate", new Date());
         });
@@ -779,7 +779,7 @@ var inspectObj = {
             minView: 'month',
             language: 'zh-CN',
             autoclose: true,
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeStartInspect").datetimepicker("setEndDate", $("#datetimeEndInspect").val());
         });
         $("#datetimeEndInspect").datetimepicker({
@@ -787,21 +787,21 @@ var inspectObj = {
             minView: 'month',
             language: 'zh-CN',
             autoclose: true,
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeEndInspect").datetimepicker("setStartDate", $("#datetimeStartInspect").val());
             $("#datetimeEndInspect").datetimepicker("setEndDate", new Date());
         });
     },
-    getCurrentTime: function () {
+    getCurrentTime: function() {
         var date = new Date().Format("yyyy-MM-dd");
         $("#datetimeStartInspect").val(date);
         $("#datetimeEndInspect").val(date);
         $("#datetimeStartEvent").val(date);
         $("#datetimeEndEvent").val(date);
     },
-    searchEventByDate: function () { //事件的时间控件搜索
+    searchEventByDate: function() { //事件的时间控件搜索
         var _this = this;
-        this.$eventDate.click(function () {
+        this.$eventDate.click(function() {
             var datetimeStartEvent = $("#datetimeStartEvent").val();
             var datetimeEndEvent = $("#datetimeEndEvent").val();
             _this.eventSearchObj.startDate = datetimeStartEvent;
@@ -809,9 +809,9 @@ var inspectObj = {
             _this.getEventPageList();
         });
     },
-    searchlineByDate: function () { //巡线的时间控件搜索
+    searchlineByDate: function() { //巡线的时间控件搜索
         var _this = this;
-        this.$lineDate.click(function () {
+        this.$lineDate.click(function() {
             var datetimeStartInspect = $("#datetimeStartInspect").val();
             var datetimeEndInspect = $("#datetimeEndInspect").val();
             _this.inspectSearchObj.startDate = datetimeStartInspect;
@@ -837,14 +837,14 @@ var tabObj = {
     tool: $('#tool'),
     closeBtn: $('.result_wrapper .close_btn'),
     currentTab: null,
-    init: function () {
+    init: function() {
         var that = this;
         that.bindEvent();
     },
-    bindEvent: function () {
+    bindEvent: function() {
         var that = this;
         // 切换Tab事件
-        that.tabsTitle.click(function () {
+        that.tabsTitle.click(function() {
             var s = $(this).attr("data-tab");
 
             if (s == "people") {
@@ -863,15 +863,15 @@ var tabObj = {
             $(this).removeClass('active');
         });
         //关闭tab事件
-        that.closeBtn.click(function () {
+        that.closeBtn.click(function() {
             that.closeTip();
         });
         //
     },
-    requestPeople: function () {
+    requestPeople: function() {
         var that = this;
     },
-    showTip: function (currentTab) {
+    showTip: function(currentTab) {
         var that = this;
         if (!currentTab) {
             return;
@@ -880,7 +880,7 @@ var tabObj = {
         that[currentTab].removeClass('hide');
         that.currentTab = currentTab;
     },
-    closeTip: function () {
+    closeTip: function() {
         // eventObj.resetevent();
         // inspectObj.resetInspect();
         var that = this;
@@ -901,26 +901,26 @@ function view_detail(e) {
 
 var taskDetailsObj = {
     _taskId: null,
-    init: function () {
+    init: function() {
         var _this = this;
     },
-    loadDetails: function (eventId) {
+    loadDetails: function(eventId) {
         $("#details").modal();
         this.loadEventDetails(eventId);
         this.loadTaskDetails(eventId);
     },
-    loadEventDetails: function (eventId) {
+    loadEventDetails: function(eventId) {
         var _this = this;
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 // debugger;
                 var msg = data.rows;
                 var images = msg[0].pic;
-                $(".event_pic").html("");
+                $(".event_pic ul").html("");
                 $(".eventCode").text(msg[0].eventCode);
                 $(".occurrenceTime").text(msg[0].occurrenceTime);
                 $(".fullTypeName").text(msg[0].fullTypeName);
@@ -937,22 +937,22 @@ var taskDetailsObj = {
 
                 var pic_scr = "";
                 for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<div class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</div>';
+                    pic_scr += '<li class="event_pic_list">' +
+                        '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                        '</li>';
                 }
-                $(".event_pic").append(pic_scr);
+                $(".event_pic ul").append(pic_scr);
             }
         });
     },
-    loadTaskDetails: function (taskId) {
+    loadTaskDetails: function(taskId) {
         //获取处置信息
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-task/dispose/getPageListByEventId?token=" + lsObj.getLocalStorage('token') + "&bizId=" + taskId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
 
                 if (data.rows[0].taskCode == "") {
                     $(".taskCode").text("无");
@@ -1014,7 +1014,7 @@ var taskDetailsObj = {
                                     '</div>' +
                                     '<div class="dispose_info">' +
                                     '<span class="info_l text-right">照片：</span>' +
-                                    '<div class="info_r taskImg_' + x + '"></div>' +
+                                    '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
                                     '</div></div></div>';
                                 $("#day_" + j).append(txtChild);
                                 //添加录音文件
@@ -1027,9 +1027,9 @@ var taskDetailsObj = {
                                 var picAll = msgAll[x].pic;
                                 var pic_scr = "";
                                 for (var n = 0; n < picAll.length; n++) {
-                                    pic_scr += '<div class="task_pic_list">' +
-                                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                        '</div>';
+                                    pic_scr += '<li class="task_pic_list">' +
+                                        '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
+                                        '</li>';
                                 }
                                 $(".taskImg_" + x).append(pic_scr);
                             }
@@ -1044,7 +1044,10 @@ var taskDetailsObj = {
     }
 }
 
-
+//查看大图
+function previewPicture(e) {
+    viewPicObj.viewPic(e);
+};
 //录音文件的播放
 function playAmrAudio(_fileId, e) {
     if (!!window.ActiveXObject || "ActiveXObject" in window) {
@@ -1056,14 +1059,14 @@ function playAmrAudio(_fileId, e) {
             url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + _fileId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 var relativePath = data.rows[0].fileUrl.replace(/^.*?\:\/\/[^\/]+/, "");
-                fetchBlob('/audio' + relativePath, function (blob) {
+                fetchBlob('/audio' + relativePath, function(blob) {
                     playAmrBlob(blob);
                 });
 
                 $(e).attr("class", "audioPlayIn");
-                setTimeout(function () {
+                setTimeout(function() {
                     $(e).attr("class", "audioPlay");
                 }, 10000);
             }

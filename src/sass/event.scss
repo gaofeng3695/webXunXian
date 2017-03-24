@@ -236,7 +236,6 @@
     // margin-left: -400px;
     // height: 600px;
     // margin-top: -300px;
-    border-radius: 8px;
     font-size: 14px;
     // overflow: hidden;
     .modal-lg {
@@ -246,6 +245,8 @@
             width: 800px;
             height: 600px;
             margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
             .modal-header {
                 height: 38px;
                 background: #344052;

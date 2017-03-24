@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
     //playerObj.play('c2f52b27-a888-40b7-824d-3abc7c056281');
 })
 
@@ -210,7 +210,7 @@ var playerObj = {
     nextPt: null, //下一个轨迹点
     rate: 30, //播放速度比率
 
-    init: function () {
+    init: function() {
         var that = this;
         this.timer = null; //定时器
         this.nowTime = 0; //播放的时间进度
@@ -242,10 +242,10 @@ var playerObj = {
         mapObj.$bdMap.clearOverlays();
 
     },
-    bindEvent: function () {
+    bindEvent: function() {
         var that = this;
         /* 点击播放按钮 */
-        that.$btn_play[0].onclick = function () {
+        that.$btn_play[0].onclick = function() {
             if ($(this).hasClass('active')) {
                 if (that.nowTime >= that.allTime) {
                     that.nowTime = 0;
@@ -256,12 +256,12 @@ var playerObj = {
             that.setTimer();
         };
         /* 关闭播放器 */
-        that.$close.click(function () {
+        that.$close.click(function() {
             that.close_player();
             inspectObj.openInspect();
         });
         /* 选择播放速度 */
-        that.$speed.click(function () {
+        that.$speed.click(function() {
             var index = $(this).index();
             var aRate = [1, 30, 60, 120, 240];
             that.$speed.removeClass('active');
@@ -269,7 +269,7 @@ var playerObj = {
             that.rate = aRate[index - 1];
         });
         /* 点击时间轴事件 */
-        that.$mask_bar.on('click', function (e) {
+        that.$mask_bar.on('click', function(e) {
             //console.log(e.offsetX/that.lineLength*that.allTime);
             var e = e || event;
             that.nowTime = e.offsetX / that.lineLength * that.allTime;
@@ -278,12 +278,12 @@ var playerObj = {
             return false;
         });
         /* 移动进度按钮事件 */
-        that.$move_bar[0].onmousedown = function () {
+        that.$move_bar[0].onmousedown = function() {
                 var bool = that.$btn_play.hasClass('active');
                 this.ispause = bool;
                 that.setTimer();
                 this.onmousemove = null;
-                this.onmousemove = function (e) {
+                this.onmousemove = function(e) {
                     var e = e || event;
                     that.nowTime = Math.ceil(+that.$move_bar.css('left').slice(0, -2) + e.offsetX) / that.lineLength * that.allTime;
                     that.setCurrentPointByTime(that.nowTime + that.beginTime);
@@ -292,13 +292,13 @@ var playerObj = {
                 }
             }
             /* 取消移动按钮事件 */
-        that.$move_bar[0].onmouseup = that.$move_bar[0].onmouseout = function (e) {
+        that.$move_bar[0].onmouseup = that.$move_bar[0].onmouseout = function(e) {
             var e = e || event;
             this.onmousemove = null;
             return false;
         }
     },
-    render: function () {
+    render: function() {
         var that = this;
         //console.log(that.beginTime)
         var begin = new Date(that.beginTime).Format('yyyy.MM.dd');
@@ -312,7 +312,7 @@ var playerObj = {
 
         that.renderStick();
     },
-    renderStick: function () {
+    renderStick: function() {
         var that = this;
         var begin_time = new Date(that.beginTime).Format('HH:mm:ss');
         var end_time = new Date(that.endTime).Format('HH:mm:ss');
@@ -326,7 +326,7 @@ var playerObj = {
         that.$stick_bar.html(s);
         that.$time_mark.html(sTime);
     },
-    renderTimeLine: function () {
+    renderTimeLine: function() {
         var that = this;
         var rate = that.nowTime / that.allTime;
         rate = rate > 1 ? 1 : rate;
@@ -340,11 +340,11 @@ var playerObj = {
         _timeNow = _timeNow - 8 * 3600 * 1000;
         that.$rangeNow.html(new Date(_timeNow).Format('HH:mm:ss'));
     },
-    play: function (s, flag) {
+    play: function(s, flag) {
         var that = this;
         that.requestRoutePoint(s, flag);
     },
-    requestRoutePoint: function (s, flag) {
+    requestRoutePoint: function(s, flag) {
         var that = this;
         //var s = s ? s : 'c2f52b27-a888-40b7-824d-3abc7c056281';
         that.close_player();
@@ -357,7 +357,7 @@ var playerObj = {
                 inspRecordId: s
             }),
             dataType: "json",
-            success: function (data) {
+            success: function(data) {
                 //console.log(data);
                 if (data.success != 1) {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
@@ -378,13 +378,13 @@ var playerObj = {
                 that.movePerson(that.aData);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
     },
-    requestEventInfo: function (s) {
+    requestEventInfo: function(s) {
         var that = this;
         $.ajax({
             type: "POST",
@@ -401,7 +401,7 @@ var playerObj = {
                 "pageSize": 100 //每页记录数 固定为100
             }),
             dataType: "json",
-            success: function (data) {
+            success: function(data) {
                 //console.log(data);
                 if (data.success != 1) {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:-1');
@@ -415,17 +415,17 @@ var playerObj = {
                 //that.drawEventOnLine(aData);
             },
             statusCode: {
-                404: function () {
+                404: function() {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
                 }
             }
         });
     },
-    drawRoute: function (data, flag) {
+    drawRoute: function(data, flag) {
         // var obj = mapObj.getMaxPointAndMinPoint(data);
         // var level = mapObj.getCenterPointAndZoomLevel(obj.maxLon, obj.maxLat, obj.minLon, obj.minLat);
         // mapObj.$bdMap.centerAndZoom(level.centerPoint, level.zoomlevel);
-        var arr = data.map(function (item, index, arr) {
+        var arr = data.map(function(item, index, arr) {
             return new BMap.Point(item.bdLon, item.bdLat);
         });
         var level = mapObj.$bdMap.setViewport(arr, {
@@ -453,11 +453,11 @@ var playerObj = {
         }
         mapObj.$bdMap.addOverlay(polyline);
     },
-    drawEventOnLine: function (data) {
+    drawEventOnLine: function(data) {
         var that = this;
         var s = '';
         console.log(data)
-        data.forEach(function (item, index) {
+        data.forEach(function(item, index) {
             var l = that.getDateFromDateString(item.createTime).getTime();
             var rate = (l - that.beginTime) / that.allTime;
             rate = rate > 1 ? 1 : rate;
@@ -466,7 +466,7 @@ var playerObj = {
         });
         that.$event_line.html(s);
     },
-    movePerson: function (data) {
+    movePerson: function(data) {
         var that = this;
         that.personMarker = new BMap.Marker(new BMap.Point(data[0].bdLon, data[0].bdLat), {
             icon: new BMap.Icon("/src/images/map/icon_person.png", new BMap.Size(30, 42))
@@ -477,7 +477,7 @@ var playerObj = {
             //that.$btn_play.removeClass('active');
             //that.setTimer();
     },
-    setTimer: function (bool) {
+    setTimer: function(bool) {
         /*
          ** 传入true，开启定时器
          ** 不传或false，关闭定时器
@@ -492,7 +492,7 @@ var playerObj = {
             return;
         }
         that.$btn_play.removeClass('active');
-        that.timer = setInterval(function () {
+        that.timer = setInterval(function() {
             that.nowTime += 40 * that.rate;
             if (that.nowTime > that.allTime) {
                 that.$btn_play.addClass('active');
@@ -502,7 +502,7 @@ var playerObj = {
             that.renderTimeLine();
         }, 40);
     },
-    setCurrentScopeByTime: function (time) { //入参：毫秒时间点
+    setCurrentScopeByTime: function(time) { //入参：毫秒时间点
         var that = this;
         var a = that.aData;
         var l = a.length;
@@ -516,7 +516,7 @@ var playerObj = {
         that.lastPt = a[l - 1];
         that.nextPt = null;
     },
-    setCurrentPointByTime: function (time) { //入参：毫秒时间点
+    setCurrentPointByTime: function(time) { //入参：毫秒时间点
         var that = this;
         that.setCurrentScopeByTime(time);
         if (!that.nextPt) {
@@ -529,16 +529,18 @@ var playerObj = {
         var lon = that.lastPt.bdLon + (that.nextPt.bdLon - that.lastPt.bdLon) * rate;
         that.personMarker.setPosition(new BMap.Point(lon, lat));
     },
-    close_player: function (fn) {
+    close_player: function(fn) {
         var that = this;
         that.setTimer();
         mapObj.$bdMap.clearOverlays();
+        inspectObj.$inspectBtn.removeClass("active");
+        eventObj.$eventBtn.removeClass("active");
         $('.player_wrapper').css('display', 'none');
         if (Object.prototype.toString.call(fn) === '[object Function]') {
             fn();
         }
     },
-    getDateFromDateString: function (s) {
+    getDateFromDateString: function(s) {
         // s = '2015-01-01 12:14'
         var date = new Date();
         date.setFullYear(s.slice(0, 4));
@@ -554,20 +556,20 @@ var playerObj = {
 var searchObj = {
     $ul: $('.location ul'),
     $input: $('#location_search'),
-    init: function () {
+    init: function() {
         this.bindEvent();
     },
-    bindEvent: function () {
+    bindEvent: function() {
         var that = this;
         var ac = new BMap.Autocomplete({
             "input": "location_search",
             "location": mapObj.$bdMap,
-            "onSearchComplete": function (re) {
+            "onSearchComplete": function(re) {
                 //console.log(re)
-                    // ac.hide();
+                // ac.hide();
             }
         });
-        ac.addEventListener("onhighlight", function (e) { //鼠标放在下拉列表上的事件
+        ac.addEventListener("onhighlight", function(e) { //鼠标放在下拉列表上的事件
             var str = "";
             var _value = e.fromitem.value;
             var value = "";
@@ -585,19 +587,19 @@ var searchObj = {
             //G("searchResultPanel").innerHTML = str;
         });
         var myValue;
-        ac.addEventListener("onconfirm", function (e) { //鼠标点击下拉列表后的事件
+        ac.addEventListener("onconfirm", function(e) { //鼠标点击下拉列表后的事件
             var _value = e.item.value;
             myValue = _value.province + _value.city + _value.district + _value.street + _value.business;
             setPlace();
         });
 
         function setPlace() {
-            if(that.lastPoint){
+            if (that.lastPoint) {
                 mapObj.$bdMap.removeOverlay(that.lastPoint);
             }
             var local = new BMap.LocalSearch(mapObj.$bdMap, { //智能搜索
-                onSearchComplete: function(){
-                    if(!local.getResults().getPoi(0)){
+                onSearchComplete: function() {
+                    if (!local.getResults().getPoi(0)) {
                         xxwsWindowObj.xxwsAlert('未找到该点，请重新搜索')
                         return;
                     }
@@ -612,10 +614,10 @@ var searchObj = {
         }
 
     },
-    renderResult: function () {
+    renderResult: function() {
 
     }
 };
-$(function () {
+$(function() {
     searchObj.init();
 });

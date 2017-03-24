@@ -149,7 +149,6 @@
     // margin-left: -400px;
     // height: 600px;
     // margin-top: -300px;
-    border-radius: 8px;
     font-size: 14px;
     // overflow: hidden;
     .modal-lg {
@@ -159,6 +158,8 @@
             width: 800px;
             height: 600px;
             margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
             .modal-header {
                 height: 40px;
                 background: #344052;
@@ -274,12 +275,18 @@
                             }
                             .event_pic {
                                 overflow: hidden;
-                                .event_pic_list {
-                                    float: left;
-                                    border: 1px solid #f1f1f1;
-                                    background: #fff;
-                                    margin: 0 6px 10px 0;
-                                    cursor: pointer;
+                                ul {
+                                    padding: 0;
+                                    margin: 0;
+                                    list-style: none;
+                                    overflow: hidden;
+                                    li {
+                                        float: left;
+                                        border: 1px solid #f1f1f1;
+                                        background: #fff;
+                                        margin: 0 6px 10px 0;
+                                        cursor: pointer;
+                                    }
                                 }
                             }
                         }
@@ -373,13 +380,26 @@
                                             overflow: hidden;
                                             word-wrap: break-word;
                                             word-break: normal;
-                                            .task_pic_list {
-                                                float: left;
-                                                border: 1px solid #f1f1f1;
-                                                background: #fff;
-                                                margin: 0 6px 10px 0;
-                                                cursor: pointer;
+                                            ul {
+                                                padding: 0;
+                                                margin: 0;
+                                                list-style: none;
+                                                overflow: hidden;
+                                                li {
+                                                    float: left;
+                                                    border: 1px solid #f1f1f1;
+                                                    background: #fff;
+                                                    margin: 0 6px 10px 0;
+                                                    cursor: pointer;
+                                                }
                                             }
+                                            // .task_pic_list {
+                                            //     float: left;
+                                            //     border: 1px solid #f1f1f1;
+                                            //     background: #fff;
+                                            //     margin: 0 6px 10px 0;
+                                            //     cursor: pointer;
+                                            // }
                                             .audioPlay {
                                                 background: url(/src/images/task/play.png) no-repeat;
                                                 width: 82px;

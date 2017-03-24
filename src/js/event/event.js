@@ -944,6 +944,7 @@ function initTable() {
         // showColumns: true,  //显示内容下拉框
         showRefresh: true,
         pagination: true, //分页
+        striped: true,
         sidePagination: 'server', //分页方式：client客户端分页，server服务端分页（*）
         pageNumber: 1,
         pageSize: 10,

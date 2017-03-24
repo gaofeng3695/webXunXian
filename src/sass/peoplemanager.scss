@@ -1,0 +1,591 @@
+                    * {
+                        margin: 0px;
+                        padding: 0px;
+                    }
+                    
+                    #page-wrapper {
+                        background: #edf1f2;
+                        .container-fluid {
+                            overflow: hidden;
+                            background: #fff;
+                            padding-right: 15px;
+                            padding-left: 15px;
+                            margin: 20px 20px 0px 20px;
+                            .search_item_wrapper {
+                                height: 76px;
+                            }
+                            .content {
+                                overflow: hidden;
+                                .treeLeft {
+                                    width: 300px;
+                                    float: left;
+                                    border: 1px solid #ededed;
+                                    overflow-x: auto;
+                                    padding: 40px 10px 20px 10px;
+                                    .ztreeLeft {
+                                        padding: 0;
+                                        width: 100%;
+                                        padding-top: 20px;
+                                        li {
+                                            line-height: 26px;
+                                            a {
+                                                display: block;
+                                                height: 26px;
+                                                background: #f3f3f3;
+                                                margin-bottom: 10px;
+                                                color: #666;
+                                                white-space: nowrap;
+                                                overflow: hidden;
+                                                text-overflow: ellipsis;
+                                                padding-left: 10px;
+                                                &:hover {
+                                                    text-decoration: none;
+                                                }
+                                                &.curSelectedNode {
+                                                    background: #edf7ff;
+                                                    border: 1px solid #5ab7fc;
+                                                    height: 26px;
+                                                }
+                                            }
+                                            span {
+                                                font-size: 14px;
+                                                color: #666;
+                                            }
+                                            #organ_list_1_span {
+                                                color: #333;
+                                            }
+                                            span.button {
+                                                &.switch {
+                                                    width: 18px;
+                                                    height: 18px;
+                                                    float: right;
+                                                    margin-top: 3px;
+                                                }
+                                                &.noline_open,
+                                                &.bottom_open,
+                                                &.root_open,
+                                                &.center_open {
+                                                    background: url(/src/images/management/open.png) center no-repeat;
+                                                }
+                                                &.noline_close,
+                                                &.bottom_close,
+                                                &.root_close,
+                                                &.center_close {
+                                                    background: url(/src/images/management/close.png) center no-repeat;
+                                                }
+                                            }
+                                            ul {
+                                                padding: 0;
+                                                li {
+                                                    padding-left: 15px;
+                                                    overflow: hidden;
+                                                    background: url(/src/images/management/center.png) 5px 0px repeat-y;
+                                                    &:first-child {
+                                                        background: url(/src/images/management/start.png) 5px 13px no-repeat;
+                                                    }
+                                                    &:last-child {
+                                                        background: url(/src/images/management/end.png) 5px -23px no-repeat;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                .treeRight {
+                                    width: auto;
+                                    margin-left: 320px;
+                                    border: 1px solid #ededed;
+                                    margin-right: 20px;
+                                }
+                                .right_wrapper {
+                                    margin-top: 0px;
+                                }
+                                .search_wrapper {
+                                    margin-right: -50px;
+                                }
+                                #toolbar {
+                                    .export-all,
+                                    .inviteuser {
+                                        margin: 0 10px;
+                                        color: #53b5fc;
+                                        font-size: 14px;
+                                        cursor: pointer;
+                                    }
+                                }
+                            }
+                            #table {
+                                .th-inner {
+                                    text-align: center;
+                                }
+                                td {
+                                    height: 36px;
+                                    line-height: 36px;
+                                }
+                            }
+                        }
+                        .view {
+                            i {
+                                display: inline-block;
+                                width: 22px;
+                                height: 16px;
+                                margin-left: 10px;
+                                background: url(/src/images/event/look.png) no-repeat;
+                                vertical-align: middle;
+                                &:hover {
+                                    background: url(/src/images/event/look_h.png) no-repeat;
+                                }
+                            }
+                        }
+                        .inviter {
+                            i {
+                                display: inline-block;
+                                width: 22px;
+                                height: 16px;
+                                background: url(/src/images/enterprised/agininvite1.png) no-repeat;
+                                vertical-align: middle;
+                                &:hover {
+                                    background: url(/src/images/enterprised/agininvite.png) no-repeat;
+                                }
+                            }
+                        }
+                        .edituser {
+                            i {
+                                display: inline-block;
+                                width: 19px;
+                                height: 21px;
+                                background: url(/src/images/management/modify.png) no-repeat;
+                                vertical-align: middle;
+                                &:hover {
+                                    background: url(/src/images/enterprised/edit_h.png) no-repeat;
+                                }
+                            }
+                        }
+                        .remove {
+                            i {
+                                display: inline-block;
+                                width: 19px;
+                                height: 21px;
+                                background: url(/src/images/task/closed.png) no-repeat;
+                                vertical-align: middle;
+                                &:hover {
+                                    background: url(/src/images/task/closed_h.png) no-repeat;
+                                }
+                            }
+                        }
+                        .search_btn_right {
+                            right: 15px;
+                            position: absolute;
+                            height: 36px;
+                            color: white;
+                            background: #58b7f7;
+                            width: 80px;
+                            text-align: center;
+                            line-height: 36px;
+                            border-radius: 18px;
+                            float: left;
+                            cursor: pointer;
+                        }
+                    }
+                    
+                    button {
+                        background: #59b6fc;
+                        color: #fff;
+                        height: 30px;
+                        line-height: 30px;
+                        border: 1px solid transparent;
+                        border-radius: 4px;
+                        padding: 0px 5px;
+                        margin: 5px;
+                    }
+                    
+                    .departments,
+                    .editdepartment,
+                    {
+                        cursor: pointer;
+                        background: url(/src/images/common/icon_plus.png) no-repeat 240px;
+                    }
+                    
+                    //模态框打开的页面
+                    .cancelbtn {
+                        background: #fff;
+                        color: #666;
+                    }
+                    
+                    .frozebtn {
+                        background: #FBAD3E;
+                    }
+                    
+                    .removebtn {
+                        background: #FF3D29;
+                    }
+                    
+                    * {
+                        margin: 0px;
+                        padding: 0px;
+                    }
+                    
+                    .alignRight {
+                        text-align: right;
+                    }
+                    
+                    .mt25 {
+                        margin-top: 25px;
+                    }
+                    
+                    .mt50 {
+                        margin-top: 50px;
+                    }
+                    
+                    .mt80 {
+                        margin-top: 80px;
+                    }
+                    
+                    .pl16 {
+                        padding-left: 16px;
+                    }
+                    
+                    .rightDiv {
+                        img {
+                            width: 20px;
+                            height: 20px;
+                            margin-top: -5px;
+                        }
+                    }
+                    
+                    .ml39 {
+                        margin-left: 39px;
+                    }
+                    
+                    .ml65 {
+                        margin-left: 65px;
+                    }
+                    
+                    //编辑人员的样式
+                    .modal-lg {
+                        .modal-content {
+                            width: 890px;
+                            height: 610px;
+                            background: #E7E9ED;
+                            margin: 0 auto;
+                            .modal-header {
+                                width: 890px;
+                                height: 35px;
+                                background: #344052;
+                                color: #fff;
+                                margin: -1px;
+                                h3 {
+                                    height: 35px;
+                                    line-height: 35px;
+                                    font-size: 16px;
+                                    text-align: center;
+                                    margin: -15px;
+                                }
+                                a {
+                                    color: #fff;
+                                    margin-top: 6px;
+                                    margin-right: 10px;
+                                    font-weight: none;
+                                    opacity: 1;
+                                }
+                            }
+                            .modal-body {
+                                width: 850px;
+                                height: 490px;
+                                background: #fff;
+                                margin: 19px;
+                                .leftAndRight {
+                                    width: 800px;
+                                    height: 350px;
+                                    margin: 60px auto;
+                                    .peopleleft {
+                                        height: 335px;
+                                        margin-left: 25px;
+                                        float: left;
+                                        img {
+                                            width: 18px;
+                                            height: 18px;
+                                            margin-top: 5px;
+                                            margin-left: 5px;
+                                        }
+                                        .leftspanstyle {
+                                            width: 80px;
+                                            color: #666;
+                                            letter-spacing: 26px;
+                                            float: left;
+                                            line-height: 30px;
+                                        }
+                                        .leftinputstyle {
+                                            height: 30px;
+                                            border: 1px solid #ccc;
+                                            outline: none;
+                                            border-radius: 5px;
+                                            padding-left: 15px;
+                                            width: 265px;
+                                            float: left
+                                        }
+                                        .leftspan2style {
+                                            display: block;
+                                            color: red;
+                                            height: 25px;
+                                            clear: both;
+                                            margin-left: 40px;
+                                        }
+                                    }
+                                    .peopleright {
+                                        width: 370px;
+                                        height: 335px;
+                                        float: right;
+                                        .rightspanstyle {
+                                            color: #666;
+                                            letter-spacing: 26px;
+                                            float: left;
+                                            line-height: 30px;
+                                        }
+                                        .rightinputstyle {
+                                            width: 265px;
+                                            height: 30px;
+                                            border: 1px solid #ccc;
+                                            outline: none;
+                                            border-radius: 5px;
+                                            padding-left: 15px;
+                                        }
+                                        .leftspan2style {
+                                            display: block;
+                                            height: 25px;
+                                            color: red;
+                                            clear: both;
+                                            margin-left: 110px;
+                                        }
+                                    }
+                                }
+                            }
+                            .modal-footer {
+                                text-align: center;
+                                background: #344052;
+                                height: 50px;
+                                margin: -1px;
+                                button {
+                                    height: 36px;
+                                    border: none;
+                                    width: 120px;
+                                    margin: -9px 35px 0 30px;
+                                    font-size: 16px;
+                                }
+                                .submit {
+                                    background: #59b6fc;
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                    
+                    //邀请人员的样式
+                    .modal-lg {
+                        .modal-content2 {
+                            width: 730px;
+                            height: 545px;
+                            background: #E7E9ED;
+                            margin: 0 auto;
+                            .modal-header {
+                                height: 35px;
+                                background: #344052;
+                                color: #fff;
+                                h3 {
+                                    height: 35px;
+                                    line-height: 35px;
+                                    font-size: 16px;
+                                    text-align: center;
+                                    margin: -15px;
+                                }
+                                a {
+                                    color: #fff;
+                                    margin-top: 6px;
+                                    margin-right: 10px;
+                                    font-weight: none;
+                                    opacity: 1;
+                                }
+                            }
+                            .modal-body {
+                                width: 690px;
+                                height: 445px;
+                                background: #fff;
+                                margin: 10px 20px;
+                                .peopleleft {
+                                    width: 361px;
+                                    margin: 50px auto;
+                                    .leftspanstyle {
+                                        // display: inline-block;
+                                        // width: 70px;
+                                        color: #666;
+                                        letter-spacing: 26px;
+                                        // text-align: right;
+                                        // text-align: justify;
+                                        float: left;
+                                        line-height: 30px;
+                                        span {
+                                            display: block;
+                                            float: left;
+                                            color: red;
+                                            letter-spacing: 8px;
+                                            font-size: 18px;
+                                            line-height: 40px;
+                                        }
+                                    }
+                                    .leftinputstyle {
+                                        height: 30px;
+                                        border: 1px solid #ccc;
+                                        outline: none;
+                                        border-radius: 5px;
+                                        padding-left: 15px;
+                                        width: 265px;
+                                        // display: inline-block;
+                                        float: left;
+                                    }
+                                    .leftspan2style {
+                                        // display: block;
+                                        color: red;
+                                        // height: 25px;
+                                        // clear: both;
+                                        margin-left: 5px;
+                                    }
+                                }
+                            }
+                            .modal-footer {
+                                text-align: center;
+                                background: #344052;
+                                height: 50px;
+                                margin: -1px;
+                                button {
+                                    height: 36px;
+                                    border: none;
+                                    width: 120px;
+                                    margin: -9px 35px 0 30px;
+                                    font-size: 16px;
+                                }
+                                .submit {
+                                    background: #59b6fc;
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 查看人员详情
+                    .modal-content1 {
+                        width: 890px;
+                        height: 415px;
+                        background: #E7E9ED;
+                        margin: 0 auto;
+                        .modal-header {
+                            height: 35px;
+                            background: #344052;
+                            color: #fff;
+                            h3 {
+                                height: 35px;
+                                line-height: 35px;
+                                font-size: 16px;
+                                text-align: center;
+                                margin: -15px;
+                            }
+                            a {
+                                color: #fff;
+                                margin-top: 6px;
+                                margin-right: 10px;
+                                font-weight: none;
+                                opacity: 1;
+                            }
+                        }
+                        .modal-body {
+                            width: 850px;
+                            height: 230px;
+                            background: #fff;
+                            margin: 20px 20px 80px 20px;
+                            table {
+                                width: 410px;
+                                height: 200px;
+                                float: left;
+                                margin: 0 auto;
+                                border: 1px solid #ececec;
+                                tr {
+                                    border-bottom: 1px solid #ececec;
+                                }
+                                .font {
+                                    padding-left: 5px;
+                                }
+                                .bgwidth {
+                                    width: 125px;
+                                    letter-spacing: 8px;
+                                    height: 40px;
+                                    border-right: 1px solid #ececec;
+                                    background: #F7F7F7;
+                                    text-align: center;
+                                    line-height: 40px;
+                                }
+                            }
+                        }
+                        .modal-footer {
+                            text-align: center;
+                            background: #344052;
+                            height: 50px;
+                            button {
+                                height: 36px;
+                                border: none;
+                                width: 120px;
+                                margin: -9px 35px 0 30px;
+                                font-size: 16px;
+                            }
+                            .submit {
+                                background: #59b6fc;
+                                color: #fff;
+                            }
+                        }
+                    }
+                    
+                    // 部门选择
+                    .modal-content3 {
+                        width: 730px;
+                        height: 610px;
+                        background: #E7E9ED;
+                        margin: 0 auto;
+                        .modal-header {
+                            height: 35px;
+                            background: #344052;
+                            color: #fff;
+                            h3 {
+                                height: 40px;
+                                line-height: 40px;
+                                font-size: 16px;
+                                text-align: center;
+                                margin: -15px;
+                            }
+                            a {
+                                color: #fff;
+                                margin-top: 6px;
+                                margin-right: 10px;
+                                font-weight: none;
+                                opacity: 1;
+                            }
+                        }
+                        .modal-body {
+                            width: 690px;
+                            height: 506px;
+                            background: #fff;
+                            margin: 10px 20px;
+                        }
+                        .modal-footer {
+                            text-align: center;
+                            background: #344052;
+                            height: 50px;
+                            button {
+                                height: 36px;
+                                border: none;
+                                width: 120px;
+                                margin: -9px 35px 0 30px;
+                                font-size: 16px;
+                            }
+                            .submit {
+                                background: #59b6fc;
+                                color: #fff;
+                            }
+                        }
+                    }

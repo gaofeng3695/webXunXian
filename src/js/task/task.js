@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
     mapObj.init();
     // taskObj.init(); //填写处置信息
     initTable();
@@ -20,7 +20,7 @@ var mapObj = {
     $bdMap: new BMap.Map("task_map"), //创建百度地图实例
     $zoom: ["50", "100", "200", "500", "1000", "2000", "5000", "10000", "20000", "25000", "50000", "100000", "20000", "25000", "50000", "100000", "200000", "500000", "1000000", "2000000"],
     aCurrentPoints: [],
-    init: function () { //地图初始化方法
+    init: function() { //地图初始化方法
         var _this = this;
         this.$bdMap.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
         this.$bdMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
@@ -39,28 +39,28 @@ var mapObj = {
         this.$bdMap.addControl(new BMap.MapTypeControl());
 
         //地图的展开和收缩-点击事件
-        $(".bottom_btn span").click(function () {
+        $(".bottom_btn span").click(function() {
             _this.mapSwitch();
         });
     },
-    mapSwitch: function () { //地图展开、收缩的开关
+    mapSwitch: function() { //地图展开、收缩的开关
         if (this.$mapO.is(":hidden")) {
             this.show();
         } else {
             this.hide();
         }
     },
-    hide: function () {
+    hide: function() {
         this.$mapO.slideUp();
         this.$mapBtn.attr("class", "map_down");
     },
-    show: function () {
+    show: function() {
         this.$mapO.slideDown();
         this.$mapBtn.attr("class", "map_up");
         this.iconHide();
     },
     //地图打点并计算中心点及缩放等级
-    setPointsMarkerWithCenterPointAndZoomLevel: function (data) {
+    setPointsMarkerWithCenterPointAndZoomLevel: function(data) {
         this.$bdMap.clearOverlays(); //清除地图上已经标注的点
         //var maxPointAndMinPointObj = this.getMaxPointAndMinPoint(data); //计算当前数据中 最大的经纬度 及 最小的经纬度
         // xxwsWindowObj.xxwsAlert(JSON.stringify(maxPointAndMinPointObj));
@@ -68,7 +68,7 @@ var mapObj = {
         //this.$bdMap.centerAndZoom(centerPointAndZoomLevel.centerPoint, centerPointAndZoomLevel.zoomlevel); //设置中心点
 
         //计算中心点及缩放的新方法
-        var arr = data.map(function (item, index, arr) {
+        var arr = data.map(function(item, index, arr) {
             return new BMap.Point(item.bdLon, item.bdLat);
         });
         this.$bdMap.setViewport(arr, {
@@ -78,7 +78,7 @@ var mapObj = {
         this.setPointsMarker(data);
     },
     //地图打点(多个点)
-    setPointsMarker: function (data) {
+    setPointsMarker: function(data) {
         //this.$bdMap.clearOverlays(); //清除地图上已经标注的点
         var txts = null;
         var myIcons = null;
@@ -123,7 +123,7 @@ var mapObj = {
         }
     },
     ///获取max坐标和min坐标
-    getMaxPointAndMinPoint: function (_data) {
+    getMaxPointAndMinPoint: function(_data) {
         var _maxLon = 0,
             _maxLat = 0,
             _minLon = 999,
@@ -153,7 +153,7 @@ var mapObj = {
         return _obj;　　　　
     },
     //获取中心点及zoom级别
-    getCenterPointAndZoomLevel: function (maxLon, maxLat, minLon, minLat) {
+    getCenterPointAndZoomLevel: function(maxLon, maxLat, minLon, minLat) {
         var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A  
         var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B  
         var distance = this.$bdMap.getDistance(pointA, pointB).toFixed(1); //获取两点距离,保留小数点后两位
@@ -172,7 +172,7 @@ var mapObj = {
         _obj.centerPoint = _centerpoint;
         return _obj;
     },
-    singlePointLocation: function (selectedItem) {
+    singlePointLocation: function(selectedItem) {
         var isExist = 0;
         this.$bdMap.centerAndZoom(new BMap.Point(selectedItem.bdLon, selectedItem.bdLat), 18); //中心点跳转
 
@@ -226,14 +226,14 @@ var mapObj = {
         });
         this.addClickHandler(txts, _marker);
     },
-    addClickHandler: function (content, marker) {
+    addClickHandler: function(content, marker) {
         var _this = this;
-        marker.addEventListener("click", function (e) {
+        marker.addEventListener("click", function(e) {
             // xxwsWindowObj.xxwsAlert(content);
             _this.openInfo(content, e)
         });
     },
-    openInfo: function (content, e) {
+    openInfo: function(content, e) {
         var opts = {
             width: 250, // 信息窗口宽度
             height: 80, // 信息窗口高度
@@ -244,7 +244,7 @@ var mapObj = {
         var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象 
         mapObj.$bdMap.openInfoWindow(infoWindow, point); //开启信息窗口
     },
-    iconHide: function () { //隐藏百度图标与文字
+    iconHide: function() { //隐藏百度图标与文字
         $(".BMap_cpyCtrl.BMap_noprint.anchorBL,.anchorBL").hide();
         $(".anchorBL a").hide();
     }
@@ -280,12 +280,12 @@ var searchObj = {
         "date": "day",
         "typeParent": '0'
     },
-    init: function () {
+    init: function() {
         this.renderActive(); //初始化显示被选中
         this.bindEvent(); //监听事件
         this.bindDateDiyEvent(); //时间控件初始化
     },
-    renderActive: function (obj) { //被选中的样式
+    renderActive: function(obj) { //被选中的样式
         var that = this;
         if (!obj) {
             obj = that.activeObj;
@@ -323,10 +323,10 @@ var searchObj = {
             }
         }
     },
-    bindEvent: function () {
+    bindEvent: function() {
         var that = this;
         /* 选择条件 */
-        that.$items.click(function () {
+        that.$items.click(function() {
             var key = $(this).parent().attr("data-class");
             var value = $(this).attr("data-value");
 
@@ -346,20 +346,20 @@ var searchObj = {
         });
 
         /* 搜索关键词 */
-        $('#gf_Btn').click(function () {
+        $('#gf_Btn').click(function() {
             var s = $(this).parent().find('input').val();
             that.querryObj.keyword = s;
             that.refreshTable();
         });
         /* keyup事件 */
-        that.$searchInput.keypress(function (e) {
+        that.$searchInput.keypress(function(e) {
             if (e && e.keyCode === 13) { // enter 键
                 //that.querryObj.keyword = that.$searchInput.val();
                 that.refreshTable();
             }
         });
         /* 显示高级搜索 */
-        $('#search_more').click(function () {
+        $('#search_more').click(function() {
             if ($(this).hasClass('active')) {
                 $(this).removeClass('active');
                 $('.more_item_wrapper').slideUp();
@@ -369,7 +369,7 @@ var searchObj = {
             }
         });
         /* 清空搜索条件 */
-        $('#gf_reset_Btn').click(function () {
+        $('#gf_reset_Btn').click(function() {
 
 
             //请求数据还原到初始话
@@ -384,7 +384,7 @@ var searchObj = {
             that.refreshTable();
         });
         //自定义时间
-        $('#diyDateBtn').on('click', function () {
+        $('#diyDateBtn').on('click', function() {
             var s = that.$startDate.val();
             var e = that.$endDate.val();
             if (!s) {
@@ -403,7 +403,7 @@ var searchObj = {
             that.refreshTable();
         });
     },
-    setDate: function (value) {
+    setDate: function(value) {
         var that = this;
         switch (value) {
             case 'day':
@@ -426,7 +426,7 @@ var searchObj = {
                 that.querryObj.endDate = '';
         }
     },
-    setType: function (e) {
+    setType: function(e) {
         var _this = this;
         switch (e) {
             case '0':
@@ -442,7 +442,7 @@ var searchObj = {
                 _this.querryObj.type = '18,19';
         }
     },
-    refreshTable: function () {
+    refreshTable: function() {
         var that = this;
         // console.log(that.querryObj);
         that.querryObj.keyword = that.$searchInput.val().trim();
@@ -451,21 +451,21 @@ var searchObj = {
         $('#task_table').bootstrapTable('refreshOptions', {
             pageNumber: +that.querryObj.pageNum,
             pageSize: +that.querryObj.pageSize,
-            queryParams: function (params) {
+            queryParams: function(params) {
                 that.querryObj.pageSize = params.pageSize;
                 that.querryObj.pageNum = params.pageNumber;
                 return that.querryObj;
             }
         });
     },
-    bindDateDiyEvent: function () { //时间控件
+    bindDateDiyEvent: function() { //时间控件
         $("#datetimeStart").datetimepicker({
             format: 'yyyy-mm-dd',
             minView: 'month',
             language: 'zh-CN',
             autoclose: true,
             // startDate: new Date()
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val())
         });
         $("#datetimeEnd").datetimepicker({
@@ -474,7 +474,7 @@ var searchObj = {
             language: 'zh-CN',
             autoclose: true,
             // startDate: new Date()
-        }).on("click", function () {
+        }).on("click", function() {
             $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
         });
     }
@@ -494,6 +494,7 @@ function initTable() {
         // showColumns: true,  //显示内容下拉框
         showRefresh: true,
         pagination: true, //分页
+        striped: true,
         sidePagination: 'server', //分页方式：client客户端分页，server服务端分页（*）
         pageNumber: 1,
         pageSize: 10,
@@ -502,7 +503,7 @@ function initTable() {
         searchOnEnterKey: false,
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
-        queryParams: function (params) {
+        queryParams: function(params) {
             return {
                 // offset: params.offset, //页码
                 // limit: params.limit, //页面大小
@@ -520,10 +521,10 @@ function initTable() {
                 status: "20"
             };
         },
-        responseHandler: function (res) {
+        responseHandler: function(res) {
             return res;
         },
-        onLoadSuccess: function (data) {
+        onLoadSuccess: function(data) {
             // console.log(data);
             if (data.rows.length > 0) {
                 mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
@@ -546,7 +547,7 @@ function initTable() {
             visible: true, //false表示不显示
             sortable: false, //启用排序
             width: '6%',
-            formatter: function (value, row, index) {
+            formatter: function(value, row, index) {
                 if (value == 1) {
                     return "<span class='dealtTask'>待办</span>";
                 } else {
@@ -568,7 +569,7 @@ function initTable() {
             sortable: false, //启用排序
             width: '7%',
             editable: true,
-            cellStyle: function (value, row, index) {
+            cellStyle: function(value, row, index) {
                 return {
                     css: {
                         "max-width": "300px",
@@ -665,7 +666,7 @@ function operateFormatter(value, row, index) {
 // 表格里面的操作
 window.operateEvents = {
     //定位功能
-    'click .location': function (e, value, row, index) {
+    'click .location': function(e, value, row, index) {
         if ($(this).find('i').attr("class") == 'active') {} else {
             $(".location").find('i').attr("class", "");
             $(this).find('i').attr("class", "active");
@@ -677,7 +678,7 @@ window.operateEvents = {
         return false;
     },
     //查看详情
-    'click .check': function (e, value, row, index) {
+    'click .check': function(e, value, row, index) {
         // console.log(row)
         $("#details").modal(); //打开详情模态框
 
@@ -688,7 +689,7 @@ window.operateEvents = {
             $(".disposeTask").show();
             $(".closeTask").show();
         }
-        $('#details').on('shown.bs.modal', function (e) {
+        $('#details').on('shown.bs.modal', function(e) {
             // console.log(row)
             taskDetailsObj.loadDetails(row);
         });
@@ -699,19 +700,19 @@ window.operateEvents = {
         return false;
     },
     //填写处置信息
-    'click .management': function (e, value, row, index) {
+    'click .management': function(e, value, row, index) {
         taskObj.taskOpen(row.taskId);
         return false;
     },
     //关闭任务
-    'click .closed': function (e, value, row, index) {
+    'click .closed': function(e, value, row, index) {
         var defaultOptions = {
             tip: '您是否关闭该任务？',
             name_title: '提示',
             name_cancel: '取消',
             name_confirm: '确定',
             isCancelBtnShow: true,
-            callBack: function () {
+            callBack: function() {
                 taskDetailsObj.closedWhether(row.taskId);
             }
         };
@@ -726,7 +727,7 @@ var taskDetailsObj = {
     $disposeTask: $(".disposeTask"),
     $closeTask: $(".closeTask"),
     _taskId: null,
-    init: function () {
+    init: function() {
         var _this = this;
 
         this.$detailsMap.centerAndZoom(new BMap.Point(116.404, 39.915), 5); // 初始化地图,设置中心点坐标和地图级别
@@ -746,14 +747,14 @@ var taskDetailsObj = {
         this.$detailsMap.addControl(new BMap.MapTypeControl());
 
         //关闭任务按钮
-        this.$closeTask.click(function () {
+        this.$closeTask.click(function() {
             var defaultOptions = {
                 tip: '您是否关闭该任务？',
                 name_title: '提示',
                 name_cancel: '取消',
                 name_confirm: '确定',
                 isCancelBtnShow: true,
-                callBack: function () {
+                callBack: function() {
                     _this.closedWhether(_this._taskId);
                 }
             };
@@ -761,13 +762,13 @@ var taskDetailsObj = {
 
         });
         //填写处置信息按钮
-        this.$disposeTask.click(function () {
+        this.$disposeTask.click(function() {
             $("#details").modal('hide'); //关闭详情模态框
             taskObj.taskOpen(_this._taskId);
         });
 
     },
-    loadDetails: function (row) {
+    loadDetails: function(row) {
         $(".taskCode").text(row.taskCode);
         var eventId = row.eventId;
         this._taskId = row.taskId;
@@ -777,7 +778,7 @@ var taskDetailsObj = {
         this.loadEventDetails(eventId);
         this.loadTaskDetails(this._taskId);
     },
-    setCenterZoom: function (msg) {
+    setCenterZoom: function(msg) {
         // debugger;
         var _this = this;
         var lon = msg[0].bdLon;
@@ -813,17 +814,17 @@ var taskDetailsObj = {
         this.$detailsMap.centerAndZoom(point, 15);
         mapObj.iconHide(); //隐藏百度图标
     },
-    loadEventDetails: function (eventId) {
+    loadEventDetails: function(eventId) {
         var _this = this;
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 var msg = data.rows;
                 var images = msg[0].pic;
-                $(".event_pic").html("");
+                $(".event_pic ul").html("");
                 $(".eventCode").text(msg[0].eventCode);
                 $(".occurrenceTime").text(msg[0].occurrenceTime);
                 $(".fullTypeName").text(msg[0].fullTypeName);
@@ -840,15 +841,15 @@ var taskDetailsObj = {
 
                 var pic_scr = "";
                 for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<div class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</div>';
+                    pic_scr += '<li class="event_pic_list">' +
+                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                        '</li>';
                 }
-                $(".event_pic").append(pic_scr);
+                $(".event_pic ul").append(pic_scr);
 
                 //打开地图中心点
                 _this.setCenterZoom(msg);
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
                     if (e.target.innerHTML == "事件详情") {
                         _this.setCenterZoom(msg);
                     }
@@ -857,14 +858,14 @@ var taskDetailsObj = {
             }
         });
     },
-    loadTaskDetails: function (taskId) {
+    loadTaskDetails: function(taskId) {
         //获取处置信息
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 var msgAll = data.rows;
                 $(".dispose_content").html("");
                 var txt = '';
@@ -917,7 +918,7 @@ var taskDetailsObj = {
                                 '</div>' +
                                 '<div class="dispose_info">' +
                                 '<span class="info_l text-right">照片：</span>' +
-                                '<div class="info_r taskImg_' + x + '"></div>' +
+                                '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
                                 '</div></div></div>';
                             $("#day_" + j).append(txtChild);
                             //添加录音文件
@@ -930,9 +931,9 @@ var taskDetailsObj = {
                             var picAll = msgAll[x].pic;
                             var pic_scr = "";
                             for (var n = 0; n < picAll.length; n++) {
-                                pic_scr += '<div class="task_pic_list">' +
-                                    '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                    '</div>';
+                                pic_scr += '<li class="task_pic_list">' +
+                                    '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
+                                    '</li>';
                             }
                             $(".taskImg_" + x).append(pic_scr);
                         }
@@ -941,14 +942,14 @@ var taskDetailsObj = {
             }
         })
     },
-    closedWhether: function (taskId) {
+    closedWhether: function(taskId) {
         var _this = this;
         $.ajax({
             type: 'GET',
             url: "/cloudlink-inspection-task/task/getTaskStatus?taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 console.log(data);
                 if (data.success == 1) {
                     var taskState = data.rows;
@@ -964,7 +965,7 @@ var taskDetailsObj = {
             }
         })
     },
-    closedTask: function (taskId) {
+    closedTask: function(taskId) {
         var taskIds = [];
         taskIds.push(taskId);
         $.ajax({
@@ -973,7 +974,7 @@ var taskDetailsObj = {
             contentType: "application/json",
             data: JSON.stringify(taskIds),
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 if (data.success == 1) {
                     xxwsWindowObj.xxwsAlert("任务关闭成功！");
                     window.location.reload();
@@ -981,8 +982,11 @@ var taskDetailsObj = {
             }
         })
     }
-}
-
+};
+//查看大图
+function previewPicture(e) {
+    viewPicObj.viewPic(e);
+};
 
 //录音文件的播放
 function playAmrAudio(_fileId, e) {
@@ -995,14 +999,14 @@ function playAmrAudio(_fileId, e) {
             url: "/cloudlink-core-file/file/getUrlByFileId?fileId=" + _fileId,
             contentType: "application/json",
             dataType: "json",
-            success: function (data, status) {
+            success: function(data, status) {
                 var relativePath = data.rows[0].fileUrl.replace(/^.*?\:\/\/[^\/]+/, "");
-                fetchBlob('/audio' + relativePath, function (blob) {
+                fetchBlob('/audio' + relativePath, function(blob) {
                     playAmrBlob(blob);
                 });
                 $(e).attr("class", "audioPlayIn");
 
-                setTimeout(function () {
+                setTimeout(function() {
                     $(e).attr("class", "audioPlay");
                 }, 10000);
             }
@@ -1022,10 +1026,10 @@ var tableOperationObj = {
         "keyword": "",
         "ids": ""
     },
-    init: function () {
+    init: function() {
         var _this = this;
         //导出全部
-        this.$exportAll.click(function () {
+        this.$exportAll.click(function() {
             _this.expoerObj.ids = '';
             _this.expoerCondition();
             if (zhugeSwitch == 1) {
@@ -1035,7 +1039,7 @@ var tableOperationObj = {
             }
         });
         //导出所选
-        this.$exportChoice.click(function () {
+        this.$exportChoice.click(function() {
             var selectionsData = $('#task_table').bootstrapTable('getSelections');
             var taskIds = [];
             if (selectionsData.length == 0) {
@@ -1055,7 +1059,7 @@ var tableOperationObj = {
             }
         });
         //在地图上显示所选点
-        this.$mapChoice.click(function () {
+        this.$mapChoice.click(function() {
             // 获取已选的信息
             var selectedPointItems = $('#task_table').bootstrapTable('getSelections');
             if (selectedPointItems.length > 0) {
@@ -1065,7 +1069,7 @@ var tableOperationObj = {
             }
         });
     },
-    expoerCondition: function () { //导出文件条件设置
+    expoerCondition: function() { //导出文件条件设置
         var searchMsg = searchObj.querryObj;
         this.expoerObj.status = searchObj.querryObj.status;
         this.expoerObj.type = searchObj.querryObj.type;
@@ -1075,7 +1079,7 @@ var tableOperationObj = {
 
         this.expoerData(this.expoerObj);
     },
-    expoerData: function (date) { //导出url等
+    expoerData: function(date) { //导出url等
         var options = {
             "url": '/cloudlink-inspection-task/task/exportExcel?token=' + lsObj.getLocalStorage('token'),
             "data": date,
@@ -1083,7 +1087,7 @@ var tableOperationObj = {
         }
         this.downLoadFile(options);
     },
-    downLoadFile: function (options) { //导出文件的方法
+    downLoadFile: function(options) { //导出文件的方法
         var config = $.extend(true, {
             method: 'post'
         }, options);

@@ -67,7 +67,7 @@ var detailsObj = {
             success: function(data, status) {
                 var msg = data.rows;
                 var images = msg[0].pic;
-                $(".event_pic").html("");
+                $(".event_pic ul").html("");
                 $(".eventCode").text(msg[0].eventCode);
                 $(".occurrenceTime").text(msg[0].occurrenceTime);
                 $(".fullTypeName").text(msg[0].fullTypeName);
@@ -77,11 +77,11 @@ var detailsObj = {
 
                 var pic_scr = "";
                 for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<div class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</div>';
+                    pic_scr += '<li class="event_pic_list">' +
+                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                        '</li>';
                 }
-                $(".event_pic").append(pic_scr);
+                $(".event_pic ul").append(pic_scr);
 
                 if (msg[0].audio.length == 0) {
                     $(".event_audio").html("无");
@@ -94,7 +94,11 @@ var detailsObj = {
             }
         });
     }
-}
+};
+//查看大图
+function previewPicture(e) {
+    viewPicObj.viewPic(e);
+};
 
 //录音文件的播放
 function playAmrAudio(_fileId, e) {

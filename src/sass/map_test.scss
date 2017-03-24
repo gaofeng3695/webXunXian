@@ -420,6 +420,18 @@
             }
             .eventpic_list {
                 margin-top: -10px;
+                overflow: hidden;
+                ul {
+                    padding: 0;
+                    margin: 0;
+                    list-style: none;
+                    overflow: hidden;
+                    li {
+                        float: left;
+                        background: #fff;
+                        cursor: pointer;
+                    }
+                }
             }
         }
         .view_detail {

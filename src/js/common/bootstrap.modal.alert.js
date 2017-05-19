@@ -116,11 +116,11 @@ var xxwsWindowObj = (function() {　　　　
             '</div>',
             '</div>',
             '<div class="modal-footer" style="padding:6px 15px;">',
-            '<button type="button" class="isCancelBtnShow name_cancel btn btn-default btn_close" data-dismiss="modal" style="visibility:hidden;margin-right: 10px">',
-            obj.name_cancel,
-            '</button>',
             '<button type="button" class="name_confirm btn btn-primary btn_confirm" data-dismiss="modal">',
             obj.name_confirm,
+            '</button>',
+            '<button type="button" class="isCancelBtnShow name_cancel btn btn-default btn_close" data-dismiss="modal" style="display:none;margin-left: 12px">',
+            obj.name_cancel,
             '</button>',
             '</div>',
             '</div>',
@@ -131,12 +131,22 @@ var xxwsWindowObj = (function() {　　　　
         $(document.body).append(this.$html);
         $modalAlert = $('#' + id + index);
         if (obj.isCancelBtnShow === true) {
-            $modalAlert.find('.name_cancel').css('visibility', 'visible')
+            $modalAlert.find('.name_cancel').css('display', 'inline-block');
         }
+        // $modalAlert.on('hidden.bs.modal', function(e) {
+        //     if (typeof obj.callBack === 'function') {
+        //         return obj.callBack();
+        //     }
+        // });
         $modalAlert.find('.btn_confirm')[0].onclick = function() {
-            if (typeof obj.callBack === 'function') {
-                return obj.callBack();
-            }
+            $modalAlert.on('hidden.bs.modal', function(e) {
+                if (typeof obj.callBack === 'function') {
+                    return obj.callBack();
+                }
+            });
+            // if (typeof obj.callBack === 'function') {
+            //     return obj.callBack();
+            // }
         }
     };
     var xxwsAlert = function() {

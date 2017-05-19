@@ -3,16 +3,14 @@ var trackObj = {
     $searchInput: $('#searchInput'), //搜索关键词dom
     $peopleInput: $('#peopleInput'),
 
-
-
     tracksIdsArr: [], //存放已被选中的轨迹ID
     aPeopleId: [],
     aPeopleName: [],
     sCurrentTrackId: '',
     defaultObj: { //默认搜索条件
         "status": "1,0", //1:有事件，0：无事件，1,0:全部
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": '', //开始日期
+        "endDate": '', //结束日期
         "keyword": "", //巡线人，巡线编号
         "userIds": "", //逗号分隔的userId
         "pageNum": 1, //第几页
@@ -20,8 +18,8 @@ var trackObj = {
     },
     querryObj: { //请求的搜索条件
         "status": "1,0", //1:有事件，0：无事件，1,0:全部
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": '', //开始日期
+        "endDate": '', //结束日期
         "keyword": "", //巡线人，巡线编号
         "userIds": "", //逗号分隔的userId
         "pageNum": 1, //第几页
@@ -29,7 +27,7 @@ var trackObj = {
     },
     activeObj: { //高亮默认搜索条件，用于渲染页面
         "status": "1,0",
-        "date": "day"
+        "date": "all"
     },
     init: function () {
         var that = this;
@@ -371,28 +369,6 @@ var trackObj = {
             data: obj,
             method: 'post'
         });
-        /*$.ajax({
-            type: "POST",
-            url: "/cloudlink-inspection-event/inspectionRecord/exportWord?token="+lsObj.getLocalStorage('token'),
-            contentType: "application/json",
-            data: JSON.stringify(obj),
-            //dataType: "json",
-            success: function (data, status) {
-                //console.log(data)
-                if (data.success != 1) {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
-                    return;
-                }
-            },
-            complete: function (xhr, txt) {
-                ////console.log(xhr);
-            },
-            statusCode: {
-                404: function () {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！code:404');
-                }
-            }
-        });*/
     },
     requestPeopleTree: function () {
         var that = this;
@@ -559,11 +535,11 @@ var trackObj = {
     table_operateFormatter: function (value, row, index) {
         return [
             '<a class="see" href="javascript:void(0)" title="查看">',
-            '<i class=""></i>',
-            '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+            '<i style="margin: 0 5px;" ></i>',
+            '</a>',
             '<a class="out" href="javascript:void(0)" title="导出">',
-            '<i class=""></i>',
-            '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+            '<i style="margin: 0 5px;"></i>',
+            '</a>',
         ].join('');
     },
     table_bindEvent: function () {
@@ -652,3 +628,4 @@ function dateChangeForSearch() {
         $("#diyDateBtn").removeClass("active");
     }
 }
+

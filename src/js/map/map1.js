@@ -13,10 +13,12 @@ var eventObj = {
     $searchEventText: $(".search_event"),
     $eventInformation: $(".event_list"),
     $eventClosed: $(".close_event"),
-    $tabEventClosed: $("#_event_closed"),
+    $tabEventClosed: $("#event_closed"),
     _eventData: null, //初始化数据
     eventStartPoints: [], //初始化事件点的数组
     eventPoints: [], //页面展示事件点的数组
+    initialPoints: [], //零时存储事件点
+    markerClusterer: null,
     eventConditionObj: {
         "status": "20", //处理状态，固定为20 处理中事件
         "type": "", //事件类型, 固定为1,2,3
@@ -27,7 +29,6 @@ var eventObj = {
         "pageNum": 1, //第几页
         "pageSize": 100 //每页记录数
     },
-    // $distance: $(".distance"), //测距离
     init: function() {
         var _this = this;
         //初始化获取事件信息
@@ -80,14 +81,31 @@ var eventObj = {
             this.eventStartPoints[i] = this.eventPoints[i];
         }
     },
-    setEventPointsMarker: function(data) { //设置地图事件点
+    setInitialPoints: function() { //储存事件点
+        for (var i = 0; i < this.eventPoints.length; i++) {
+            this.initialPoints[i] = this.eventPoints[i];
+        }
+    },
+    getInitialPoints: function() { //获取事件点
+        if (this.initialPoints.length > 0) {
+            for (var i = 0; i < this.initialPoints.length; i++) {
+                this.eventPoints[i] = this.initialPoints[i];
+            }
+            this.initialPoints = []; //清空
+        }
+    },
+    setEventPointsMarker: function(data, boolean) { //设置地图事件点
         // mapObj.$bdMap.clearOverlays(); //清除地图上已经标注的点
         //清空事件点
-        // debugger;
         this.removePoints();
 
-        // var data = this._eventData.rows;
         var _this = this;
+        if (boolean == '' || boolean == null || boolean == undefined) {
+            //
+        } else {
+            _this.setInitialPoints();
+        }
+
         var myIcons = null;
         var markers = null;
         var point = null;
@@ -123,13 +141,12 @@ var eventObj = {
             });
             //添加点击事件
             markers.addEventListener("click", function(e) {
-                _this.eventPointClick(e);
+                _this.eventPointClick(e, boolean);
             });
         }
         this.addPoints();
-
     },
-    eventPointClick: function(e) { //事件标注点的点击事件
+    eventPointClick: function(e, boolean) { //事件标注点的点击事件
         var _this = this;
         // debugger;
         for (var i = 0; i < this.eventPoints.length; i++) {
@@ -142,19 +159,29 @@ var eventObj = {
         p.setAnimation(BMAP_ANIMATION_BOUNCE); //添加跳动
         for (var i = 0; i < this.eventPoints.length; i++) {
             if (this.eventPoints[i].value == p) {
-                _this.getEventDetails(this.eventPoints[i].key);
+                if (boolean == '' || boolean == null || boolean == undefined) {
+                    _this.getEventDetails(this.eventPoints[i].key);
+                } else {
+                    taskDetailsObj.loadDetails(this.eventPoints[i].key);
+                }
                 // console.log(this.eventPoints[i].key);
             }
         }
     },
     eventTabListClick: function(eventId) { //事件列表点击事件
         var _this = this;
-        this.addPoints();
+        if (this.$eventBtn.hasClass("active")) {} else {
+            this.addPoints();
+        }
         for (var i = 0; i < inspectObj.inspectPoints.length; i++) {
             inspectObj.inspectPoints[i].value.setAnimation();
         }
         for (var i = 0; i < _this.eventPoints.length; i++) {
             if (_this.eventPoints[i].key == eventId) {
+                //设置中心点并跳动
+                var cenLng = _this.eventPoints[i].value.getPosition().lng;
+                var cenLat = _this.eventPoints[i].value.getPosition().lat;
+                mapObj.$bdMap.centerAndZoom(new BMap.Point(cenLng, cenLat), 19);
                 _this.eventPoints[i].value.setAnimation(BMAP_ANIMATION_BOUNCE);
             } else {
                 _this.eventPoints[i].value.setAnimation();
@@ -162,6 +189,7 @@ var eventObj = {
         }
         this.getEventDetails(eventId);
         this.$eventBtn.addClass("active");
+
     },
     setEventTab: function(data) { //事件列表
         this.$eventBtn.addClass("active");
@@ -236,7 +264,7 @@ var eventObj = {
         _this.$eventInformation.show();
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+            url: "/cloudlink-inspection-event/eventInfo/get?token=" + lsObj.getLocalStorage('token') + "&eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -247,7 +275,7 @@ var eventObj = {
                 $(".event_code").text(msg[0].eventCode);
                 $(".event_type").text(msg[0].fullTypeName); //事件类型
                 $(".report_man").text(msg[0].inspectorName); //上报人
-                $(".event_address").text(msg[0].address); //地理位置
+                $(".event_address").text(msg[0].address); //详细位置
                 $(".event_description").text(msg[0].description); //事件描述
                 $(".event_date").text(msg[0].occurrenceTime); //事件时间
                 $(".detail_btn").attr("name", msg[0].objectId);
@@ -272,14 +300,20 @@ var eventObj = {
         });
     },
     addPoints: function() { //添加事件点
+        var markersArr = [];
         for (var i = 0; i < this.eventPoints.length; i++) {
-            mapObj.$bdMap.addOverlay(this.eventPoints[i].value);
+            // mapObj.$bdMap.addOverlay(this.eventPoints[i].value);
+            markersArr.push(this.eventPoints[i].value);
         }
+        this.markerClusterer = new BMapLib.MarkerClusterer(mapObj.$bdMap, { markers: markersArr });
     },
     removePoints: function() { //删除事件点
-        for (var i = 0; i < this.eventPoints.length; i++) {
-            mapObj.$bdMap.removeOverlay(this.eventPoints[i].value);
-        }
+        if (this.eventPoints.length > 0) {
+            for (var i = 0; i < this.eventPoints.length; i++) {
+                // mapObj.$bdMap.removeOverlay(this.eventPoints[i].value);
+                this.markerClusterer.removeMarker(this.eventPoints[i].value);
+            }
+        } else {}
     }
 }
 
@@ -358,6 +392,9 @@ var inspectObj = {
 
         //左上角人员tab关闭
         this.$tabInspectClosed.click(function() {
+            playerObj.close_player(function() {
+                eventObj.getInitialPoints();
+            });
             _this.resetInspect();
             eventObj.resetevent();
         });
@@ -398,6 +435,7 @@ var inspectObj = {
             //将当前地图上的坐标点 赋值全局变量
             this.inspectPoints.push({
                 'key': data[i].objectId,
+                'name': data[i].userName,
                 'value': markers,
                 "isOnline": data[i].isOnline
             });
@@ -425,11 +463,15 @@ var inspectObj = {
             }
         }
     },
-    inspectTabListClick: function(inspectId, isOnline) { //事件列表点击事件
+    inspectTabListClick: function(inspectId, isOnline) { //人员列表点击事件
         var _this = this;
         // mapObj.$bdMap.clearO
-        playerObj.close_player();
-        this.addPoints();
+        playerObj.close_player(function() {
+            eventObj.getInitialPoints();
+        });
+        if (this.$inspectBtn.hasClass("active")) {} else {
+            this.addPoints();
+        }
         this.$inspectBtn.addClass("active");
         //巡检员信息
         var peopleLeave = Enumerable.From(this._inspectData.rows).Where(function(x) {
@@ -446,6 +488,10 @@ var inspectObj = {
             if (_this.inspectPoints[i].key == inspectId) {
                 isExist++;
                 _this.inspectPoints[i].value.setAnimation(BMAP_ANIMATION_BOUNCE);
+                //设置中心点
+                var cenLng = _this.inspectPoints[i].value.getPosition().lng;
+                var cenLat = _this.inspectPoints[i].value.getPosition().lat;
+                mapObj.$bdMap.setCenter(new BMap.Point(cenLng, cenLat));
             } else {
                 _this.inspectPoints[i].value.setAnimation();
             }
@@ -460,10 +506,13 @@ var inspectObj = {
             _marker = new BMap.Marker(_point, {
                 icon: _myIcons
             });
+
             mapObj.$bdMap.addOverlay(_marker); // 将标注添加到地图中
+            mapObj.$bdMap.setCenter(_point);
             _marker.setAnimation(BMAP_ANIMATION_BOUNCE);
             this.inspectPoints.push({
                 key: inspectId,
+                name: peopleLeave[0].userName,
                 value: _marker,
                 "isOnline": peopleLeave[0].isOnline
             });
@@ -512,7 +561,7 @@ var inspectObj = {
         mapObj.setPointsMarkerWithCenterPointAndZoomLevel(querryArr);
         this.$inspectBtn.addClass("active");
     },
-    resetInspect: function() { //重置事件信息
+    resetInspect: function() { //重置人员信息
         this.$inspectInformation.hide();
         this.$searchText.val("");
         this.inspectOnline(this._inspectData.rows);
@@ -526,12 +575,20 @@ var inspectObj = {
         try {
             if (data.length > 0) {
                 for (var i = 0; i < data.length; i++) {
+                    var roleName = data[i].roleNames;
+                    var orgname = data[i].orgName;
+                    if (roleName == null || roleName == '') {
+                        roleName = "----";
+                    }
+                    if (orgname == null || orgname == '') {
+                        orgname = "----";
+                    }
                     txt = '<li>' +
                         '<input type="hidden" name="inspect_id" value="' + data[i].objectId + '">' +
                         '<input type="hidden" name="is_online" value="' + data[i].isOnline + '">' +
                         '<span class="name">' + data[i].userName + '</span>' +
-                        '<span class="dept">' + data[i].orgName + '</span>' +
-                        '<span class="task">' + data[i].roleNames + '</span>' +
+                        '<span class="dept">' + orgname + '</span>' +
+                        '<span class="task">' + roleName + '</span>' +
                         '</li>';
 
                     $("#people .people ul").append(txt);
@@ -555,7 +612,7 @@ var inspectObj = {
             dataType: 'json',
             success: function(data, status) {
                 _this._inspectData = data;
-                console.log(_this._inspectData);
+                // console.log(_this._inspectData);
                 _this.inspectInit();
                 eventsAndInspectersLoadFinish(data.rows); //create by alex 判断事件与人员都已经初始化加载完成
             }
@@ -606,10 +663,19 @@ var inspectObj = {
                 $(".dynamicTitle").attr('title', data.rows[0].mobileNum);
                 // 姓名
                 $('.inspectUseName').text(data.rows[0].userName);
+
+                var roleName = data.rows[0].roleNames;
+                var orgname = data.rows[0].orgName;
+                if (roleName == null || roleName == '') {
+                    roleName = "----";
+                }
+                if (orgname == null || orgname == '') {
+                    orgname = "----";
+                }
                 // 部门
-                $('.inspectDepartment').text(data.rows[0].orgName);
+                $('.inspectDepartment').text(orgname);
                 // 角色
-                $('.inspectRoleName').text(data.rows[0].roleNames);
+                $('.inspectRoleName').text(roleName);
                 // 手机号
                 // 本日巡检次数
                 $('.inspectCount').text(data.rows[0].inspectTodayCount + ' 次');
@@ -623,6 +689,13 @@ var inspectObj = {
     },
     addPoints: function() { //添加巡检点
         for (var i = 0; i < this.inspectPoints.length; i++) {
+            var label = new BMap.Label(this.inspectPoints[i].name, { offset: new BMap.Size(30, 3) });
+            if (this.inspectPoints[i].isOnline == 1) {
+                label.setStyle({ color: "#75c3fe", fontSize: "12px", border: '1px solid #75c3fe', padding: '3px' });
+            } else {
+                label.setStyle({ color: "#999", fontSize: "12px", border: '1px solid #999', padding: '3px' });
+            }
+            this.inspectPoints[i].value.setLabel(label);
             mapObj.$bdMap.addOverlay(this.inspectPoints[i].value);
         }
     },
@@ -836,6 +909,7 @@ var tabObj = {
     location: $('#location'),
     tool: $('#tool'),
     closeBtn: $('.result_wrapper .close_btn'),
+    refresh: $('#gf_refresh'),
     currentTab: null,
     init: function() {
         var that = this;
@@ -848,11 +922,22 @@ var tabObj = {
             var s = $(this).attr("data-tab");
 
             if (s == "people") {
-                eventObj.closeEvent();
-                inspectObj.openInspect();
+                if (inspectObj.$inspectBtn.hasClass("active")) {
+                    eventObj.closeEvent();
+                } else {
+                    eventObj.closeEvent();
+                    inspectObj.openInspect();
+                }
             } else if (s == "event") {
-                inspectObj.closeInspect();
-                eventObj.openEvent();
+                playerObj.close_player(function() {
+                    eventObj.getInitialPoints();
+                });
+                if (eventObj.$eventBtn.hasClass("active")) {
+                    inspectObj.closeInspect();
+                } else {
+                    inspectObj.closeInspect();
+                    eventObj.openEvent();
+                }
             }
             if (s !== that.currentTab) {
                 that.closeTip();
@@ -867,6 +952,9 @@ var tabObj = {
             that.closeTip();
         });
         //
+        that.refresh.click(function() {
+            location.reload();
+        });
     },
     requestPeople: function() {
         var that = this;
@@ -913,7 +1001,7 @@ var taskDetailsObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+            url: "/cloudlink-inspection-event/eventInfo/get?token=" + lsObj.getLocalStorage('token') + "&eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -936,10 +1024,14 @@ var taskDetailsObj = {
                 }
 
                 var pic_scr = "";
-                for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<li class="event_pic_list">' +
-                        '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</li>';
+                if (images.length > 0) {
+                    for (var i = 0; i < images.length; i++) {
+                        pic_scr += '<li class="event_pic_list">' +
+                            '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                            '</li>';
+                    }
+                } else {
+                    pic_scr = "<span>无</span>";
                 }
                 $(".event_pic ul").append(pic_scr);
             }
@@ -962,7 +1054,6 @@ var taskDetailsObj = {
                 }
 
                 $(".dispose_content").html("");
-                console.log(data);
                 var msgAll = data.rows[0].disposeList;
                 if (msgAll.length > 0) {
                     var txt = '';
@@ -991,31 +1082,52 @@ var taskDetailsObj = {
                                 if (recevieUser == null || recevieUser == '') {
                                     recevieUser = '无';
                                 }
-                                txtChild = '<div class="dispose_main">' +
-                                    '<div class="dispose_main_l">' +
-                                    '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_main_r">' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
-                                    '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">信息描述：</span>' +
-                                    '<div class="info_r">' + msgAll[x].content + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">语音描述：</span>' +
-                                    '<div class="info_r task_audio_' + x + '"></div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">接收人：</span>' +
-                                    '<div class="info_r">' + recevieUser + '</div>' +
-                                    '</div>' +
-                                    '<div class="dispose_info">' +
-                                    '<span class="info_l text-right">照片：</span>' +
-                                    '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
-                                    '</div></div></div>';
+                                if (msgAll[x].typeCode == 00 || msgAll[x].typeCode == 40) {
+                                    txtChild = '<div class="dispose_main">' +
+                                        '<div class="dispose_main_l">' +
+                                        '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
+                                        '</div>' +
+                                        '<div class="dispose_main_r">' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
+                                        '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">信息描述：</span>' +
+                                        '<div class="info_r">' + msgAll[x].content + '</div>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">接收人：</span>' +
+                                        '<div class="info_r">' + recevieUser + '</div>' +
+                                        '</div>' +
+                                        '</div></div>';
+                                } else {
+                                    txtChild = '<div class="dispose_main">' +
+                                        '<div class="dispose_main_l">' +
+                                        '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
+                                        '</div>' +
+                                        '<div class="dispose_main_r">' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
+                                        '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">信息描述：</span>' +
+                                        '<div class="info_r">' + msgAll[x].content + '</div>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">语音描述：</span>' +
+                                        '<div class="info_r task_audio_' + x + '"></div>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">接收人：</span>' +
+                                        '<div class="info_r">' + recevieUser + '</div>' +
+                                        '</div>' +
+                                        '<div class="dispose_info">' +
+                                        '<span class="info_l text-right">照片：</span>' +
+                                        '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
+                                        '</div></div></div>';
+                                }
                                 $("#day_" + j).append(txtChild);
                                 //添加录音文件
                                 if (msgAll[x].audio.length == 0) {
@@ -1026,10 +1138,14 @@ var taskDetailsObj = {
                                 }
                                 var picAll = msgAll[x].pic;
                                 var pic_scr = "";
-                                for (var n = 0; n < picAll.length; n++) {
-                                    pic_scr += '<li class="task_pic_list">' +
-                                        '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                        '</li>';
+                                if (picAll.length > 0) {
+                                    for (var n = 0; n < picAll.length; n++) {
+                                        pic_scr += '<li class="task_pic_list">' +
+                                            '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
+                                            '</li>';
+                                    }
+                                } else {
+                                    pic_scr = "<span>无</span>";
                                 }
                                 $(".taskImg_" + x).append(pic_scr);
                             }

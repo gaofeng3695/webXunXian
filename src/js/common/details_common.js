@@ -61,7 +61,7 @@ var detailsObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+            url: "/cloudlink-inspection-event/eventInfo/get?token="+lsObj.getLocalStorage('token')+"&eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -76,11 +76,16 @@ var detailsObj = {
                 $(".description").text(msg[0].description);
 
                 var pic_scr = "";
-                for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<li class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</li>';
+                if (images.length > 0) {
+                    for (var i = 0; i < images.length; i++) {
+                        pic_scr += '<li class="event_pic_list">' +
+                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                            '</li>';
+                    }
+                } else {
+                    pic_scr = "<span>无</span>";
                 }
+
                 $(".event_pic ul").append(pic_scr);
 
                 if (msg[0].audio.length == 0) {

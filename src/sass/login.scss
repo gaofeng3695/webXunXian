@@ -143,8 +143,7 @@ html {
                     .forget {
                         width: 80px;
                         height: 30px;
-                        margin-left: 10px;
-                        margin-right: 100px;
+                        float: left;
                         border: none;
                         outline: none;
                         background: #fff;
@@ -153,8 +152,8 @@ html {
                         cursor: pointer;
                     }
                     .immediately {
-                        width: 100px;
                         height: 30px;
+                        float: right;
                         border: none;
                         outline: none;
                         background: #fff;

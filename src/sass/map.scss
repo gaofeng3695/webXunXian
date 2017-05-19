@@ -3,9 +3,10 @@ $blue: #51b7ff;
     display: none;
 }
 
-label{
+label {
     max-width: none;
 }
+
 @mixin hidd {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -94,6 +95,21 @@ body {
             &:nth-child(7) {
                 background: url(/src/images/map/icon_down.png) no-repeat 56px center;
                 padding-left: 24px;
+            }
+        }
+        .fresh {
+            float: left;
+            box-sizing: border-box;
+            width: 87px;
+            padding-left: 21px;
+            font-size: 12px;
+            color: white;
+            line-height: 36px;
+            cursor: pointer;
+            background: url(/src/images/map/icon_reload.png) no-repeat 52px center;
+            background-size: 14px;
+            &:hover {
+                background-color: rgba(11, 11, 11, .4) !important;
             }
         }
     }
@@ -242,10 +258,10 @@ body {
             }
         }
         .tool_wrapper {
-            width : 86px;
+            width: 86px;
             box-shadow: 0px 0px 12px #888;
             position: absolute;
-            right: 0;
+            right: 88px;
             line-height: 36px;
             background: #fff;
             padding: 0 8px;
@@ -275,7 +291,7 @@ body {
                 }
             }
         }
-        .search_location{
+        .search_location {
             .search_wrapper {
                 overflow: hidden;
                 border: 2px solid $blue;
@@ -303,7 +319,6 @@ body {
             }
         }
     }
-
 }
 
 
@@ -423,44 +438,44 @@ body {
                     .item {
                         position: absolute;
                         left: 0;
-                        bottom: 8px;;
+                        bottom: 8px;
+                        ;
                         margin-left: -9px;
                         height: 26px;
                         width: 18px;
                         cursor: pointer;
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis2{
+                        &.dis2 {
                             background: url(/src/images/event/dis2.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-                        &.dis1{
+                        &.dis1 {
                             background: url(/src/images/event/dis1.png) no-repeat 0 0;
                             background-size: 18px 26px;
                         }
-
                     }
                 }
                 .move_bar {

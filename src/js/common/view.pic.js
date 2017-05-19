@@ -15,6 +15,7 @@ var viewPicObj = (function() {
     var viewH = null;
     var viewW = null;
     var flag = null;
+    var srcLoad = '/src/images/common/loading.gif';
 
     $("body").on("click", ".viewClose", function() {　　　　
         closeView();
@@ -42,8 +43,10 @@ var viewPicObj = (function() {
         viewH = view.height();
         viewW = view.width();
         img.css({
-            "width": 'auto',
-            "height": 'auto'
+            "width": '56px',
+            "height": '56px',
+            "margin-top": "-28px",
+            "margin-left": "-28px"
         });
     };
     //关闭视图窗口
@@ -56,15 +59,18 @@ var viewPicObj = (function() {
         if (flag == true) {
             flag = false;
             img.css({
-                "width": 'auto',
-                "height": 'auto'
+                "width": '56px',
+                "height": '56px',
+                "margin-top": "-28px",
+                "margin-left": "-28px"
             });
             next.show();
             if (index == 1) {
                 prev.hide();
             }
             src = container.find("li").eq(index - 1).find("img").attr("data-original");
-            img.attr("src", src);
+            img.attr("src", srcLoad);
+            imgLocation(src);
             index--;
         }
     };
@@ -73,41 +79,86 @@ var viewPicObj = (function() {
         if (flag == true) {
             flag = false;
             img.css({
-                "width": 'auto',
-                "height": 'auto'
+                "width": '56px',
+                "height": '56px',
+                "margin-top": "-28px",
+                "margin-left": "-28px"
             });
             prev.show();
             if (index == (totalLeng - 2)) {
                 next.hide();
             }
             src = container.find("li").eq(index + 1).find("img").attr("data-original");
-            img.attr("src", src);
+            img.attr("src", srcLoad);
+            imgLocation(src);
             index++;
         }
     };
     //计算图片的宽高，来确定它显示的位置
-    var imgLocation = function() {
-        img.load(function() {
-            flag = true;
-            var height = img.height();
-            var width = img.width();
+    var imgLocation = function(src) {
 
-            if (height > viewH) {
+        getImageWidth(src, function(w, h) {
+            flag = true;
+            img.attr("src", src);
+            img.height(h);
+            img.width(w);
+            if (h > viewH) {
                 img.height(viewH);
-                height = viewH;
-                width = img.width();
+                img.width('auto');
+                h = viewH;
+                w = img.width();
             }
-            if (width > viewW) {
+            if (w > viewW) {
                 img.width(viewW);
-                width = viewW;
-                height = img.height();
+                img.height('auto');
+                w = viewW;
+                h = img.height();
             }
             img.css({
-                "margin-top": -height / 2 + "px",
-                "margin-left": -width / 2 + "px"
+                "margin-top": -h / 2 + "px",
+                "margin-left": -w / 2 + "px"
             });
+
         });
+
+        // img.load(function() {
+        //     flag = true;
+        //     var height = img.height();
+        //     var width = img.width();
+        //     console.log(height);
+        //     if (height > viewH) {
+        //         img.height(viewH);
+        //         height = viewH;
+        //         width = img.width();
+        //     }
+        //     if (width > viewW) {
+        //         img.width(viewW);
+        //         width = viewW;
+        //         height = img.height();
+        //     }
+        //     img.css({
+        //         "margin-top": -height / 2 + "px",
+        //         "margin-left": -width / 2 + "px"
+        //     });
+        // });
     };
+
+    function getImageWidth(url, callback) {
+        var img = new Image();
+        img.src = url;
+
+        // 如果图片被缓存，则直接返回缓存数据
+        if (img.complete) {
+            callback(img.width, img.height);
+        } else {
+            // 完全加载完毕的事件
+            img.onload = function() {
+                callback(img.width, img.height);
+            }
+        }
+
+    }
+
     //查看图片
     var viewPic = function(e) {
         openView();
@@ -116,7 +167,8 @@ var viewPicObj = (function() {
         totalLeng = container.find("li").length;
 
         src = $(e).attr("data-original");
-        img.attr("src", src);
+
+        img.attr("src", srcLoad);
 
         if (index == 0) {
             prev.hide();
@@ -125,7 +177,7 @@ var viewPicObj = (function() {
             next.hide();
         }
         flag = false;
-        imgLocation();
+        imgLocation(src);
     };
     return {
         viewPic: viewPic,

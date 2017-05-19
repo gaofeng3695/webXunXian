@@ -1,7 +1,7 @@
 /**企业部门的tree,调用getAllData(frameName, parentId, childId)打开
  * frameName---字符串(必填),可以为""，用于辨别来自哪个窗口
  * parentId---部门id（必填），默认选中的节点
- * childId---部门id（选填），禁止被选中的节点，子节点也被禁止
+ * childId---部门id（选填），删除的节点
  */
 /** 
  * 调用getSelectDepart()，返回所选节点对象obj = {key: "",value: arr };
@@ -24,7 +24,7 @@ var departmentObj = {
         _this_frameName = frameName;
         $.ajax({
             type: "GET",
-            url: "/cloudlink-core-framework/organization/getTree",
+            url: "/cloudlink-core-framework/organization/getTree?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: {
                 token: lsObj.getLocalStorage('token'),
@@ -64,11 +64,9 @@ var departmentObj = {
                 beforeClick: function(treeId, treeNode, clickFlag) {
                     _this.zTree.checkNode(treeNode, true, true);
                     _this.zTree.expandNode(treeNode, true); //打开当前节点
-                    // _this.getChildList(treeNode);
                 },
                 beforeCheck: function(treeId, treeNode) {
                     _this.zTree.selectNode(treeNode); //设置默认被选中
-                    // console.log(treeNode)
                 }
             }
         };
@@ -96,7 +94,8 @@ var departmentObj = {
     prohibitDepart: function(id) { //禁止节点被选中，以及子节点
         var _this = this;
         var childNodes = _this.zTree.getNodesByParam("id", id, null); //根据id查询节点对象数组
-        _this.zTree.setChkDisabled(childNodes[0], true, false, true);
+        // _this.zTree.setChkDisabled(childNodes[0], true, false, true);
+        _this.zTree.removeNode(childNodes[0]);
     }
 };
 

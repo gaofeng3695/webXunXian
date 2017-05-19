@@ -54,7 +54,7 @@
         background: #fff;
         border-radius: 5px;
         border: 1px solid #e1e5e6;
-        padding: 0px 10px 12px 10px;
+        padding-bottom: 12px;
         box-shadow: 2px 1px #e1e5e6;
         font-size: 14px;
         margin-top: 15px;
@@ -75,6 +75,7 @@
                 height: 20px;
                 background: url(/src/images/event/map.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/event/map_h.png) no-repeat;
                 }
@@ -90,6 +91,7 @@
                 height: 16px;
                 background: url(/src/images/event/look.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/event/look_h.png) no-repeat;
                 }
@@ -102,6 +104,7 @@
                 height: 21px;
                 background: url(/src/images/task/management.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/task/management_h.png) no-repeat;
                 }
@@ -115,6 +118,7 @@
                 height: 21px;
                 background: url(/src/images/task/management_e.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
             }
         }
         .closed {
@@ -124,6 +128,7 @@
                 height: 18px;
                 background: url(/src/images/task/closed.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/task/closed_h.png) no-repeat;
                 }
@@ -137,6 +142,7 @@
                 height: 18px;
                 background: url(/src/images/task/closed_e.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
             }
         }
     }

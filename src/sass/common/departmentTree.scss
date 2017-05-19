@@ -28,11 +28,11 @@
                 }
             }
             .modal-body {
-                padding: 0;
+                padding: 10px 20px 0 20px;
+                height: 510px;
+                overflow-y: auto;
                 .department_select {
-                    padding: 10px 20px 0 20px;
-                    height: 510px;
-                    overflow-y: auto;
+                    padding-bottom: 10px;
                 }
             }
             .modal-footer {

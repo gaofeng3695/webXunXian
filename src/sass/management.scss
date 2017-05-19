@@ -7,18 +7,24 @@ body {
     height: 100%;
     font-size: 14px;
     color: #666;
+    background: #edf1f2;
+    padding: 15px 15px 10px 15px;
     .enterprise_main {
         overflow: hidden;
         height: 100%;
+        padding-bottom: 5px;
         .enterprise_tree {
             height: 100%;
             float: left;
-            width: 320px;
+            width: 300px;
             border: 1px solid #ededed;
             padding: 5px 0;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0px 1px 8px #d3d3d3;
             .enterprise_nav {
                 overflow-x: auto;
-                padding: 35px 15px 15px 15px;
+                padding: 15px;
                 .department_add {
                     height: 44px;
                     span {
@@ -32,36 +38,64 @@ body {
                     }
                 }
             }
-            .mCSB_dragger_bar,
+            .mCSB_dragger_bar {
+                margin-right: 0px;
+                background: #7e7d7c;
+                // opacity: .6;
+                &:hover {
+                    background: #7e7d7c;
+                    opacity: 1;
+                }
+            }
             .mCSB_draggerRail {
                 margin-right: 0px;
+                background: #ccc;
             }
         }
         .enterprise_list {
             width: auto;
-            margin-top: 40px;
-            margin-left: 340px;
+            max-height: 100%;
+            padding: 20px 10px 15px 10px;
+            margin-left: 315px;
             border: 1px solid #ededed;
-            margin-right: 20px;
+            overflow-x: auto;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0px 1px 8px #d3d3d3;
             p.list_title {
+                min-width: 500px;
                 color: #333;
                 background: #edf1f2;
                 margin: 0;
                 height: 36px;
                 line-height: 36px;
                 font-size: 14px;
+                border: 1px solid #ededed;
+                border-bottom: none;
                 .title-left {
                     padding-left: 40px;
+                    display: inline-block;
+                    width: 285px;
+                    vertical-align: middle;
+                }
+                .title-num {
+                    display: inline-block;
+                    width: 70px;
+                    text-align: center;
                 }
                 .title-right {
                     float: right;
                     display: inline-block;
                     line-height: 36px;
-                    padding-right: 50px;
+                    padding-right: 42px;
                 }
             }
             .child_list {
+                min-width: 500px;
                 list-style: none;
+                border: 1px solid #ededed;
+                border-top: none;
                 margin: 0;
                 padding: 0;
                 li {
@@ -83,10 +117,10 @@ body {
                         height: 22px;
                         cursor: pointer;
                         float: right;
-                        margin-right: 30px;
-                        margin-top: 14px;
+                        margin: 14px 5px 0 5px;
                     }
                     .delete_btn {
+                        margin-right: 30px;
                         background: url(/src/images/task/closed.png) center no-repeat;
                         &:hover {
                             background: url(/src/images/task/closed_h.png) center no-repeat;
@@ -96,6 +130,24 @@ body {
                         background: url(/src/images/management/modify.png) center no-repeat;
                         &:hover {
                             background: url(/src/images/management/modify_h.png) center no-repeat;
+                        }
+                    }
+                    span.clildren_name {
+                        display: inline-block;
+                        width: 240px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        vertical-align: middle;
+                    }
+                    span.children_num {
+                        display: inline-block;
+                        margin-left: 10px;
+                        vertical-align: middle;
+                        width: 70px;
+                        text-align: center;
+                        b {
+                            font-weight: normal;
                         }
                     }
                 }
@@ -166,6 +218,19 @@ body {
                                 cursor: pointer;
                             }
                         }
+                        .has-feedback {
+                            .form-control {
+                                padding-right: 38px;
+                                background: #fff;
+                                cursor: pointer;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                overflow: hidden;
+                            }
+                            .form-control-feedback {
+                                right: 0px;
+                            }
+                        }
                     }
                 }
             }
@@ -219,7 +284,7 @@ body {
             display: block;
             height: 26px;
             background: #f3f3f3;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             color: #333;
             white-space: nowrap;
             overflow: hidden;

@@ -259,8 +259,8 @@ var searchObj = {
     // tracksIdsArr: [], //存放已被选中的轨迹ID
     defaultObj: { //默认搜索条件
         "status": "20", //20:处理中，21：已完成，:全部
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
         "keyword": "", //高级搜索关键词
         "type": "", //事件类型，逗号分隔的
         "pageNum": 1, //第几页
@@ -268,8 +268,8 @@ var searchObj = {
     },
     querryObj: { //请求的搜索条件
         "status": "20",
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
         "keyword": "", //巡线人，巡线编号
         "type": "",
         "pageNum": 1, //第几页
@@ -277,7 +277,7 @@ var searchObj = {
     },
     activeObj: { //高亮默认搜索条件，用于渲染页面
         "status": "20",
-        "date": "day",
+        "date": "all",
         "typeParent": '0'
     },
     init: function() {
@@ -504,22 +504,25 @@ function initTable() {
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
         queryParams: function(params) {
-            return {
-                // offset: params.offset, //页码
-                // limit: params.limit, //页面大小
-                // search: params.search, //搜索
-                // order: params.order, //排序
-                // ordername: params.sort, //排序
-                pageSize: params.pageSize,
-                pageNum: params.pageNumber,
-                // searchText: params.searchText,
-                // sortName: params.sortName,
-                // sortOrder: params.sortOrder,
-                type: "",
-                startDate: new Date().Format('yyyy-MM-dd'),
-                endDate: new Date().Format('yyyy-MM-dd'),
-                status: "20"
-            };
+            searchObj.querryObj.pageSize = params.pageSize;
+            searchObj.querryObj.pageNum = params.pageNumber;
+            return searchObj.querryObj;
+            // return {
+            //     // offset: params.offset, //页码
+            //     // limit: params.limit, //页面大小
+            //     // search: params.search, //搜索
+            //     // order: params.order, //排序
+            //     // ordername: params.sort, //排序
+            //     pageSize: params.pageSize,
+            //     pageNum: params.pageNumber,
+            //     // searchText: params.searchText,
+            //     // sortName: params.sortName,
+            //     // sortOrder: params.sortOrder,
+            //     type: "",
+            //     startDate: "",
+            //     endDate: "",
+            //     status: "20"
+            // };
         },
         responseHandler: function(res) {
             return res;
@@ -649,13 +652,13 @@ function operateFormatter(value, row, index) {
     return [
         '<a class="location" href="javascript:void(0)" title="定位">',
         '<i></i>',
-        '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+        '</a>',
         '<a class="' + managementClass + '" href="javascript:void(0)" title="处置">',
         '<i></i>',
-        '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+        '</a>',
         '<a class="check" data-toggle="modal" href="javascript:void(0)" title="查看">',
         '<i></i>',
-        '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+        '</a>',
         '<a class="' + closedClass + '" href="javascript:void(0)" title="关闭">',
         '<i></i>',
         '</a>',
@@ -679,7 +682,6 @@ window.operateEvents = {
     },
     //查看详情
     'click .check': function(e, value, row, index) {
-        // console.log(row)
         $("#details").modal(); //打开详情模态框
 
         if (row.stakeholder == 0) {
@@ -689,10 +691,7 @@ window.operateEvents = {
             $(".disposeTask").show();
             $(".closeTask").show();
         }
-        $('#details').on('shown.bs.modal', function(e) {
-            // console.log(row)
-            taskDetailsObj.loadDetails(row);
-        });
+        taskDetailsObj._taskDetailsData = row;
         // setTimeout(function() {
         //     taskDetailsObj.loadDetails(row);
         // }, 1000);
@@ -726,6 +725,7 @@ var taskDetailsObj = {
     $detailsMap: new BMap.Map("details_address_map"),
     $disposeTask: $(".disposeTask"),
     $closeTask: $(".closeTask"),
+    _taskDetailsData: null,
     _taskId: null,
     init: function() {
         var _this = this;
@@ -765,6 +765,11 @@ var taskDetailsObj = {
         this.$disposeTask.click(function() {
             $("#details").modal('hide'); //关闭详情模态框
             taskObj.taskOpen(_this._taskId);
+        });
+        //详情模态框加载完运行方法
+        $('#details').on('shown.bs.modal', function() {
+            // console.log(_this._taskDetailsData)
+            taskDetailsObj.loadDetails(_this._taskDetailsData);
         });
 
     },
@@ -818,7 +823,7 @@ var taskDetailsObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+            url: "/cloudlink-inspection-event/eventInfo/get?token=" + lsObj.getLocalStorage('token') + "&eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -840,10 +845,14 @@ var taskDetailsObj = {
                 }
 
                 var pic_scr = "";
-                for (var i = 0; i < images.length; i++) {
-                    pic_scr += '<li class="event_pic_list">' +
-                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
-                        '</li>';
+                if (images.length > 0) {
+                    for (var i = 0; i < images.length; i++) {
+                        pic_scr += '<li class="event_pic_list">' +
+                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" onclick="previewPicture(this)" alt=""/>' +
+                            '</li>';
+                    }
+                } else {
+                    pic_scr = "<span>无</span>";
                 }
                 $(".event_pic ul").append(pic_scr);
 
@@ -862,7 +871,7 @@ var taskDetailsObj = {
         //获取处置信息
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?taskId=" + taskId,
+            url: "/cloudlink-inspection-task/dispose/getPageListByTaskId?token=" + lsObj.getLocalStorage('token') + "&taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -895,31 +904,52 @@ var taskDetailsObj = {
                             if (recevieUser == null || recevieUser == '') {
                                 recevieUser = '无';
                             }
-                            txtChild = '<div class="dispose_main">' +
-                                '<div class="dispose_main_l">' +
-                                '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
-                                '</div>' +
-                                '<div class="dispose_main_r">' +
-                                '<div class="dispose_info">' +
-                                '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
-                                '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
-                                '</div>' +
-                                '<div class="dispose_info">' +
-                                '<span class="info_l text-right">信息描述：</span>' +
-                                '<div class="info_r">' + msgAll[x].content + '</div>' +
-                                '</div>' +
-                                '<div class="dispose_info">' +
-                                '<span class="info_l text-right">语音描述：</span>' +
-                                '<div class="info_r task_audio_' + x + '"></div>' +
-                                '</div>' +
-                                '<div class="dispose_info">' +
-                                '<span class="info_l text-right">接收人：</span>' +
-                                '<div class="info_r">' + recevieUser + '</div>' +
-                                '</div>' +
-                                '<div class="dispose_info">' +
-                                '<span class="info_l text-right">照片：</span>' +
-                                '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
-                                '</div></div></div>';
+                            if (msgAll[x].type == 00 || msgAll[x].type == 40) {
+                                txtChild = '<div class="dispose_main">' +
+                                    '<div class="dispose_main_l">' +
+                                    '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
+                                    '</div>' +
+                                    '<div class="dispose_main_r">' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
+                                    '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">信息描述：</span>' +
+                                    '<div class="info_r">' + msgAll[x].content + '</div>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">接收人：</span>' +
+                                    '<div class="info_r">' + recevieUser + '</div>' +
+                                    '</div>' +
+                                    '</div></div>';
+                            } else {
+                                txtChild = '<div class="dispose_main">' +
+                                    '<div class="dispose_main_l">' +
+                                    '<span class="dispose_time">' + msgAll[x].modifytime + '</span>' +
+                                    '</div>' +
+                                    '<div class="dispose_main_r">' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="modifyUserName">' + msgAll[x].modifyUserName + '</span>&nbsp&nbsp' +
+                                    '<span class="disposeValue">' + msgAll[x].disposeValue + '</span>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">信息描述：</span>' +
+                                    '<div class="info_r">' + msgAll[x].content + '</div>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">语音描述：</span>' +
+                                    '<div class="info_r task_audio_' + x + '"></div>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">接收人：</span>' +
+                                    '<div class="info_r">' + recevieUser + '</div>' +
+                                    '</div>' +
+                                    '<div class="dispose_info">' +
+                                    '<span class="info_l text-right">照片：</span>' +
+                                    '<div class="info_r"><ul class="taskImg_' + x + '"></ul></div>' +
+                                    '</div></div></div>';
+                            }
                             $("#day_" + j).append(txtChild);
                             //添加录音文件
                             if (msgAll[x].audio.length == 0) {
@@ -930,10 +960,14 @@ var taskDetailsObj = {
                             }
                             var picAll = msgAll[x].pic;
                             var pic_scr = "";
-                            for (var n = 0; n < picAll.length; n++) {
-                                pic_scr += '<li class="task_pic_list">' +
-                                    '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
-                                    '</li>';
+                            if (picAll.length > 0) {
+                                for (var n = 0; n < picAll.length; n++) {
+                                    pic_scr += '<li class="task_pic_list">' +
+                                        '<img data-original="/cloudlink-core-file/file/downLoad?fileId=' + picAll[n] + '" src="/cloudlink-core-file/file/getImageBySize?fileId=' + picAll[n] + '&viewModel=fill&width=104&hight=78" id="taskImagesPic' + n + '" onclick="previewPicture(this)" alt=""/>' +
+                                        '</li>';
+                                }
+                            } else {
+                                pic_scr = "<span>无</span>";
                             }
                             $(".taskImg_" + x).append(pic_scr);
                         }
@@ -946,7 +980,7 @@ var taskDetailsObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-task/task/getTaskStatus?taskId=" + taskId,
+            url: "/cloudlink-inspection-task/task/getTaskStatus?token=" + lsObj.getLocalStorage('token') + "&taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -978,6 +1012,8 @@ var taskDetailsObj = {
                 if (data.success == 1) {
                     xxwsWindowObj.xxwsAlert("任务关闭成功！");
                     window.location.reload();
+                } else {
+                    xxwsWindowObj.xxwsAlert("任务关闭失败！");
                 }
             }
         })

@@ -165,6 +165,8 @@ var taskObj = {
             dataType: "json",
             success: function(data, status) {
                 if (data.success == 1) {
+                    $("#event_description").val("");
+                    $("input[name='receiveUser']").val("");
                     _this.$taskM.modal('hide');
                     window.location.reload();
                 } else {
@@ -283,7 +285,7 @@ var taskObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-task/task/getTaskStatus?taskId=" + taskId,
+            url: "/cloudlink-inspection-task/task/getTaskStatus?token="+lsObj.getLocalStorage('token')+"&taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {

@@ -6,7 +6,7 @@ var Sys = (function(ua) {
     // s.IE6 = (s.IE && ([/MSIE (\d)\.0/i.exec(navigator.userAgent)][0][1] == 6)) ? true : false;
     // s.IE7 = (s.IE && ([/MSIE (\d)\.0/i.exec(navigator.userAgent)][0][1] == 7)) ? true : false;
     // s.IE8 = (s.IE && ([/MSIE (\d)\.0/i.exec(navigator.userAgent)][0][1] == 8)) ? true : false;
-    console.log(s)
+    // console.log(s)
     return s;
 })(navigator.userAgent.toLowerCase()); /*判断是哪一种浏览器,火狐,谷歌,ie*/
 // var aa = function(id) {
@@ -57,10 +57,11 @@ var Class = function(properties) {
 };
 var Resize = new Class({
     initialize: function(obj) {
+        // console.log(obj)
         this.obj = obj;
         this.resizeelm = null;
-        this.fun = null; //记录触发什么事件的索引   
-        this.original = []; //记录开始状态的数组   
+        this.fun = null; //记录触发什么事件的索引
+        this.original = []; //记录开始状态的数组
         this.width = null;
         this.height = null;
         this.fR = BindAsEventListener(this, this.resize); /*拖拽去更改div的大小*/
@@ -69,6 +70,7 @@ var Resize = new Class({
     set: function(elm, direction) {
         if (!elm) return;
         this.resizeelm = elm;
+        // console.log(this.resizeelm)
         /*点击事件的监听,调用start函数去初始化数据,监听mousemove和mouseup,这两个事件,当mouseover的时候,去更改div的大小,当mouseup,去清除之前监听的两个事件*/
         addListener(this.resizeelm, 'mousedown', BindAsEventListener(this, this.start, this[direction]));
         return this;
@@ -102,7 +104,7 @@ var Resize = new Class({
     stop: function() {
         removeListener(document, "mousemove", this.fR);
         removeListener(document, "mousemove", this.fS);
-        window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty(); /**清除选中的内容*/
+        //window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty(); /**清除选中的内容*/
     },
     up: function(e) {
         this.height > e.clientY ? Css(this.obj, {

@@ -123,7 +123,7 @@ function onSubmit() {
                                 postAdvise(textArea, contactWay, uuid);
                             }
                         } else {
-                            alert("当前网络不稳定")
+                            xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
                         }
                     },
                     error: function(data) {
@@ -163,7 +163,7 @@ function postAdvise(textArea, contactWay, uuid) {
                 $(".feedback_main").hide();
                 $(".feedback_success").show();
             } else {
-                alert("当前网络不稳定");
+                xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
             }
         }
     });

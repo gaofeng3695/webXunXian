@@ -15,14 +15,14 @@ var usermanager = {
     inittable: function() { //初始化表格
         var that = this;
         $('#table').bootstrapTable({
-            url: "/cloudlink-core-framework/user/queryPage?token=" + lsObj.getLocalStorage('token'), //请求数据url
-            method: 'post',
+            url: "/cloudlink-core-framework/user/queryPageByOrgId?token=" + lsObj.getLocalStorage('token'), //请求数据url
+            method: 'GET',
             toolbar: "#toolbar",
             toolbarAlign: "left",
             cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
             showHeader: true,
             showRefresh: true,
-            striped: true,
+            striped: true, //出现渐变色
             pagination: true, //分页
             sidePagination: 'server', //分页方式：client客户端分页，server服务端分页（*）
             pageNumber: 1,
@@ -33,8 +33,8 @@ var usermanager = {
             queryParams: function(params) {
                 that.searchObj.pageSize = params.pageSize;
                 that.searchObj.pageNum = params.pageNumber;
-                that.searchObj.enterpriseId = JSON.parse(lsObj.getLocalStorage("userBo")).enterpriseId;
                 that.searchObj.status = "1";
+                that.searchObj.enterpriseId = JSON.parse(lsObj.getLocalStorage("userBo")).enterpriseId
                 return that.searchObj;
             },
             responseHandler: function(res) {
@@ -84,7 +84,14 @@ var usermanager = {
                     sortable: false, //启用排序
                     width: '16%',
                     editable: true,
-                    valign: "middle"
+                    valign: "middle",
+                    formatter: function(value, row, index) {
+                        if (value == null || value == "") {
+                            return "";
+                        } else {
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'operation',
@@ -94,9 +101,9 @@ var usermanager = {
                     formatter: function(value, row, index) {
                         var s = "";
                         if (row.objectId == JSON.parse(lsObj.getLocalStorage("userBo")).objectId) {
-                            s = '<button class="disabledremove"  href="javascript:void(0)" title="移交管理员" disabled>移交管理员</button>';
+                            s = '<button class="disabledremove"  href="javascript:void(0)" title="移交" disabled>移交</button>';
                         } else {
-                            s = '<button class="remove"  href="javascript:void(0)" title="移交管理员">移交管理员</button>';
+                            s = '<button class="remove"  href="javascript:void(0)" title="移交">移交</button>';
                         }
                         return [
                             s
@@ -110,20 +117,20 @@ var usermanager = {
         var that = this;
         $('#gf_Btn').click(function() {
             var s = $(this).parent().find('input').val();
-            that.querryObj.userName = s;
+            that.querryObj.keyWord = s;
             that.refreshTable();
         });
         /* keyup事件 */
         that.$searchInput.keypress(function(e) {
             if (e && e.keyCode === 13) { // enter 键
                 var s = $(this).parent().find('input').val();
-                that.querryObj.userName = s;
+                that.querryObj.keyWord = s;
                 that.refreshTable();
             }
         });
         $("#searchInput").bind('keyup', function(event) {
             if (event.keyCode == "8") {
-                that.querryObj.userName = ""; //将搜索框里面的内容清空
+                that.querryObj.keyWord = ""; //将搜索框里面的内容清空
                 that.refreshTable();
             }
         });
@@ -146,29 +153,36 @@ var usermanager = {
 }
 window.operateEvents = {
     'click .remove': function(e, value, row, index) {
+        var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
+        var _data = {
+            'enterpriseId': row.enterpriseId,
+            'to': row.objectId,
+            'from': userBo.objectId,
+            'fromUserName': userBo.userName,
+            'enterpriseName': userBo.enterpriseName,
+            'functionNames': "企业管理",
+            'signName': ""
+        };
         var defaultOptions = {
-            tip: '移交后，您将不在拥有管理员权限，确定移交？',
-            name_title: '提示',
+            tip: '是否将系统管理员权限移交给' + row.userName + '(' + row.mobileNum + ')，移交后将会自动退出登录。',
+            name_title: '系统管理员移交',
             name_cancel: '取消',
             name_confirm: '确定',
             isCancelBtnShow: true,
             callBack: function() {
                 $.ajax({
-                    url: "/cloudlink-core-framework/user/changeEnpAdmin",
+                    url: "/cloudlink-core-framework/user/changeEnpAdminAndSendMsm",
                     async: false,
                     contentType: "application/json",
-                    data: JSON.stringify({
-                        'enterpriseId': row.enterpriseId,
-                        'to': row.objectId,
-                        'from': JSON.parse(lsObj.getLocalStorage("userBo")).objectId
-                    }),
+                    data: JSON.stringify(_data),
                     type: "post",
                     dataType: "json",
                     success: function(data, status) {
                         if (data.success == 1) {
-                            xxwsWindowObj.xxwsAlert("移交成功");
+                            lsObj.clearAll();
+                            parent.location.href = '../../login.html';
                         } else {
-                            xxwsWindowObj.xxwsAlert("网络异常，请稍候尝试");
+                            xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
                         }
                     }
                 });

@@ -12,6 +12,7 @@ var eventObj = {
     $mapM: $("#event_address"),
     $receiveUser: $("input[name=receiveUser]"),
     receiveUserIdsArr: [],
+    _eventObjectId: null,
     $eventId: null,
     $flg: true,
     init: function() {
@@ -33,6 +34,15 @@ var eventObj = {
             _this.setSelectedPerson();
             //console.log(that.querryObj);
         });
+
+        //地图模态框加载完加载
+        this.$mapM.on('shown.bs.modal', function() {
+            mapAddObj.reload();
+        });
+        //详情模态框加载完加载
+        $('#details').on('shown.bs.modal', function(e) {
+            detailsObj.loadEventDetails(_this._eventObjectId);
+        });
         this.getType();
     },
     eventOpen: function() { //打开摸态窗口
@@ -42,9 +52,6 @@ var eventObj = {
     },
     mapOpen: function() { //打开地图摸态窗口
         this.$mapM.modal();
-        this.$mapM.on('shown.bs.modal', function(e) {
-            mapAddObj.reload();
-        });
         this.iconHide();
     },
     submit: function() { //提交表单
@@ -123,7 +130,7 @@ var eventObj = {
     uploadData: function() {
         var _this = this;
         var eventData = this.formData();
-        console.log(JSON.stringify(eventData));
+        // console.log(JSON.stringify(eventData));
         $.ajax({
             type: 'POST',
             url: "/cloudlink-inspection-event/eventInfo/saveBatch?token=" + lsObj.getLocalStorage('token'),
@@ -132,10 +139,11 @@ var eventObj = {
             dataType: "json",
             success: function(data, status) {
                 if (data.success == 1) {
+                    $("input[type='text']").val("");
                     _this.$eventM.modal('hide');
                     window.location.reload();
                 } else {
-                    xxwsWindowObj.xxwsAlert("当前网络不稳定");
+                    xxwsWindowObj.xxwsAlert("保存事件失败！");
                     _this.again();
                 }
             }
@@ -178,7 +186,7 @@ var eventObj = {
     getType: function() {
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventType/getTree",
+            url: "/cloudlink-inspection-event/eventType/getTree?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
@@ -211,7 +219,7 @@ var eventObj = {
                 // console.log(JSON.stringify(data));
                 var peopleAllArr = data.rows;
                 if (data.success != 1) {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！');
+                    xxwsWindowObj.xxwsAlert('获取人员信息失败！');
                     return;
                 }
 
@@ -226,7 +234,7 @@ var eventObj = {
             },
             statusCode: {
                 404: function() {
-                    xxwsWindowObj.xxwsAlert('网络连接出错！');
+                    xxwsWindowObj.xxwsAlert('获取人员信息失败！');
                 }
             }
         });
@@ -354,7 +362,7 @@ var mapAddObj = { //上报事件地图
         this.$dataPass.click(function() { //地址传到上报页面
             // console.log("dddd")
             if (_this.$text.val() == '') {
-                xxwsWindowObj.xxwsAlert("请选择地理位置！");
+                xxwsWindowObj.xxwsAlert("请选择详细位置！");
                 return false;
             } else {
                 eventObj.$mapA.val(_this.$text.val()); //传地址过去
@@ -698,8 +706,8 @@ var searchObj = {
     // tracksIdsArr: [], //存放已被选中的轨迹ID
     defaultObj: { //默认搜索条件
         "status": "20", //20:处理中，21：已完成，:全部
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
         "keyword": "", //高级搜索关键词
         "type": "", //事件类型，逗号分隔的
         "pageNum": 1, //第几页
@@ -707,8 +715,8 @@ var searchObj = {
     },
     querryObj: { //请求的搜索条件
         "status": "20",
-        "startDate": new Date().Format('yyyy-MM-dd'), //开始日期
-        "endDate": new Date().Format('yyyy-MM-dd'), //结束日期
+        "startDate": "", //开始日期
+        "endDate": "", //结束日期
         "keyword": "", //巡线人，巡线编号
         "type": "",
         "pageNum": 1, //第几页
@@ -716,7 +724,7 @@ var searchObj = {
     },
     activeObj: { //高亮默认搜索条件，用于渲染页面
         "status": "20",
-        "date": "day",
+        "date": "all",
         "typeParent": '0'
     },
     init: function() {
@@ -882,6 +890,7 @@ var searchObj = {
     },
     refreshTable: function() {
         var that = this;
+        // console.log(that.querryObj);
         that.querryObj.keyword = that.$searchInput.val().trim();
         that.$searchInput.val(that.querryObj.keyword);
         that.querryObj.pageNum = '1';
@@ -954,21 +963,29 @@ function initTable() {
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
         queryParams: function(params) {
-            searchObj.defaultObj.pageSize = params.pageSize;
-            searchObj.defaultObj.pageNum = params.pageNumber;
-            return searchObj.defaultObj;
+            searchObj.querryObj.pageSize = params.pageSize;
+            searchObj.querryObj.pageNum = params.pageNumber;
+            return searchObj.querryObj;
         },
         responseHandler: function(res) {
             return res;
         },
         onLoadSuccess: function(data) {
             // xxwsWindowObj.xxwsAlert(data.rows.length);
-            if (data.rows.length > 0) {
-                mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
-            } else {
-                mapObj.$bdMap.clearOverlays();
+            if (data.success == 1) {
+                if (data.rows.length > 0) {
+                    mapObj.setPointsMarkerWithCenterPointAndZoomLevel(data.rows);
+                } else {
+                    mapObj.$bdMap.clearOverlays();
+                }
             }
+
         },
+        // onDblClickRow: function(row) {
+        //     var objId = row.objectId;
+        //     eventObj._eventObjectId = objId;
+        //     $("#details").modal(); //打开详情模态框
+        // },
         //表格的列
         columns: [{
             field: 'state', //域值
@@ -1052,7 +1069,7 @@ function operateFormatter(value, row, index) {
     return [
         '<a class="location" href="javascript:void(0)" title="定位">',
         '<i></i>',
-        '</a>&nbsp;&nbsp;&nbsp;&nbsp;',
+        '</a>',
         '<a class="check" data-toggle="modal" href="javascript:void(0)" title="查看">',
         '<i></i>',
         '</a>',
@@ -1076,11 +1093,9 @@ window.operateEvents = {
     //查看详情
     'click .check': function(e, value, row, index) {
         var objId = row.objectId;
-
+        eventObj._eventObjectId = objId;
         $("#details").modal(); //打开详情模态框
-        $('#details').on('shown.bs.modal', function(e) {
-            detailsObj.loadEventDetails(objId);
-        });
+
         // setTimeout(function() {
         //     detailsObj.loadEventDetails(objId);
         // }, 1000);

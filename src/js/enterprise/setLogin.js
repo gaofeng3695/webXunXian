@@ -77,7 +77,7 @@ $(".setdefault").click(function() {
                     //设置成默认企业之后，需要重新调用获取默认企业ID，然后进行加入该企业
                     getDefaultEnterpriseId(userBo.objectId);
                 } else {
-                    xxwsWindowObj.xxwsAlert("默认企业设置失败，请重新登录进行设置");
+                    xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
                 }
             }
         });

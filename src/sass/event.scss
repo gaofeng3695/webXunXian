@@ -206,6 +206,7 @@
                 height: 20px;
                 background: url(/src/images/event/map.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/event/map_h.png) no-repeat;
                 }
@@ -221,6 +222,7 @@
                 height: 16px;
                 background: url(/src/images/event/look.png) no-repeat;
                 vertical-align: middle;
+                margin: 0 5px;
                 &:hover {
                     background: url(/src/images/event/look_h.png) no-repeat;
                 }
@@ -274,7 +276,8 @@
                 .event_form {
                     background: #fff;
                     border-radius: 5px;
-                    padding-bottom: 20px;
+                    padding-top: 1px;
+                    padding-bottom: 10px;
                     min-height: 490px;
                     color: #636363;
                     .form_part {
@@ -383,6 +386,7 @@
                                 float: left;
                                 margin-right: 20px;
                                 position: relative;
+                                margin-bottom: 10px;
                                 img {
                                     width: 104px;
                                     height: 78px;

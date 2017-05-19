@@ -47,7 +47,7 @@ function handleFiles(obj) {
             //fileList.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='image',src='"+nfile+"')";
         }
         i++;
-        console.log(obj.value)
+        // console.log(obj.value)
         var imagesL = '<div class="feedback_images">' +
             '<img src="' + path + '" alt=""/>' +
             '<span onclick="closeImg(this);" data-key="' + i + '"></span>' +

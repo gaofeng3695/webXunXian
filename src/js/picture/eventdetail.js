@@ -27,7 +27,7 @@ $(function() {
 function load_event(eventId) {
     $.ajax({
         type: 'GET',
-        url: "/cloudlink-inspection-event/eventInfo/get?eventId=" + eventId,
+        url: "/cloudlink-inspection-event/eventInfo/get?token="+lsObj.getLocalStorage('token')+"&eventId=" + eventId,
         contentType: "application/json",
         dataType: "json",
         success: function(data, status) {
@@ -37,7 +37,7 @@ function load_event(eventId) {
             $(".event_code").text(msg[0].eventCode);
             $(".event_type").text(msg[0].fullTypeName); //事件类型
             $(".report_man").text(msg[0].inspectorName); //上报人
-            $(".event_address").text(msg[0].address); //地理位置
+            $(".event_address").text(msg[0].address); //详细位置
             $(".event_description").text(msg[0].description); //事件描述
             $(".occurrenceTime").text(msg[0].occurrenceTime); //事件时间
             var pic_scr = "";

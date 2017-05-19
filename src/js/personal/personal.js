@@ -112,7 +112,7 @@ function upload_Img() {
             if (result == 1) {
                 updateUserBoImg();
             } else {
-                xxwsWindowObj.xxwsAlert("当前网络不稳定，请稍候重试");
+                xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
             }
         }
     });
@@ -181,7 +181,7 @@ function base_personal() {
                         location.reload();
                     });
                 } else {
-                    xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
+                    xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
                 }
             }
         });
@@ -227,7 +227,7 @@ function updateUserBoImg() {
                 }
                 base_personal();
             } else {
-                xxwsWindowObj.xxwsAlert("个人基本信息修改未成功");
+                xxwsWindowObj.xxwsAlert("服务异常，请稍候重试");
             }
         }
     });

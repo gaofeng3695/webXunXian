@@ -73,6 +73,11 @@
 }
 
 .borderLeft {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    overflow: hidden;
+    width: 125px;
     border-left: 1px solid #ccc;
     padding-left: 10px;
     img {

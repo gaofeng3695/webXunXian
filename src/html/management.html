@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="enterprise_list">
-            <p class="list_title"><span class="title-left">部门名称</span><span class="title-right">操作</span></p>
+            <p class="list_title"><span class="title-left">部门名称</span><span class="title-num">部门人数</span><span class="title-right">操作</span></p>
             <ul class="child_list">
                 <li>请选择您要查看的部门</li>
             </ul>
@@ -44,8 +44,11 @@
                 <div class="department_main">
                     <div class="department_list">
                         <div class="list_l"><i>*</i>上级部门</div>
-                        <div class="list_r">
+                        <div class="list_r has-feedback">
                             <input type="text" class="form-control parent_input" readonly name="selectParentDepart" placeholder="请选择所在部门" data-id="" value="">
+                            <span class="form-control-feedback" aria-hidden="true">
+                                        <img src="/src/images/enterprised/onclick.png" alt="">
+                                    </span>
                         </div>
                     </div>
                     <div class="department_list">
@@ -74,8 +77,11 @@
                 <div class="department_main">
                     <div class="department_list">
                         <div class="list_l"><i>*</i>上级部门</div>
-                        <div class="list_r">
+                        <div class="list_r has-feedback">
                             <input type="text" class="form-control parent_input" readonly name="parentDepart" placeholder="请选择所在部门" data-id="" value="">
+                            <span class="form-control-feedback" aria-hidden="true">
+                                        <img src="/src/images/enterprised/onclick.png" alt="">
+                                    </span>
                         </div>
                     </div>
                     <div class="department_list">
@@ -123,6 +129,7 @@
     <script type="text/javascript" src="/src/js/common/departmentTree.js"></script>
     <script type="text/javascript" src="/src/js/management/management.js"></script>
     <script src="/src/js/common/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="/src/js/common/admin.js"></script>
     <script>
         $(".scrollContainer").mCustomScrollbar({
             advanced: {

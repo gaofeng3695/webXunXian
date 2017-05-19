@@ -257,7 +257,9 @@ var playerObj = {
         };
         /* 关闭播放器 */
         that.$close.click(function() {
-            that.close_player();
+            that.close_player(function() {
+                eventObj.getInitialPoints();
+            });
             inspectObj.openInspect();
         });
         /* 选择播放速度 */
@@ -411,7 +413,7 @@ var playerObj = {
                 if (aData.length === 0) {
                     return;
                 }
-                eventObj.setEventPointsMarker(aData);
+                eventObj.setEventPointsMarker(aData, true);
                 //that.drawEventOnLine(aData);
             },
             statusCode: {
@@ -534,7 +536,8 @@ var playerObj = {
         that.setTimer();
         mapObj.$bdMap.clearOverlays();
         inspectObj.$inspectBtn.removeClass("active");
-        eventObj.$eventBtn.removeClass("active");
+        // eventObj.$eventBtn.removeClass("active");
+        eventObj.closeEvent();
         $('.player_wrapper').css('display', 'none');
         if (Object.prototype.toString.call(fn) === '[object Function]') {
             fn();

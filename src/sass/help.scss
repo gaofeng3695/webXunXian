@@ -11,6 +11,50 @@
         padding: 12px 10px;
         border: 1px solid #e1e5e6;
         box-shadow: 2px 1px #e1e5e6;
+        .suspensionFrame {
+            width: 275px;
+            height: 235px;
+            position: fixed;
+            right: 35px;
+            top: 200px;
+            word-wrap: break-word;
+            z-index: 98;
+            .title {
+                font-size: 20px;
+                background: #59B6FC;
+                width: 100%;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                color: #fff;
+                position: relative;
+            }
+            .zixun {
+                position: absolute;
+                top: -15px;
+                left: -30px;
+                z-index: 99;
+            }
+            .content {
+                width: 100%;
+                height: 180px;
+                background: #fff;
+                opacity: 0.8;
+                border: 1px solid #ececec;
+                box-shadow: 1px 2px #ececec;
+                p {
+                    margin: 0;
+                    padding-left: 20px;
+                    color: #333;
+                    font-size: 16px;
+                    height: 45px;
+                    line-height: 45px;
+                    span {
+                        padding-left: 8px;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -33,7 +77,6 @@
 .body,
 html {
     background: #edf1f2;
-    // overflow-y: hidden;
 }
 
 .kuai1 {

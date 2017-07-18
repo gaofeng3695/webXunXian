@@ -809,12 +809,15 @@ $('#addname').blur(function() {
 
 function checkname() {
     var nameVal = $('#addname').val().trim();
-    var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,15}$/;
+    var nameReg = /^[a-zA-Z\u4e00-\u9fa5]/g;
     if (nameVal == "" || nameVal == null) {
         $('.addnameReg').text("请输入您的姓名");
         return false;
     } else if (nameVal.length > 15) {
-        $('.addnameReg').text("您输入的姓名过长，最多15字。");
+        $('.addnameReg').text("您输入的姓名过长，最多15个字。");
+        return false;
+    } else if (nameVal.length < 2) {
+        $('.addnameReg').text("您输入的姓名过短，最少2个字。");
         return false;
     } else if (!nameReg.test(nameVal)) {
         $('.addnameReg').text("您输入的姓名格式有误。");

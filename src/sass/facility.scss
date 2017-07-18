@@ -584,6 +584,13 @@
                             }
                         }
                     }
+                    .fixed-table-container thead tr {
+                        &:nth-child(2) {
+                            th:first-child {
+                                border-left: 1px solid #ddd;
+                            }
+                        }
+                    }
                 }
             }
         }

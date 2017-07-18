@@ -1,4 +1,4 @@
- var zhugeSwitch = 0; //1:开启诸葛 0：关闭诸葛
+ var zhugeSwitch =1; //1:开启诸葛 0：关闭诸葛
  window.zhuge = window.zhuge || [];
  window.zhuge.methods = "_init debug identify track trackLink trackForm page".split(" ");
  window.zhuge.factory = function (b) {

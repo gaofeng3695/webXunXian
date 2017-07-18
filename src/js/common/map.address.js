@@ -21,6 +21,8 @@ var addressMapObj = {
         name: null,
         lng: null,
         lat: null,
+        gpsLon: null,
+        gpsLat: null,
     },
     init: function() {
         var _this = this;
@@ -59,6 +61,8 @@ var addressMapObj = {
         } else {
             _this.addressObj.lng = obj.lng;
             _this.addressObj.lat = obj.lat;
+            _this.addressObj.gpsLon = obj.gpsLon;
+            _this.addressObj.gpsLat = obj.gpsLat;
             _this.addPoint(obj.lng, obj.lat);
             _this.$addressText.val(obj.name);
         }
@@ -66,18 +70,22 @@ var addressMapObj = {
     getPoint: function() {
         var _this = this;
         if (_this.$addressText.val().trim() == '') {
-            xxwsWindowObj.xxwsAlert("请选择地理位置！");
+            xxwsWindowObj.xxwsAlert("请选择详细位置！");
             return false;
         } else if (_this.$addressText.val().trim().length > 50) {
-            xxwsWindowObj.xxwsAlert("地理位置名称过长！");
+            xxwsWindowObj.xxwsAlert("详细位置名称过长！");
             return false;
         } else {
+            var coordinate = coordtransform.bd09togcj02(_this.addressObj.lng, _this.addressObj.lat);
+            var coordinateGps = coordtransform.gcj02towgs84(coordinate[0], coordinate[1]);
+            _this.addressObj.gpsLon = coordinateGps[0];
+            _this.addressObj.gpsLat = coordinateGps[1];
             _this.addressObj.name = _this.$addressText.val().trim();
             var dataObj = {
                 key: _this._frameName,
                 value: _this.addressObj
             };
-            _this.$frame.modal('hide')
+            _this.$frame.modal('hide');
             return dataObj;
         }
     },

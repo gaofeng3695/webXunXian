@@ -2,7 +2,7 @@ $(function() {
     enterprisedObj.init();
 });
 /*删除图片*/
-function closebusinessImg(e) {;
+function closebusinessImg(e) {
     $(e).closest(".business_enterprise_images").remove();
     for (var i = 0; i < $(".business_img_file").find("input[name='file']").length; i++) {
         if ($(".business_img_file").find("input").eq(i).attr("data-value") == $(e).attr("data-key")) {
@@ -12,11 +12,21 @@ function closebusinessImg(e) {;
 
 }
 /*删除图片*/
-function closeIndefityImg(e) {;
+function closeIndefityImg(e) {
     $(e).closest(".identify_enterprise_images").remove();
     for (var i = 0; i < $(".identify_img_file").find("input[name='file']").length; i++) {
         if ($(".identify_img_file").find("input").eq(i).attr("data-value") == $(e).attr("data-key")) {
             $(".identify_img_file").find("input").eq(i).remove();
+        }
+    }
+
+}
+/*删除图片*/
+function closeRoseImg(e) {
+    $(e).closest(".rose_enterprise_images").remove();
+    for (var i = 0; i < $(".rose_img_file").find("input[name='file']").length; i++) {
+        if ($(".rose_img_file").find("input").eq(i).attr("data-value") == $(e).attr("data-key")) {
+            $(".rose_img_file").find("input").eq(i).remove();
         }
     }
 
@@ -26,6 +36,7 @@ var enterprisedObj = {
     $submitInformation: $("#submitInformation"),
     $addBusinessImg: $(".addBusinessImg"), //点击选择营业执照
     $addidentifyImg: $(".addidentifyImg"), //上传法人身份证
+    $addroseImg: $(".addroseImg"), //上传企业人员花名册
     currentstatus: null, //当前状态
     $flag: true, //用于将按钮进行锁死操作。
     imgIndex: 0,
@@ -61,6 +72,15 @@ var enterprisedObj = {
                 $(".upload_identify_picture").trigger("click");
             } else {
                 xxwsWindowObj.xxwsAlert("最多上传两张图片");
+            }
+        });
+        /*上传企业人员花名册 */
+        that.$addroseImg.click(function() {
+            var imgNum = $(".rose_img_list").find('.rose_enterprise_images').length;
+            if (imgNum <= 8) {
+                $(".upload_rose_picture").trigger("click");
+            } else {
+                xxwsWindowObj.xxwsAlert("最多上传9张图片");
             }
         });
         that.$submitInformation.click(function() {
@@ -160,7 +180,8 @@ var enterprisedObj = {
         var that = this;
         var num = $(".identify_img_list").find(".identify_enterprise_images").length;
         if (num == 0 || num == that.imgIndex) {
-            that.fillInformation();
+            that.imgIndex = 0;
+            that.submitRose();
         } else {
             var picid = $('.identify_img_file').find('input').eq(that.imgIndex).attr('id');
             that.submitIdentifySycn(picid);
@@ -181,6 +202,40 @@ var enterprisedObj = {
                 if (statu == 1) {
                     that.imgIndex = that.imgIndex + 1;
                     that.submitIdentify();
+                } else {
+                    xxwsWindowObj.xxwsAlert("当前网络不稳定", function() {
+                        that.imgIndex = 0;
+                        that.again();
+                    });
+                }
+            }
+        });
+    },
+    submitRose: function() {
+        var that = this;
+        var num = $(".rose_img_list").find(".rose_enterprise_images").length;
+        if (num == 0 || num == that.imgIndex) {
+            that.fillInformation();
+        } else {
+            var picid = $('.rose_img_file').find('input').eq(that.imgIndex).attr('id');
+            that.submitRoseSycn(picid);
+        }
+    },
+    submitRoseSycn: function(_picid) {
+        var that = this;
+        $.ajaxFileUpload({
+            url: "/cloudlink-core-file/attachment/web/v1/save?businessId=" + that.userBo.enterpriseId + "&bizType=pic_roster&token=" + lsObj.getLocalStorage("token"),
+            /*这是处理文件上传的servlet*/
+            secureuri: false,
+            fileElementId: _picid, //上传input的id
+            dataType: "json",
+            type: "POST",
+            async: false,
+            success: function(data, status) {
+                var statu = data.success;
+                if (statu == 1) {
+                    that.imgIndex = that.imgIndex + 1;
+                    that.submitRose();
                 } else {
                     xxwsWindowObj.xxwsAlert("当前网络不稳定", function() {
                         that.imgIndex = 0;
@@ -232,7 +287,7 @@ var enterprisedObj = {
     },
     deleteImgByEnterpriseId: function() { //二次上传的时候，进行以前上传的文件先进行删除
         var that = this;
-        var bizArray = ["pic_business", "pic_identity"];
+        var bizArray = ["pic_business", "pic_identity", "pic_roster"];
         var enterArray = [that.userBo.enterpriseId];
         $.ajax({
             type: 'POST',

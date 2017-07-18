@@ -7,6 +7,7 @@ var recordObj = {
     $openHistory: $(".openHistory"),
     _recordId: null,
     _groupId: null,
+    _planId: null,
     init: function() {
         var _this = this;
         //获取计划列表
@@ -24,7 +25,7 @@ var recordObj = {
             _this.clearHistoryRecord();
         });
         _this.$historyRecordFrame.on('shown.bs.modal', function(e) {
-            _this.getHistoryRecord(_this._groupId);
+            _this.getHistoryRecord(_this._groupId, _this._planId);
         });
         //删除安检记录
         _this.$deleteRecord.click(function() {
@@ -44,7 +45,7 @@ var recordObj = {
     getTable: function() {
         var _this = this;
         $('#tablRrecord').bootstrapTable({
-            url: "/cloudlink-inspection-event/securityCheckRecord/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
+            url: "/cloudlink-inspection-event/commonData/securityCheckRecord/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
             method: 'post',
             toolbar: "#toolbar",
             toolbarAlign: "left",
@@ -97,41 +98,16 @@ var recordObj = {
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '15%',
-                editable: true,
-                cellStyle: function(value, row, index) {
-                    return {
-                        css: {
-                            // "max-width": "300px",
-                        }
-                    };
-                }
-            }, {
-                field: 'enterhomeAddress', //域值
-                title: '详细地址', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '15%',
-                editable: true,
-            }, {
-                field: 'createUserName', //域值
-                title: '安检人员', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
                 width: '10%',
                 editable: true,
             }, {
-                field: 'enterhomeSituationTypeName', //域值
-                title: '入户情况', //内容
+                field: 'userFileName', //域值
+                title: '用户名称', //内容
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '9%',
-                formatter: function(value, row, index) {
-                    return "<span class='home_" + row.enterhomeSituationTypeCode + "'>" + value + "</span>";
-                }
+                width: '8%',
+                editable: true,
             }, {
                 field: 'enterhomeUserTypeName', //域值
                 title: '用户类型', //内容
@@ -140,6 +116,32 @@ var recordObj = {
                 sortable: false, //启用排序
                 width: '6%',
                 editable: true,
+            }, {
+                field: 'address', //域值
+                title: '详细地址', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '30%',
+                editable: true,
+            }, {
+                field: 'createUserName', //域值
+                title: '安检人员', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '8%',
+                editable: true,
+            }, {
+                field: 'enterhomeSituationTypeName', //域值
+                title: '入户情况', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '8%',
+                formatter: function(value, row, index) {
+                    return "<span class='home_" + row.enterhomeSituationTypeCode + "'>" + value + "</span>";
+                }
             }, {
                 field: 'isdanger', //域值
                 title: '安全隐患', //内容
@@ -157,19 +159,11 @@ var recordObj = {
                     }
                 }
             }, {
-                field: 'enterhomeUserName', //域值
-                title: '用户名称', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
                 field: 'operate',
                 title: '操作',
                 align: 'center',
                 events: _this.tableEvent(),
-                width: '15%',
+                width: '5%',
                 formatter: _this.tableOperation,
             }]
         });
@@ -196,9 +190,9 @@ var recordObj = {
             '<a class="look" data-toggle="modal" href="javascript:void(0)" title="查看">',
             '<i></i>',
             '</a>',
-            '<a class="' + deleteClass + '" href="javascript:void(0)" title="删除">',
-            '<i></i>',
-            '</a>',
+            // '<a class="' + deleteClass + '" href="javascript:void(0)" title="删除">',
+            // '<i></i>',
+            // '</a>',
         ].join('');
     },
     tableEvent: function() {
@@ -260,24 +254,121 @@ var recordObj = {
         });
     },
     clearSecurityRecord: function() { //清空安检记录详情
-        $(".planNameT").text("---");
-        $(".securityCheckTimeT").text("---");
-        $(".enterhomeUserCodeT").text("---");
-        $(".enterhomeUserNameT").text("---");
-        $(".enterhomeUserTypeCodeT").text("---");
-        $(".enterhomeUserTelT").text("---");
-        $(".enterhomeSituationTypeCodeT").text("---");
+        $("#securityRecordFrame").find("p").each(function() {
+            if ($(this).attr("data-name")) {
+                $(this).text("----");
+            }
+        });
+        // $(".planNameT").text("---");
+        // $(".securityCheckTimeT").text("---");
+        // $(".enterhomeUserCodeT").text("---");
+        // $(".enterhomeUserNameT").text("---");
+        // $(".enterhomeUserTypeCodeT").text("---");
+        // $(".enterhomeUserTelT").text("---");
+        // $(".enterhomeSituationTypeCodeT").text("---");
+        // $(".createUserNameT").text("---");
+        // $(".enterhomeAddressT").text("---");
+        // $(".remarkT").text("---");
         $(".isdangerT").text("正常");
-        $(".createUserNameT").text("---");
-        $(".enterhomeAddressT").text("---");
-        $(".remarkT").text("---");
         $(".hiddendangersT").html('<span>无</span>');
         $(".gasMeterList").html("");
         $(".recordImg").html("<span>无</span>");
         $(".userImg").html("<span>无</span>");
         this.$openHistory.hide();
         this.$deleteRecord.hide();
+        $(".isHasDanger").hide();
         $(".isSuccess").hide();
+        this.satisfaction('5');
+    },
+    satisfaction: function(value) { //满意度星星的遍历
+        var _this = this;
+        switch (value) {
+            case '1':
+                var liTxt = '<li><img src="/src/images/security/star.png" width="20" alt="">';
+                $(".satisfaction ul").html(liTxt);
+                $(".satisfaction span").text("非常不满");
+                break;
+            case '2':
+                var liTxt = '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>';
+                $(".satisfaction ul").html(liTxt);
+                $(".satisfaction span").text("不满意");
+                break;
+            case '3':
+                var liTxt = '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>';
+                $(".satisfaction ul").html(liTxt);
+                $(".satisfaction span").text("一般");
+                break;
+            case '4':
+                var liTxt = '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>';
+                $(".satisfaction ul").html(liTxt);
+                $(".satisfaction span").text("满意");
+                break;
+            default:
+                var liTxt = '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>';
+                $(".satisfaction ul").html(liTxt);
+                $(".satisfaction span").text("非常满意");
+                break;
+        }
+    },
+    satisfactionTxt: function(value) { //满意度星星的遍历
+        var _this = this;
+        switch (value) {
+            case '1':
+                var starTxt = '<ul>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '</ul>' +
+                    '<span>非常不满</span>';
+                return starTxt;
+                break;
+            case '2':
+                var starTxt = '<ul>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '</ul>' +
+                    '<span>不满意</span>';
+                return starTxt;
+                break;
+            case '3':
+                var starTxt = '<ul>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '</ul>' +
+                    '<span>一般</span>';
+                return starTxt;
+                break;
+            case '4':
+                var starTxt = '<ul>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '</ul>' +
+                    '<span>满意</span>';
+                return starTxt;
+                break;
+            default:
+                var starTxt = '<ul>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '<li><img src="/src/images/security/star.png" width="20" alt=""></li>' +
+                    '</ul>' +
+                    '<span>非常满意</span>';
+                return starTxt;
+                break;
+        }
     },
     getSecurityRecord: function(recordId) { //获取安检记录详情
         var _this = this;
@@ -286,30 +377,33 @@ var recordObj = {
         }
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/securityCheckRecord/get?token=" + lsObj.getLocalStorage('token'),
+            url: "/cloudlink-inspection-event/commonData/securityCheckRecord/get?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: record,
             dataType: "json",
             success: function(data, status) {
                 if (data.success == 1) {
-                    $(".planNameT").text(data.rows[0].planName);
-                    $(".securityCheckTimeT").text(data.rows[0].securityCheckTime);
-                    $(".enterhomeUserCodeT").text(data.rows[0].enterhomeUserCode);
-                    $(".enterhomeUserNameT").text(data.rows[0].enterhomeUserName);
-                    $(".enterhomeUserTypeCodeT").text(data.rows[0].enterhomeUserTypeName);
-                    $(".enterhomeUserTelT").text(data.rows[0].enterhomeUserTel);
-                    $(".enterhomeSituationTypeCodeT").text(data.rows[0].enterhomeSituationTypeName);
+                    var obj = data.rows[0];
+                    fromObj.setDetails('securityRecordFrame', obj);
+                    // $(".planNameT").text(data.rows[0].planName);
+                    // $(".securityCheckTimeT").text(data.rows[0].securityCheckTime);
+                    // $(".enterhomeUserCodeT").text(data.rows[0].enterhomeUserCode);
+                    // $(".enterhomeUserNameT").text(data.rows[0].enterhomeUserName);
+                    // $(".enterhomeUserTypeCodeT").text(data.rows[0].enterhomeUserTypeName);
+                    // $(".enterhomeUserTelT").text(data.rows[0].enterhomeUserTel);
+                    // $(".enterhomeSituationTypeCodeT").text(data.rows[0].enterhomeSituationTypeName);
                     // 安全隐患
                     if (data.rows[0].isdanger == 0) {
                         $(".isdangerT").text("不存在");
                     } else if (data.rows[0].isdanger == 1) {
                         $(".isdangerT").text("存在");
+                        $(".isHasDanger").show();
                     } else {
                         $(".isdangerT").text("");
                     }
-                    $(".createUserNameT").text(data.rows[0].createUserName);
-                    $(".enterhomeAddressT").text(data.rows[0].enterhomeAddress);
-                    $(".remarkT").text(data.rows[0].remark);
+                    // $(".createUserNameT").text(data.rows[0].createUserName);
+                    // $(".enterhomeAddressT").text(data.rows[0].enterhomeAddress);
+                    // $(".remarkT").text(data.rows[0].remark);
 
                     //判断是否成功入户
                     if (data.rows[0].enterhomeSituationTypeCode == 'EHS_001') {
@@ -343,16 +437,64 @@ var recordObj = {
                                 '</div>' +
                                 '</div>' +
                                 '<div class="planListHalf">' +
-                                '<div class="planListLeft">燃气表读数</div>' +
+                                '<div class="planListLeft">类型</div>' +
                                 '<div class="planListRight">' +
-                                '<p>' + (data.rows[0].gasmeters[i].gasmeterData == null ? "" : data.rows[0].gasmeters[i].gasmeterData) + '</p>' +
+                                '<p>' + data.rows[0].gasmeters[i].gasmeterTypeName + '</p>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
                                 '<div class="planList">' +
-                                '<div class="planListLeft">左右表</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">型号</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].gasmeterMode + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">生产厂家</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].manufacturer + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">进气方向</div>' +
                                 '<div class="planListRight">' +
                                 '<p>' + data.rows[0].gasmeters[i].gasmeterEntermode + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">生产日期</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].manufactureDate + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">使用状态</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].gasmeterStatusName + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">使用年限</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].serviceLife + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListLeft">规格</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + data.rows[0].gasmeters[i].specifications + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListLeft">燃气表读数</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + (data.rows[0].gasmeters[i].gasmeterData == null ? "" : data.rows[0].gasmeters[i].gasmeterData) + '</p>' +
                                 '</div>' +
                                 '</div>';
                             $(".gasMeterList").append(txtGes);
@@ -383,8 +525,12 @@ var recordObj = {
                         txtUsImg = "<span>无</span>";
                     }
                     $(".userImg").append(txtUsImg);
+
+                    //满意度值
+                    _this.satisfaction(data.rows[0].satisfaction);
                     //判断底部的按钮
                     _this._groupId = data.rows[0].groupId;
+                    _this._planId = data.rows[0].planId;
                     if (data.rows[0].hasHistory == 1) {
                         _this.$openHistory.show();
                     };
@@ -411,18 +557,20 @@ var recordObj = {
     clearHistoryRecord: function() { //清空历史记录详情
         $(".historyList").html("");
     },
-    getHistoryRecord: function(groupId) { //获取历史记录详情
+    getHistoryRecord: function(groupId, planId) { //获取历史记录详情
         var _this = this;
-        var group = {
-            groupId: groupId
+        var param = {
+            groupId: groupId,
+            planId: planId
         }
         $.ajax({
-            type: 'GET',
-            url: "/cloudlink-inspection-event/securityCheckRecord/getHistory?token=" + lsObj.getLocalStorage('token'),
+            type: 'POST',
+            url: "/cloudlink-inspection-event/commonData/securityCheckRecordHistory/getList?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
-            data: group,
+            data: JSON.stringify(param),
             dataType: "json",
             success: function(data, status) {
+                /*
                 $(".historyList").html("");
                 if (data.success == 1) {
                     var txtHistory = null;
@@ -438,7 +586,7 @@ var recordObj = {
                             '<div class="planListHalf">' +
                             '<div class="planListLeft">入户情况</div>' +
                             '<div class="planListRight">' +
-                            '<p>' + data.rows[i].enterhomeSituationTypeCode + '</p>' +
+                            '<p>' + data.rows[i].enterhomeSituationTypeName + '</p>' +
                             '</div>' +
                             '</div>' +
                             '</div>' +
@@ -477,6 +625,157 @@ var recordObj = {
                 } else {
                     xxwsWindowObj.xxwsAlert("获取历史记录失败");
                 }
+                */
+                if (data.success == 1) {
+                    var dataAll = data.rows;
+                    var txt = '';
+                    if (dataAll.length > 0) {
+                        for (var j = 0; j < dataAll.length; j++) {
+                            //满意度
+                            var starTxt = _this.satisfactionTxt(dataAll[j].satisfaction);
+                            //隐患情况组
+                            var txtDanger = "";
+                            if (dataAll[j].hiddendangers.length > 0) {
+                                for (var i = 0; i < dataAll[j].hiddendangers.length; i++) {
+                                    txtDanger += '<span class="dangerC">' + dataAll[j].hiddendangers[i].hiddendangerName + '</span>';
+                                }
+                            } else {
+                                txtDanger = '<span>无</span>';
+                            };
+                            //照片图片
+                            var txtReImg = "";
+                            if (dataAll[j].pic.length > 0) {
+                                for (var i = 0; i < dataAll[j].pic.length; i++) {
+                                    txtReImg += '<li class="event_pic_list">' +
+                                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + dataAll[j].pic[i] + '&viewModel=fill&width=104&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + dataAll[j].pic[i] + '" onclick="previewPicture(this)" alt=""/>' +
+                                        '</li>';
+                                }
+                            } else {
+                                txtReImg = "<span>无</span>";
+                            };
+                            //用户签字
+                            var txtUsImg = "";
+                            if (dataAll[j].signature.length > 0) {
+                                for (var l = 0; l < dataAll[j].signature.length; l++) {
+                                    txtUsImg += '<li class="event_pic_list">' +
+                                        '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + dataAll[j].signature[l] + '&viewModel=fill&width=156&hight=78" data-original="/cloudlink-core-file/file/downLoad?fileId=' + dataAll[j].signature[l] + '" onclick="previewPicture(this)" alt=""/>' +
+                                        '</li>';
+                                }
+                            } else {
+                                txtUsImg = "<span>无</span>";
+                            };
+
+                            // 安全隐患
+                            var securityTxt = null;
+                            var securityClass = null;
+                            if (dataAll[j].isdanger == 0) {
+                                securityTxt = "不存在";
+                                securityClass = 'hideClass';
+                            } else if (dataAll[j].isdanger == 1) {
+                                securityTxt = "存在";
+                                securityClass = 'showClass';
+                            } else {
+                                securityTxt = "";
+                                securityClass = 'hideClass';
+                            }
+
+                            //判断是否成功入户
+                            var successClass = null;
+                            if (dataAll[j].enterhomeSituationTypeCode == 'EHS_001') {
+                                successClass = 'showClass';
+                            } else {
+                                successClass = 'hideClass';
+                            }
+
+                            txt += '<div class="planDetailsMain">' +
+                                '<div class="planList">' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">安检时间</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].securityCheckTime + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">安检人</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].createUserName + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">安检计划</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].planName + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">入户情况</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].enterhomeSituationTypeName + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">安全隐患</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + securityTxt + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planListHalf">' +
+                                '<div class="planListLeft">整改时间</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].remediationTime + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList ' + securityClass + '">' +
+                                '<div class="planListLeft">隐患情况</div>' +
+                                '<div class="planListRight">' +
+                                '<p class="hiddendangersT">' + txtDanger + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList ' + securityClass + '">' +
+                                '<div class="planListLeft">隐患措施告知</div>' +
+                                '<div class="planListRight">' +
+                                '<p>隐患整改措施已告知用户并解释清楚</p>' +
+                                '</div>' +
+                                '</div>' +
+
+                                '<div class="planList">' +
+                                '<div class="planListLeft">备注</div>' +
+                                '<div class="planListRight">' +
+                                '<p>' + dataAll[j].remark + '</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList">' +
+                                '<div class="planListLeft">照片</div>' +
+                                '<div class="planListRight">' +
+                                '<ul>' + txtReImg + '</ul>' +
+                                '</div>' +
+                                '</div>' +
+
+                                '<div class="planList ' + successClass + '">' +
+                                '<div class="planListLeft">用户签字</div>' +
+                                '<div class="planListRight">' +
+                                '<ul>' + txtUsImg + '</ul>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="planList ' + successClass + '">' +
+                                '<div class="planListLeft">用户满意度</div>' +
+                                '<div class="planListRight satisfaction">' + starTxt + '</div>' +
+                                '</div>' +
+
+                                '</div>';
+                        }
+                    } else {
+                        txt = "<span class='notEmptyData'>暂无检查记录</span>";
+                    }
+                    $(".historyList").append(txt);
+                } else {
+                    xxwsWindowObj.xxwsAlert("获取历史记录失败");
+                }
             }
         });
     },
@@ -506,8 +805,9 @@ var recordObj = {
                 } else {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有删除安检记录的权限！");
+                    } else {
+                        xxwsWindowObj.xxwsAlert("安检记录删除失败！");
                     }
-                    xxwsWindowObj.xxwsAlert("安检记录删除失败！");
                 }
             }
         });
@@ -815,7 +1115,7 @@ var exportFileObj = {
     },
     expoerData: function(date) {
         var options = {
-            "url": '/cloudlink-inspection-event/securityCheckRecord/exportExcel?token=' + lsObj.getLocalStorage('token'),
+            "url": '/cloudlink-inspection-event/commonData/securityCheckRecord/export?token=' + lsObj.getLocalStorage('token'),
             "data": date,
             "method": 'post'
         }

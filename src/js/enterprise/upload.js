@@ -1,6 +1,6 @@
 var i = 0; //用于存储营业执照照片
 var j = 0; //用于存储法人身份证照片
-
+var z = 0; //用于存储企业人员花名册
 window.URL = window.URL || window.webkitURL;
 
 var fileElem = document.getElementById("fileElem"),
@@ -63,7 +63,7 @@ function handleFiles(obj, des) {
             $(".business_img_file").find("input").last().attr(file);
             var fileId = "<input type='file' onchange='handleFiles(this,1);'  class='upload_business_picture'/>";
             $(".business_img_file").append(fileId);
-        } else {
+        } else if (des == 2) {
             j++;
             var imagesL = '<div class="identify_enterprise_images">' +
                 '<img src="' + path + '" alt=""/>' +
@@ -79,6 +79,22 @@ function handleFiles(obj, des) {
             $(".identify_img_file").find("input").last().attr(file);
             var fileId = "<input type='file' onchange='handleFiles(this,2);'  class='upload_identify_picture'/>";
             $(".identify_img_file").append(fileId);
+        } else if (des == 3) {
+            z++;
+            var imagesL = '<div class="rose_enterprise_images">' +
+                '<img src="' + path + '" alt=""/>' +
+                '<span onclick="closeRoseImg(this);" data-key="' + z + '"></span>' +
+                '</div>';
+            $(".rose_img_list").append(imagesL);
+            var file = {
+                "data-value": z,
+                "id": 'fileidRose' + z,
+                "name": "file",
+            }
+            $(".rose_img_file").find("input").attr("class", ""); //清空所有的class，进行事件的
+            $(".rose_img_file").find("input").last().attr(file);
+            var fileId = "<input type='file' onchange='handleFiles(this,3);'  class='upload_rose_picture'/>";
+            $(".rose_img_file").append(fileId);
         }
 
 

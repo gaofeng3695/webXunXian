@@ -14,6 +14,7 @@
     <link href="/lib/css/font-awesome.min.css" rel="stylesheet">
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
+    <link href="/src/css/userChoice.css" rel="stylesheet">
     <link href="/src/css/security.css" rel="stylesheet">
 </head>
 
@@ -129,10 +130,10 @@
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        <i>*</i>用户总数
+                                        用户总数
                                     </div>
                                     <div class="planListRight">
-                                        <input type="text" class="form-control" name="planWorkload" />
+                                        <input type="text" readonly class="form-control" name="planWorkload" />
                                     </div>
                                 </div>
                             </div>
@@ -170,8 +171,8 @@
                                     <i>*</i>安检范围
                                 </div>
                                 <div class="planListRight textarea_text">
-                                    <textarea id="" name="securityCheckScope" oninput="checkLen(this)" class="form-control"></textarea>
-                                    <span class="text_num">(200字)</span>
+                                    <textarea name="securityCheckScope" readonly class="form-control"></textarea>
+                                    <p class="addChoiceUserBtn"><span>选择</span></p>
                                 </div>
                             </div>
                             <div class="planList">
@@ -179,7 +180,7 @@
                                     备注
                                 </div>
                                 <div class="planListRight textarea_text">
-                                    <textarea id="" name="remark" oninput="checkLen(this)" class="form-control"></textarea>
+                                    <textarea name="remark" oninput="checkLen(this)" class="form-control"></textarea>
                                     <span class="text_num">(200字)</span>
                                 </div>
                             </div>
@@ -222,10 +223,10 @@
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        <i>*</i>用户总数
+                                        用户总数
                                     </div>
                                     <div class="planListRight">
-                                        <input type="text" class="form-control" name="planWorkload" />
+                                        <input type="text" class="form-control" readonly name="planWorkload" />
                                     </div>
                                 </div>
                             </div>
@@ -263,8 +264,8 @@
                                     <i>*</i>安检范围
                                 </div>
                                 <div class="planListRight textarea_text">
-                                    <textarea id="" name="securityCheckScope" oninput="checkLen(this)" class="form-control"></textarea>
-                                    <span class="text_num">(200字)</span>
+                                    <textarea name="securityCheckScope" readonly class="form-control"></textarea>
+                                    <p class="modifyChoiceUserBtn"><span>选择</span></p>
                                 </div>
                             </div>
                             <div class="planList">
@@ -272,7 +273,7 @@
                                     备注
                                 </div>
                                 <div class="planListRight textarea_text">
-                                    <textarea id="" name="remark" oninput="checkLen(this)" class="form-control"></textarea>
+                                    <textarea name="remark" oninput="checkLen(this)" class="form-control"></textarea>
                                     <span class="text_num">(200字)</span>
                                 </div>
                             </div>
@@ -343,7 +344,25 @@
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        完成情况
+                                        覆盖数
+                                    </div>
+                                    <div class="planListRight">
+                                        <p class="coverageWorkloadT">--</p>
+                                    </div>
+                                </div>
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        覆盖率
+                                    </div>
+                                    <div class="planListRight">
+                                        <p class="coverageRatioT">--</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="planList">
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        入户数
                                     </div>
                                     <div class="planListRight">
                                         <p class="factWorkloadT">--</p>
@@ -351,7 +370,7 @@
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        完成率
+                                        入户率
                                     </div>
                                     <div class="planListRight">
                                         <p class="workloadRatioT">--</p>
@@ -372,6 +391,7 @@
                                 </div>
                                 <div class="planListRight textarea_text">
                                     <p class="securityCheckScopeT">--</p>
+                                    <p class="lookUserList"><span>查看明细</span></p>
                                 </div>
                             </div>
                             <div class="planList">
@@ -386,6 +406,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn submit copyPlan">复制计划</button>
                     <button class="btn deletePlan">删除计划</button>
                     <button class="btn closePlan">关闭计划</button>
                     <button class="btn" data-dismiss="modal">取消</button>
@@ -413,6 +434,226 @@
         </div>
     </div>
 
+    <!--小区选择-->
+    <div id="choiceAreaFrame" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>选择安检范围<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="areaMain">
+                        <div class="areaTitle">
+                            <p>共计<span>120</span>个小区</p>
+                        </div>
+                        <div class="areaSearch">
+                            <div class="searchListBtn">
+                                <ul>
+                                    <li class="active">全部</li>
+                                    <li>已选择</li>
+                                    <li>未选择</li>
+                                </ul>
+                            </div>
+                            <div class="searchText">
+                                <div class="searchBorder">
+                                    <div class="input_wrapper">
+                                        <input class="areaSearchText" type="text" placeholder="请输入关键字搜索">
+                                    </div>
+                                    <span class="areaSearchBtn">确定</span>
+                                </div>
+                                <div class="resetBtn">
+                                    <span>重置</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="areaPlaceMain">
+                            <div class="areaPlace"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn submit areaChoiceTrueBtn">确定选择</button>
+                    <button class="btn" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--用户选择-->
+    <div id="choiceUserFrame" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>选择小区用户<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="userChoiceMain">
+                        <div class="areaInformation">
+                            <p>小区名称：<span class="choiceAreaName">--</span>总户数：<span class="choiceAreaTotal">--</span>已纳入：<span class="choiceAreaYes">--</span>未纳入：<span class="choiceAreaNo">--</span></p>
+                        </div>
+                        <div class="container-fluid search_item_wrapper">
+                            <div class="ChoiceTop">
+                                <div class="row search_title">
+                                    <div class="col-lg-5 col-xs-5 btn_wrapper">
+                                        <div class="col-xs-8">
+                                            <select class="form-control" name="regionIdChoice">
+                                                <option value="">全部（片区）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-7 col-xs-7 right_wrapper">
+                                        <div class="search_btn_right">
+                                            <div class="search_reset" id="choiceResetBtn">重置</div>
+                                        </div>
+                                        <div class="search_wrapper">
+                                            <div class="input_wrapper">
+                                                <input class="" id="searchInputChoice" type="text" placeholder="请输入设施名称、编号、详细位置等关键字搜索">
+                                            </div>
+                                            <span class="mybtn" id="choiceUserTxtBtn">确定</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="more_item_wrapper">
+                                    <div class="sub_wrapper">
+                                        <div class="son_wrapper">
+                                            <div class="line">
+                                                <div class="title">用户类型</div>
+                                                <div class="item_box">
+                                                    <div class="item1" data-class="enterhomeUserTypeCode">
+                                                        <span class="item" data-value="">全部</span>
+                                                        <span class="item" data-value="EHT_001">居民</span>
+                                                        <span class="item" data-value="EHT_002">工业</span>
+                                                        <span class="item" data-value="EHT_003">商业</span>
+                                                        <span class="item" data-value="EHT_004">公共福利</span>
+                                                        <span class="item" data-value="EHT_099">其他</span>
+                                                        <span class="item" data-value="none">无</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="title">用户状态</div>
+                                                <div class="item_box">
+                                                    <div class="item1" data-class="userStatusCode">
+                                                        <span class="item" data-value="">全部</span>
+                                                        <span class="item" data-value="US_02">未通气</span>
+                                                        <span class="item" data-value="US_01">在用</span>
+                                                        <span class="item" data-value="US_03">停用</span>
+                                                        <span class="item" data-value="US_04">欠费</span>
+                                                        <span class="item" data-value="US_05">已注销</span>
+                                                        <span class="item" data-value="none">无</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="title">纳入情况</div>
+                                                <div class="item_box">
+                                                    <div class="item1" data-class="choiceCode">
+                                                        <span class="item" data-value="">全部</span>
+                                                        <span class="item" data-value="no">未纳入</span>
+                                                        <span class="item" data-value="yes">已纳入</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data_tab">
+                            <div class="container-fluid">
+                                <table id="userChoiceList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn submit userChoiceTrueBtn">确定选择</button>
+                    <button class="btn" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--查看安检范围模态框-->
+    <div id="viewDetailFrame" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>安检范围<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="areaDetailMain">
+                        <div class="areaRangeName"> 计划名称： <span class="areaName"> 二里庄小区</span></div>
+                        <!--高级搜索开始-->
+                        <div class="container-fluid search_item_wrapper">
+                            <div class="userDetailed">
+                                <div class="row search_title">
+                                    <div class="col-lg-4 col-xs-4 btn_wrapper">
+                                        <div class="col-xs-12">
+                                            <select class="form-control" name="quartersList">
+                                                <option value="">全部（小区/院/村）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8 col-xs-8 right_wrapper">
+                                        <div class="search_btn_right">
+                                            <div class="search_reset" id="lookUserDetailedreset">重置</div>
+                                        </div>
+                                        <div class="search_wrapper">
+                                            <div class="input_wrapper">
+                                                <input id="searchInputLook" type="text" placeholder="请输入用户名称、编号、详细地址等关键字搜索">
+                                            </div>
+                                            <span class="mybtn" id="lookUserDetailedBtn">确定</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="more_item_wrapper">
+                                    <div class="sub_wrapper">
+                                        <div class="son_wrapper">
+                                            <div class="line">
+                                                <div class="title">用户类型</div>
+                                                <div class="item_box">
+                                                    <div class="item1" data-class="enterhomeUserTypeCode">
+                                                        <span class="item" data-value="">全部</span>
+                                                        <span class="item" data-value="EHT_001">居民</span>
+                                                        <span class="item" data-value="EHT_002">工业</span>
+                                                        <span class="item" data-value="EHT_003">商业</span>
+                                                        <span class="item" data-value="EHT_004">公共福利</span>
+                                                        <span class="item" data-value="EHT_099">其他</span>
+                                                        <span class="item" data-value="none">无</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="title">用户状态</div>
+                                                <div class="item_box">
+                                                    <div class="item1" data-class="userStatusCode">
+                                                        <span class="item" data-value="">全部</span>
+                                                        <span class="item" data-value="US_02">未通气</span>
+                                                        <span class="item" data-value="US_01">在用</span>
+                                                        <span class="item" data-value="US_03">停用</span>
+                                                        <span class="item" data-value="US_04">欠费</span>
+                                                        <span class="item" data-value="US_05">已注销</span>
+                                                        <span class="item" data-value="none">无</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--高级搜索结束-->
+                        <!--查看片区范围table开始-->
+                        <table id="userDetailedTable"></table>
+                        <!--查看片区范围table结束-->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript" src="/lib/js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="/lib/js/jquery.ztree.all.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap.min.js"></script>
@@ -424,6 +665,7 @@
     <script type="text/javascript" src="/src/js/common/html5-storage.js"></script>
     <script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>
 
+    <script type="text/javascript" src="/src/js/user/choice.user.js"></script>
     <script type="text/javascript" src="/src/js/security/securityPlan.js"></script>
 </body>
 <script>

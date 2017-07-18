@@ -120,6 +120,32 @@
                 }
             }
         }
+        .range {
+            i {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background: url(/src/images/user/detail.png) no-repeat;
+                vertical-align: middle;
+                margin: 0 5px;
+                &:hover {
+                    background: url(/src/images/user/detail_h.png) no-repeat;
+                }
+            }
+        }
+        .clone {
+            i {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background: url(/src/images/security/clone.png) no-repeat;
+                vertical-align: middle;
+                margin: 0 5px;
+                &:hover {
+                    background: url(/src/images/security/clone_h.png) no-repeat;
+                }
+            }
+        }
         .modify {
             i {
                 display: inline-block;
@@ -256,6 +282,23 @@
                                 bottom: 2px;
                                 right: 30px;
                             }
+                            p {
+                                margin: 0;
+                                text-align: right;
+                                padding-top: 10px;
+                                span {
+                                    width: 60px;
+                                    height: 30px;
+                                    line-height: 30px;
+                                    cursor: pointer;
+                                    text-align: center;
+                                    border-radius: 3px;
+                                    background: #59b6fc;
+                                    color: #fff;
+                                    font-size: 16px;
+                                    display: inline-block;
+                                }
+                            }
                         }
                         .has-feedback {
                             .form-control {
@@ -329,7 +372,7 @@
                                 border: none;
                             }
                             .planListLeft {
-                                width: 90px;
+                                width: 100px;
                                 float: left;
                                 text-align: right;
                                 line-height: 36px;
@@ -338,7 +381,7 @@
                             }
                             .planListRight {
                                 background: #fff;
-                                margin-left: 90px;
+                                margin-left: 100px;
                                 width: auto;
                                 padding: 0 10px;
                                 border-left: 1px solid #ddd;
@@ -350,6 +393,16 @@
                                     color: #000;
                                     word-wrap: break-word;
                                     word-break: normal;
+                                    &.lookUserList {
+                                        text-align: right;
+                                        min-height: 24px;
+                                        line-height: 24px;
+                                        padding: 0;
+                                        span {
+                                            color: #59b6fc;
+                                            cursor: pointer;
+                                        }
+                                    }
                                 }
                                 ul {
                                     margin: 0;
@@ -365,9 +418,27 @@
                                         overflow: hidden;
                                         padding: 3px;
                                         border: 1px solid #f1f1f1;
-                                        margin: 0 11px 8px 0;
+                                        margin: 0 9px 8px 0;
                                         cursor: pointer;
                                     }
+                                }
+                            }
+                            .satisfaction {
+                                ul {
+                                    display: inline-block;
+                                    vertical-align: middle;
+                                    padding-top: 6px;
+                                    margin: 0;
+                                    li {
+                                        border: none;
+                                        padding: 0;
+                                        margin-bottom: 0;
+                                        height: 20px;
+                                    }
+                                }
+                                span {
+                                    display: inline-block;
+                                    vertical-align: middle;
                                 }
                             }
                             .planListHalf {
@@ -410,6 +481,33 @@
                     .historyList {
                         .planDetailsMain {
                             margin-bottom: 20px;
+                            .planList {
+                                &.hideClass {
+                                    display: none;
+                                }
+                                &.showClass {
+                                    display: block;
+                                }
+                                .planListRight {
+                                    p {
+                                        .dangerC {
+                                            display: inline-block;
+                                            line-height: 24px;
+                                            color: #ec9029;
+                                            padding-right: 5px;
+                                            padding-left: 20px;
+                                            margin-right: 10px;
+                                            border-radius: 5px;
+                                            border: 1px solid #ec9029;
+                                            background: url(/src/images/security/yes.png) 3px center no-repeat;
+                                            margin-bottom: 7px;
+                                        }
+                                        &.hiddendangersT {
+                                            padding-bottom: 0;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

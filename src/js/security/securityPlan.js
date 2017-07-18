@@ -8,8 +8,13 @@ var planObj = {
     $planDetailsFrame: $("#planDetailsFrame"),
     $securityPeople: $(".planMainAdd input[name=securityPeople]"),
     $securityPeopleModify: $(".planMainModify input[name=securityPeople]"),
+    $addChoiceUserBtn: $(".addChoiceUserBtn span"),
+    $modifyChoiceUserBtn: $(".modifyChoiceUserBtn span"),
+    $lookUserListBtn: $(".lookUserList span"),
+    $copyPlanBtn: $(".copyPlan"),
     selectPersonArr: [], //选择的人员数组
     _planId: null,
+    _planNmae: null,
     _planShowStatus: null,
     _createUserId: null,
     _isEdit: null,
@@ -23,8 +28,59 @@ var planObj = {
             _this.$addPlanFrame.modal();
             _this.$securityPeople.val("");
             _this.selectPersonArr = [];
+            $(".planMainAdd").find('input').val("");
+            $(".planMainAdd").find('textarea').val("");
+            $("#addPlanFrame").removeData('userData');
+        });
+        //新建模态框加载完成
+        _this.$addPlanFrame.on('shown.bs.modal', function(e) {
             $("input[name=createUserNameAdd]").val(JSON.parse(lsObj.getLocalStorage('userBo')).userName);
         });
+        //新建打开用户选择
+        _this.$addChoiceUserBtn.click(function() {
+            _this._isEdit = false;
+            choiceFrameObj.$choiceAreaFrame.modal();
+            choiceFrameObj._areaChoiceData = $("#addPlanFrame").data('userData');
+        });
+        //修改打开用户选择
+        _this.$modifyChoiceUserBtn.click(function() {
+            _this._isEdit = true;
+            choiceFrameObj.$choiceAreaFrame.modal();
+            choiceFrameObj._areaChoiceData = $("#modifyPlanFrame").data('userData');
+        });
+
+        //确定小区选择
+        $(".areaChoiceTrueBtn").click(function() {
+            var data = choiceFrameObj.getAreaChoiceData();
+            choiceFrameObj.$choiceAreaFrame.modal('hide');
+            var txt = [],
+                total = 0;
+            for (var i = 0; i < data.length; i++) {
+                total += data[i].choiceNumber;
+                txt.push(data[i].residential + '(' + data[i].choiceNumber + '户)');
+            }
+            if (_this._isEdit == true) {
+                $("#modifyPlanFrame").data('userData', data);
+                $("#modifyPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
+                $("#modifyPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
+            } else {
+                $("#addPlanFrame").data('userData', data);
+                $("#addPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
+                $("#addPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
+            }
+        });
+
+        //打开用户的明细
+        _this.$lookUserListBtn.click(function() {
+            if (_this._planId) {
+                $("#viewDetailFrame").modal();
+                choiceFrameObj._planId = _this._planId;
+                $('.areaRangeName .areaName').text(_this._planNmae);
+            } else {
+                xxwsWindowObj.xxwsAlert('无详细信息');
+            }
+        });
+
         //打开人员模态框
         _this.$securityPeople.click(function() {
             // _this.selectPersonArr = [];
@@ -86,6 +142,7 @@ var planObj = {
                 }
             }
         });
+        //修改模态框加载完成
         _this.$modifyPlanFrame.on('shown.bs.modal', function(e) {
             _this.getModifyDetails(_this._planId);
         });
@@ -141,11 +198,31 @@ var planObj = {
             xxwsWindowObj.xxwsAlert(defaultOptions);
             return false;
         });
+
+        //复制计划
+        _this.$copyPlanBtn.click(function() {
+            if (_this._planId) {
+                var defaultOptions = {
+                    tip: '您是否复制该计划？',
+                    name_title: '提示',
+                    name_cancel: '取消',
+                    name_confirm: '确定',
+                    isCancelBtnShow: true,
+                    callBack: function() {
+                        _this.copyPlan(_this._planId);
+                    }
+                };
+                xxwsWindowObj.xxwsAlert(defaultOptions);
+                return false;
+            } else {
+                xxwsWindowObj.xxwsAlert("未获取到计划信息，不能复制");
+            }
+        });
     },
     getTable: function() { //table 数据
         var _this = this;
         $('#tablePlan').bootstrapTable({
-            url: "/cloudlink-inspection-event/securityCheckPlan/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
+            url: "/cloudlink-inspection-event/commonData/securityCheckPlan/getPageList?token=" + lsObj.getLocalStorage('token'), //请求数据url
             method: 'post',
             toolbar: "#toolbar",
             toolbarAlign: "left",
@@ -200,7 +277,7 @@ var planObj = {
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '15%',
+                width: '10%',
                 editable: true,
                 cellStyle: function(value, row, index) {
                     return {
@@ -215,7 +292,7 @@ var planObj = {
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '15%',
+                width: '10%',
                 editable: true,
             }, {
                 field: 'planShowStatusName', //域值
@@ -223,33 +300,52 @@ var planObj = {
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '9%',
+                width: '7%',
                 formatter: function(value, row, index) {
                     return "<span class='atatus_" + (parseInt(row.planShowStatus) + 1) + "'>" + value + "</span>";
                 }
             }, {
                 field: 'planWorkload', //域值
-                title: '计划数', //内容
+                title: '用户总数', //内容
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '9%',
+                width: '8%',
                 editable: true,
             }, {
-                field: 'factWorkload', //域值
-                title: '完成数', //内容
+                field: 'coverageWorkload', //域值
+                title: '覆盖数', //内容
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '9%',
+                width: '7%',
+                // editable: true,
+            }, {
+                field: 'coverageRatio', //域值
+                title: '覆盖率', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '7%',
+                editable: true,
+                formatter: function(value, row, index) {
+                    return value + '%';
+                }
+            }, {
+                field: 'factWorkload', //域值
+                title: '入户数', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '7%',
                 // editable: true,
             }, {
                 field: 'workloadRatio', //域值
-                title: '完成率', //内容
+                title: '入户率', //内容
                 align: 'center',
                 visible: true, //false表示不显示
                 sortable: false, //启用排序
-                width: '9%',
+                width: '7%',
                 editable: true,
                 formatter: function(value, row, index) {
                     return value + '%';
@@ -259,7 +355,7 @@ var planObj = {
                 title: '操作',
                 align: 'center',
                 events: _this.tableEvent(),
-                width: '15%',
+                width: '18%',
                 formatter: _this.tableOperation,
             }]
         });
@@ -296,10 +392,16 @@ var planObj = {
             '<a class="look" data-toggle="modal" href="javascript:void(0)" title="查看">',
             '<i></i>',
             '</a>',
+            '<a class="range" href="javascript:void(0)" title="范围明细">',
+            '<i></i>',
+            '</a>',
             '<a class="' + modifyClass + '" href="javascript:void(0)" title="修改">',
             '<i></i>',
             '</a>',
             '<a class="' + closedClass + '" href="javascript:void(0)" title="关闭">',
+            '<i></i>',
+            '</a>',
+            '<a class="clone" href="javascript:void(0)" title="复制计划">',
             '<i></i>',
             '</a>',
             '<a class="' + deleteClass + '" href="javascript:void(0)" title="删除">',
@@ -319,10 +421,34 @@ var planObj = {
                 _this.clearDetails();
                 return false;
             },
+            //查看范围明细
+            'click .range': function(e, value, row, index) {
+                $("#viewDetailFrame").modal();
+                choiceFrameObj._planId = row.objectId;
+                $('.areaRangeName .areaName').text(row.planName);
+                return false;
+            },
             //修改计划
             'click .modify': function(e, value, row, index) {
-                _this._planId = row.objectId;
-                _this.$modifyPlanFrame.modal(); //打开修改模态框
+                if (row.planShowStatus == 0) {
+                    _this._planId = row.objectId;
+                    _this.clearModify();
+                    _this.$modifyPlanFrame.modal(); //打开修改模态框
+                } else {
+                    var defaultOptions = {
+                        tip: '该计划处于【' + row.planShowStatusName + '】，如要修改安检范围，则会引起覆盖及入户相关数据的改变，是否继续修改？',
+                        name_title: '提示',
+                        name_cancel: '取消',
+                        name_confirm: '确定',
+                        isCancelBtnShow: true,
+                        callBack: function() {
+                            _this._planId = row.objectId;
+                            _this.clearModify();
+                            _this.$modifyPlanFrame.modal(); //打开修改模态框
+                        }
+                    };
+                    xxwsWindowObj.xxwsAlert(defaultOptions);
+                }
                 return false;
             },
             //关闭计划
@@ -335,6 +461,21 @@ var planObj = {
                     isCancelBtnShow: true,
                     callBack: function() {
                         _this.closedPlan(row.objectId);
+                    }
+                };
+                xxwsWindowObj.xxwsAlert(defaultOptions);
+                return false;
+            },
+            //复制计划
+            'click .clone': function(e, value, row, index) {
+                var defaultOptions = {
+                    tip: '您是否复制该计划？',
+                    name_title: '提示',
+                    name_cancel: '取消',
+                    name_confirm: '确定',
+                    isCancelBtnShow: true,
+                    callBack: function() {
+                        _this.copyPlan(row.objectId);
                     }
                 };
                 xxwsWindowObj.xxwsAlert(defaultOptions);
@@ -465,7 +606,7 @@ var planObj = {
         var securityPeople = e.find("input[name=securityPeople]").val().trim();
         var securityCheckScope = e.find("textarea[name=securityCheckScope]").val().trim();
         var remark = e.find("textarea[name=remark]").val().trim();
-        var reg = /^\+?[1-9][0-9]*$/;
+        // var reg = /^\+?[1-9][0-9]*$/;
 
         var userMsg = {
             "relationshipPersonId": JSON.parse(lsObj.getLocalStorage('userBo')).objectId,
@@ -483,15 +624,6 @@ var planObj = {
         } else if (planName.length > 15) {
             xxwsWindowObj.xxwsAlert('计划名称过长，填写上限为15个字');
             return false;
-        } else if (planWorkload == '' || planWorkload == null) {
-            xxwsWindowObj.xxwsAlert('请输入用户总数');
-            return false;
-        } else if (planWorkload.length > 8) {
-            xxwsWindowObj.xxwsAlert('用户总数最大不超过1亿！');
-            return false;
-        } else if (!reg.test(planWorkload)) {
-            xxwsWindowObj.xxwsAlert('用户总数格式不对');
-            return false;
         } else if (planStartTime == '' || planStartTime == null) {
             xxwsWindowObj.xxwsAlert('起始时间不能为空');
             return false;
@@ -499,7 +631,7 @@ var planObj = {
             xxwsWindowObj.xxwsAlert('结束时间不能为空');
             return false;
         } else if (securityCheckScope == '' || securityCheckScope == null) {
-            xxwsWindowObj.xxwsAlert('请输入安检范围');
+            xxwsWindowObj.xxwsAlert('请选择安检范围');
             return false;
         } else {
             var param = {
@@ -517,6 +649,7 @@ var planObj = {
     addPlan: function(paramData) { //添加计划
         var _this = this;
         _this._flag = false;
+        paramData.userFileIdVoSet = $("#addPlanFrame").data('userData');
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/securityCheckPlan/save?token=" + lsObj.getLocalStorage('token'),
@@ -551,6 +684,7 @@ var planObj = {
     modifyPlan: function(paramData) { //修改计划提交
         var _this = this;
         _this._flag = false;
+        paramData.userFileIdVoSet = $("#modifyPlanFrame").data('userData');
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/securityCheckPlan/update?token=" + lsObj.getLocalStorage('token'),
@@ -582,6 +716,13 @@ var planObj = {
             }
         });
     },
+    clearModify: function() { //情况修改模态框
+        var _this = this;
+        $(".planMainModify").find("input").val("");
+        $(".planMainModify").find("textarea").val("");
+        $("#modifyPlanFrame").data('userData', null);
+        _this.selectPersonArr = [];
+    },
     getModifyDetails: function(planId) { //获取计划详情修改
         var _this = this;
         var param = {
@@ -589,7 +730,7 @@ var planObj = {
         }
         $.ajax({
             type: "GET",
-            url: "/cloudlink-inspection-event/securityCheckPlan/get?token=" + lsObj.getLocalStorage('token'),
+            url: "/cloudlink-inspection-event/commonData/securityCheckPlan/get?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: param,
             dataType: "json",
@@ -604,6 +745,8 @@ var planObj = {
                     _this.$securityPeopleModify.val(data.rows[0].relationshipPersonNames);
                     $(".planMainModify").find("textarea[name=securityCheckScope]").val(data.rows[0].securityCheckScope);
                     $(".planMainModify").find("textarea[name=remark]").val(data.rows[0].remark);
+
+                    $("#modifyPlanFrame").data("userData", data.rows[0].userFileIdVoSet);
                     //人员数组
                     _this.selectPersonArr = [];
                     for (var i = 0; i < data.rows[0].relationshipPersons.length; i++) {
@@ -624,6 +767,8 @@ var planObj = {
         $(".planWorkloadT").text("---");
         $(".planStartTimeT").text("---");
         $(".planEndTimeT").text("---");
+        $(".coverageRatioT").text("---");
+        $(".coverageWorkloadT").text("---");
         $(".factWorkloadT").text("---");
         $(".workloadRatioT").text("---");
         $(".relationshipPersonNamesT").text("---")
@@ -637,22 +782,26 @@ var planObj = {
         var param = {
             objectId: planId
         }
+        _this._planId = null;
         $.ajax({
             type: "GET",
-            url: "/cloudlink-inspection-event/securityCheckPlan/get?token=" + lsObj.getLocalStorage('token'),
+            url: "/cloudlink-inspection-event/commonData/securityCheckPlan/get?token=" + lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: param,
             dataType: "json",
             success: function(data) {
                 if (data.success == 1) {
                     _this._planId = data.rows[0].objectId;
+                    _this._planNmae = data.rows[0].planName;
                     $(".planNameT").text(data.rows[0].planName);
                     $(".createUserNameT").text(data.rows[0].createUserName);
                     $(".planWorkloadT").text(data.rows[0].planWorkload);
                     $(".planStartTimeT").text(data.rows[0].planStartTime);
                     $(".planEndTimeT").text(data.rows[0].planEndTime);
+                    $(".coverageWorkloadT").text(data.rows[0].coverageWorkload);
+                    $(".coverageRatioT").text(parseInt((data.rows[0].coverageRatio == '') ? 0 : data.rows[0].coverageRatio) + "%");
                     $(".factWorkloadT").text(data.rows[0].factWorkload);
-                    $(".workloadRatioT").text(data.rows[0].workloadRatio + "%");
+                    $(".workloadRatioT").text(parseInt(data.rows[0].workloadRatio) + "%");
                     $(".relationshipPersonNamesT").text(data.rows[0].relationshipPersonNames)
                     $(".securityCheckScopeT").text(data.rows[0].securityCheckScope);
                     $(".remarkT").text(data.rows[0].remark);
@@ -691,8 +840,9 @@ var planObj = {
                 } else {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有关闭计划的权限！");
+                    } else {
+                        xxwsWindowObj.xxwsAlert("安检计划关闭失败！");
                     }
-                    xxwsWindowObj.xxwsAlert("安检计划关闭失败！");
                 }
             }
         });
@@ -718,8 +868,9 @@ var planObj = {
                 } else {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有删除计划的权限！");
+                    } else {
+                        xxwsWindowObj.xxwsAlert("安检计划删除失败！");
                     }
-                    xxwsWindowObj.xxwsAlert("安检计划删除失败！");
                 }
             }
         });
@@ -750,8 +901,38 @@ var planObj = {
                 } else {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有删除计划的权限！");
+                    } else {
+                        xxwsWindowObj.xxwsAlert("安检计划删除失败！");
                     }
-                    xxwsWindowObj.xxwsAlert("安检计划删除失败！");
+                }
+            }
+        });
+    },
+    copyPlan: function(planId) { //复制计划
+        var plan = {
+            objectId: planId
+        };
+        $.ajax({
+            type: 'POST',
+            url: "/cloudlink-inspection-event/securityCheckPlan/clone?token=" + lsObj.getLocalStorage('token'),
+            contentType: "application/json",
+            data: JSON.stringify(plan),
+            dataType: "json",
+            success: function(data, status) {
+                if (data.success == 1) {
+                    var defaultOptions = {
+                        tip: '安检计划复制成功！',
+                        name_title: '提示',
+                        name_cancel: '取消',
+                        name_confirm: '确定',
+                        isCancelBtnShow: false,
+                        callBack: function() {
+                            window.location.reload();
+                        }
+                    };
+                    xxwsWindowObj.xxwsAlert(defaultOptions);
+                } else {
+                    xxwsWindowObj.xxwsAlert("安检计划复制失败！");
                 }
             }
         });
@@ -1030,7 +1211,7 @@ var exportFileObj = {
     },
     expoerData: function(date) {
         var options = {
-            "url": '/cloudlink-inspection-event/securityCheckPlan/exportExcel?token=' + lsObj.getLocalStorage('token'),
+            "url": '/cloudlink-inspection-event/commonData/securityCheckPlan/export?token=' + lsObj.getLocalStorage('token'),
             "data": date,
             "method": 'post'
         }

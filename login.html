@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/lib/css/bootstrap.css" rel="stylesheet">
     <link href="/src/css/login.css" rel="stylesheet">
 </head>
 
@@ -16,7 +17,7 @@
     <div id="bgcontent" style="background-size: cover;filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/src/images/loginImg/loginbg.jpg',sizingMethod='scale');">
         <div class="loginContent">
             <div class="poskuai">
-                <div style="padding-left:20px;padding-top:20px;font-size:16px;color: #5EB6F9;">免费试用</div>
+                <div id="versionInformation"><span style="cursor: pointer">V1.3.0</span></div>
                 <div class="message">
                     <div class="logoImg"></div>
                     <div class="info">
@@ -41,10 +42,35 @@
         </div>
         <p class="words">北京中盈安信技术服务股份有限公司旗下网站：巡线卫士<span>©</span>2016 京 B2-20080224-16</p>
     </div>
+    <!--版本号模态框-->
+    <div id="versionmodal" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="content">
+                        <h4><b>1.3.0版本更新</b></h4>
+                        <ul>
+                            <li>新增【管网设施】模块</li>
+                            <li>APP端新增事件分享功能（支持微信、QQ）</li>
+                            <li>优化相关功能，增强用户体验</li>
+                            <li>修复若干bug</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="modal_close btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/lib/js/jquery-1.12.4.min.js"></script>
     <script src="/lib/js/bootstrap.min.js"></script>
     <script src="/src/js/common/md5.js"></script>
     <script src="/src/js/common/html5-storage.js"></script>
+    <!--<script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>-->
     <script src="/src/js/common/zhuge.js"></script>
     <script src="/src/js/login/login.review.js"></script>
     <script>

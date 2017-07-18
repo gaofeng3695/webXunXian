@@ -3,7 +3,7 @@
     nameImg1: "url(src/images/loginImg/nameImg1.png)",
     passwordImg: "url(src/images/loginImg/password1.png)",
     passwordImg1: "url(src/images/loginImg/password.png)",
-    focus: function (obj, imgSrc) {
+    focus: function(obj, imgSrc) {
         obj.css({
             background: "#ECF7FF",
             border: "1px solid #5EB6F9"
@@ -12,7 +12,7 @@
         obj.find('.common').css("border-left", "1px solid #5EB6F9");
         obj.find('.bg').css("background-image", imgSrc);
     },
-    blur: function (obj, imgSrc) {
+    blur: function(obj, imgSrc) {
         obj.css({
             background: "#fff",
             border: "1px solid #bbb"
@@ -22,20 +22,20 @@
         obj.find('.bg').css("background-image", imgSrc);
     }
 }
-$(".name input").focus(function () {
+$(".name input").focus(function() {
     Obj.focus($(".name"), Obj.nameImg);
-}).blur(function () {
+}).blur(function() {
     Obj.blur($(".name"), Obj.nameImg1);
 });
-$(".password input").focus(function () {
+$(".password input").focus(function() {
     Obj.focus($(".password"), Obj.passwordImg);
-}).blur(function () {
+}).blur(function() {
     Obj.blur($(".password"), Obj.passwordImg1);
 })
 var passwordVal = null;
 var nameVal = null;
 //确认登录
-$('.btn').click(function () {
+$('.btn').click(function() {
     nameVal = $(".name input").val().trim();
     passwordVal = MD5($(".password input").val().trim());
     var phoneReg = /^1\d{10}$/;
@@ -67,7 +67,7 @@ function accountNumber() {
         contentType: "application/json",
         data: _data,
         dataType: "json",
-        success: function (data, status) {
+        success: function(data, status) {
             var res = data.rows.isExist;
             if (res == 0) {
                 $('.hidkuai1 span').text('账号未注册');
@@ -98,7 +98,7 @@ function requestData() {
         contentType: "application/json",
         data: JSON.stringify(_data),
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
             var success = data.success;
             if (success == 1) {
                 var row = data.rows;
@@ -147,7 +147,7 @@ function requestData() {
             }
 
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);
@@ -165,7 +165,7 @@ function getDefaultEnterpriseId(_userId) {
             userId: _userId
         }),
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
             var success = data.success;
             if (success == 1) {
                 // alert(JSON.stringify(data));
@@ -180,7 +180,7 @@ function getDefaultEnterpriseId(_userId) {
                 }
             }
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);
@@ -200,7 +200,7 @@ function joinDefaultEnterprise(_enterpriseId) {
             enterpriseId: _enterpriseId
         }),
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
             // alert(JSON.stringify(data));
             var success = data.success;
             if (success == 1) {
@@ -266,7 +266,7 @@ function joinDefaultEnterprise(_enterpriseId) {
                 }
             }
         },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.log(XMLHttpRequest);
             console.log(textStatus);
             console.log(errorThrown);

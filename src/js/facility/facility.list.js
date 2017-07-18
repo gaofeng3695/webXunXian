@@ -261,6 +261,8 @@ var facilityFrame = {
         name: null,
         lng: null,
         lat: null,
+        gpsLon: null,
+        gpsLat: null,
     },
     _facilityId: null,
     _recordId: null,
@@ -274,9 +276,12 @@ var facilityFrame = {
         var _this = this;
         //新建设施模态框加载完
         _this.$addFacilityFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('addFacilityFrameT').scrollTop = 0;
             _this.temporaryObj.name = null;
             _this.temporaryObj.lng = null;
             _this.temporaryObj.lat = null;
+            _this.temporaryObj.gpsLon = 0.00;
+            _this.temporaryObj.gpsLat = 0.00;
             _this.$addFacilityFrame.find("input[name=inspectionCount]").val(0);
             _this.$addFacilityFrame.find("input[name=inspectionDays]").val(1);
             _this.$addFacilityFrame.find("input[name=createUserName]").val(JSON.parse(lsObj.getLocalStorage('userBo')).userName);
@@ -286,6 +291,7 @@ var facilityFrame = {
         });
         //修改设施模态框加载完
         _this.$modifyFacilityFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('modifyFacilityFrameT').scrollTop = 0;
             _this._deleteImgs = [];
             _this.getModifyData(_this._facilityId);
         });
@@ -392,7 +398,7 @@ var facilityFrame = {
                         callBack: function() {
                             _this._imgLengthAdd = 0;
                             paramData.objectId = _this._facilityId;
-                            _this.facilityFileDelete(paramData);
+                            _this.facilityJudge(paramData);
                         }
                     };
                     xxwsWindowObj.xxwsAlert(defaultOptions);
@@ -402,6 +408,7 @@ var facilityFrame = {
 
         //设施详情加载完成
         _this.$facilityDetailsFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('facilityDetailsFrameT').scrollTop = 0;
             _this.facilityDetails(_this._facilityId);
         });
         //详情里面打开历史检查
@@ -410,10 +417,12 @@ var facilityFrame = {
         });
         //历史检查加载完成
         _this.$historyFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('historyFrameT').scrollTop = 0;
             facilityTable.getHistoryTable(_this._facilityId, _this._facilityTypeCode);
         });
         //历史检查详情模态框加载完
         historyDetailsObj.$historyDetailsFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('historyDetailsFrameT').scrollTop = 0;
             historyDetailsObj.geiHistoryDetails(_this._recordId);
         });
 
@@ -439,6 +448,7 @@ var facilityFrame = {
             facilityChart.clearAll();
         });
         _this.$measurementFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('measurementFrameT').scrollTop = 0;
             facilityChart.getGasData(_this._facilityId);
             if (_this._facilityTypeCode == 'FT_01') {
                 $(".pressureMain").show();
@@ -559,8 +569,9 @@ var facilityFrame = {
                 } else {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有删除设施的权限！");
+                    } else {
+                        xxwsWindowObj.xxwsAlert("设施删除失败！");
                     }
-                    xxwsWindowObj.xxwsAlert("设施删除失败！");
                 }
             }
         });
@@ -600,6 +611,8 @@ var facilityFrame = {
                     _this.temporaryObj.name = data.rows[0].address;
                     _this.temporaryObj.lng = data.rows[0].bdLon;
                     _this.temporaryObj.lat = data.rows[0].bdLat;
+                    _this.temporaryObj.gpsLon = data.rows[0].lon;
+                    _this.temporaryObj.gpsLat = data.rows[0].lat;
 
                     //人员数组
                     _this._selectPersonArr = [];
@@ -695,8 +708,8 @@ var facilityFrame = {
                     inspectionDays: inspectionDays, //巡检天数  选填
                     bdLon: _this.temporaryObj.lng, //百度坐标lon 
                     bdLat: _this.temporaryObj.lat, //百度坐标lat 
-                    lon: '',
-                    lat: '',
+                    lon: _this.temporaryObj.gpsLon,
+                    lat: _this.temporaryObj.gpsLat,
                     relationshipPersonList: relationshipPersons
                 }
                 // console.log(param);
@@ -771,9 +784,41 @@ var facilityFrame = {
             }
         });
     },
-    facilityFileDelete: function(paramData) {
+    facilityJudge: function(paramData) { //设施修改前检查的判断
         var _this = this;
         _this._flag = false;
+        var param = {
+            objectId: _this._facilityId, //设施ID
+            facilityTypeCode: paramData.facilityTypeCode, //设施类型
+        }
+        $.ajax({
+            type: "POST",
+            url: "/cloudlink-inspection-event/facility/judgeCodeForUpdate?token=" + lsObj.getLocalStorage('token'),
+            contentType: "application/json",
+            data: JSON.stringify(param),
+            dataType: "json",
+            success: function(data) {
+                if (data.success == 1) {
+                    _this.facilityFileDelete(paramData);
+                } else {
+                    if (data.code == 'XE04001') {
+                        xxwsWindowObj.xxwsAlert('修改设施失败,设施下已经存在检查记录，设施类型不能被修改');
+                        _this.again();
+                    } else {
+                        xxwsWindowObj.xxwsAlert('修改设施失败');
+                        _this.again();
+                    }
+                }
+            },
+            error: function() {
+                xxwsWindowObj.xxwsAlert('修改设施失败');
+                _this.again();
+            }
+        });
+    },
+    facilityFileDelete: function(paramData) {
+        var _this = this;
+        // _this._flag = false;
         if (_this._deleteImgs.length > 0) {
             var param = {
                 businessId: _this._facilityId,
@@ -963,6 +1008,7 @@ var facilityChart = {
                 trigger: 'item',
                 formatter: '{b} <br/>{a} : {c}'
             },
+            color: ["#59b6fc"],
             legend: {
                 left: 'left',
                 data: ['浓度']
@@ -971,6 +1017,7 @@ var facilityChart = {
                 type: 'category',
                 name: '时间',
                 splitLine: { show: false },
+                nameGap: 5,
                 data: time
             },
             grid: {
@@ -980,13 +1027,17 @@ var facilityChart = {
                 containLabel: true
             },
             yAxis: {
-                type: 'log',
-                name: '浓度（ppm）'
+                type: 'value',
+                name: '浓度（ppm）',
+                // min: 10,
+                // max: 10000,
+                // splitNumber: 5
             },
             series: [{
                 name: '浓度（ppm）',
-                type: 'line',
-                data: data
+                type: 'bar',
+                data: data,
+                barWidth: 20
             }]
         };
         _this.gasChart.setOption(option);
@@ -1046,6 +1097,7 @@ var facilityChart = {
                 type: 'category',
                 name: '时间',
                 splitLine: { show: false },
+                nameGap: 5,
                 data: time
             },
             grid: {
@@ -1055,8 +1107,8 @@ var facilityChart = {
                 containLabel: true
             },
             yAxis: {
-                type: 'log',
-                name: '压力（Kpa）'
+                type: 'value',
+                name: '压力（kPa）'
             },
             series: [{
                     name: '进口压力',
@@ -1374,7 +1426,14 @@ var facilityTable = {
         return {
             //定位功能
             'click .location': function(e, value, row, index) {
-                facilityMapObj.locationClick(row);
+                if ($(this).find('i').attr("class") == 'active') {} else {
+                    $(".location").find('i').attr("class", "");
+                    $(this).find('i').attr("class", "active");
+                    facilityMapObj.locationClick(row);
+                }
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 500);
                 return false;
             },
             //查看功能
@@ -1443,8 +1502,8 @@ var facilityTable = {
             queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
             // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
             queryParams: function(params) {
-                param.pageSize = params.pageSize;
-                param.pageNum = params.pageNumber;
+                param.pageSize = params.pageNumber;
+                param.pageNum = params.pageSize;
                 return param;
             },
             onLoadSuccess: function(data) {
@@ -1457,108 +1516,158 @@ var facilityTable = {
                 return false;
             },
             //表格的列
-            columns: [{
-                field: 'facilityCheckTime', //域值
-                title: '检查时间',
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '24%',
-                editable: true,
-            }, {
-                field: 'isLeakageName', //域值
-                title: '漏气状态', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'pressureSituationName', //域值
-                title: '压力情况', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-                editable: true,
-            }, {
-                field: 'pressureIn', //域值
-                title: '进口压力', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-                editable: true,
-            }, {
-                field: 'pressureOut', //域值
-                title: '出口压力', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-            }, {
-                field: 'isSeeperName', //域值
-                title: '井内有无积水', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-                editable: true,
-            }, {
-                field: 'isWellCoverDamageName', //域值
-                title: '井盖是否损坏', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-                editable: true,
-            }, {
-                field: 'isOccupyName', //域值
-                title: '有无占压', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '8%',
-            }, {
-                field: 'flowmeterData', //域值
-                title: '流量计读数（m3）', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '14%',
-                editable: true,
-            }, {
-                field: 'isFacilityWorkName', //域值
-                title: '设施运行情况', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '14%',
-                editable: true,
-            }, {
-                field: 'facilityCheckResultName', //域值
-                title: '检查结果', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'createUserName', //域值
-                title: '检查人', //内容
-                align: 'center',
-                visible: true, //false表示不显示
-                sortable: false, //启用排序
-                width: '10%',
-                editable: true,
-            }, {
-                field: 'operate',
-                title: '操作',
-                align: 'center',
-                events: _this.historyTableEvent(),
-                width: '8%',
-                formatter: _this.historyTableOperation,
-            }],
+            columns: [
+                [{
+                    field: 'facilityCheckTime', //域值
+                    title: '检查时间',
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '24%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'isLeakageName', //域值
+                    title: '漏气状态', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '10%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'pressureSituationName', //域值
+                    title: '压力情况', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'pressure', //域值
+                    title: '压力', //内容
+                    align: 'center',
+                    // visible: true, //false表示不显示
+                    // sortable: false, //启用排序
+                    width: '16%',
+                    // editable: true,
+                    colspan: 2,
+                    rowspan: 1
+                }, {
+                    field: 'isSeeperName', //域值
+                    title: '井内有无积水', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'isWellCoverDamageName', //域值
+                    title: '井盖是否损坏', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'isOccupyName', //域值
+                    title: '有无占压', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'flowmeterData', //域值
+                    title: '流量计读数（m<sup>3</sup>）', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '14%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'isFacilityWorkName', //域值
+                    title: '设施运行情况', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '14%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'facilityCheckResultName', //域值
+                    title: '检查结果', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '10%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'createUserName', //域值
+                    title: '检查人', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '10%',
+                    editable: true,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: _this.historyTableEvent(),
+                    width: '8%',
+                    formatter: _this.historyTableOperation,
+                    valign: "middle",
+                    colspan: 1,
+                    rowspan: 2
+                }],
+                [{
+                    field: 'pressureIn', //域值
+                    title: '进口(kPa)', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    editable: true,
+                    colspan: 1,
+                    rowspan: 1
+                }, {
+                    field: 'pressureOut', //域值
+                    title: '出口(kPa)', //内容
+                    align: 'center',
+                    visible: true, //false表示不显示
+                    sortable: false, //启用排序
+                    width: '8%',
+                    colspan: 1,
+                    rowspan: 1
+                }, ]
+            ],
         });
     },
     getHistoryTable: function(id, e) {
@@ -1576,6 +1685,8 @@ var facilityTable = {
         };
         $('#tableHistory').bootstrapTable('refreshOptions', {
             queryParams: function(params) {
+                param.pageNum = params.pageNumber;
+                param.pageSize = params.pageSize;
                 return param;
             }
         });
@@ -1597,6 +1708,7 @@ var facilityTable = {
                 $('#tableHistory').bootstrapTable('showColumn', 'isWellCoverDamageName'); //井盖破损
                 $('#tableHistory').bootstrapTable('showColumn', 'isOccupyName'); //有无占压
                 $('#tableHistory').bootstrapTable('hideColumn', 'flowmeterData'); //流量计读数
+                $("th[data-field='pressure']").hide();
                 break;
             case "FT_10": //流量计
                 $('#tableHistory').bootstrapTable('showColumn', 'pressureSituationName'); //压力情况
@@ -1606,6 +1718,7 @@ var facilityTable = {
                 $('#tableHistory').bootstrapTable('hideColumn', 'isWellCoverDamageName'); //井盖破损
                 $('#tableHistory').bootstrapTable('hideColumn', 'isOccupyName'); //有无占压
                 $('#tableHistory').bootstrapTable('showColumn', 'flowmeterData'); //流量计读数
+                $("th[data-field='pressure']").hide();
                 break;
             default: //其他所有
                 $('#tableHistory').bootstrapTable('hideColumn', 'pressureSituationName'); //压力情况
@@ -1615,6 +1728,7 @@ var facilityTable = {
                 $('#tableHistory').bootstrapTable('hideColumn', 'isWellCoverDamageName'); //井盖破损
                 $('#tableHistory').bootstrapTable('hideColumn', 'isOccupyName'); //有无占压
                 $('#tableHistory').bootstrapTable('hideColumn', 'flowmeterData'); //流量计读数
+                $("th[data-field='pressure']").hide();
         }
     },
     historyTableOperation: function(value, row, index) { //历史检查操作按钮
@@ -2055,14 +2169,14 @@ function dateChangeForSearch() {
 
 $(function() {
     $("input[type=text]").val("");
+    searchObj.init();
     facility.init();
     facilityTable.init();
-    facilityMapObj.init();
-    searchObj.init();
     facilityFrame.init();
     exportFileObj.init();
     fileObj.init();
     facilityChart.init();
+    facilityMapObj.init();
     drafting('facilityMap', 'drafting_down'); //启动拖拽
 
     //通过该方法来为每次弹出的模态框设置最新的zIndex值，从而使最新的modal显示在最前面

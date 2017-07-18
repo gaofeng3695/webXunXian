@@ -103,7 +103,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="line">
+                                <!--<div class="line">
                                     <div class="title">特殊筛选</div>
                                     <div class="item_box">
                                         <div class="item1" data-class="specialFilter">
@@ -111,7 +111,7 @@
                                             <span class="item" data-value="1">地址存在重复</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -146,14 +146,13 @@
                 <div class="modal-body">
                     <div class="planDetails">
                         <div class="planDetailsMain">
-
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        入户计划
+                                        安检时间
                                     </div>
                                     <div class="planListRight">
-                                        <p class="planNameT">----</p>
+                                        <p data-name="securityCheckTime">----</p>
                                     </div>
                                 </div>
                                 <div class="planListHalf">
@@ -161,25 +160,25 @@
                                         安检人员
                                     </div>
                                     <div class="planListRight">
-                                        <p class="createUserNameT">----</p>
+                                        <p data-name="createUserName">----</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        安检时间
+                                        入户计划
                                     </div>
                                     <div class="planListRight">
-                                        <p class="securityCheckTimeT">----</p>
+                                        <p data-name="planName">----</p>
                                     </div>
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        用户编号
+                                        入户情况
                                     </div>
                                     <div class="planListRight">
-                                        <p class="enterhomeUserCodeT">----</p>
+                                        <p data-name="enterhomeSituationTypeName">----</p>
                                     </div>
                                 </div>
                             </div>
@@ -189,15 +188,33 @@
                                         用户名称
                                     </div>
                                     <div class="planListRight">
-                                        <p class="enterhomeUserNameT">----</p>
+                                        <p data-name="userFileName">----</p>
                                     </div>
                                 </div>
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        用户编号
+                                    </div>
+                                    <div class="planListRight">
+                                        <p data-name="userFileCode">----</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
                                         用户类型
                                     </div>
                                     <div class="planListRight">
-                                        <p class="enterhomeUserTypeCodeT">----</p>
+                                        <p data-name="enterhomeUserTypeName">----</p>
+                                    </div>
+                                </div>
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        联系人
+                                    </div>
+                                    <div class="planListRight">
+                                        <p data-name="contactUser">----</p>
                                     </div>
                                 </div>
                             </div>
@@ -207,15 +224,15 @@
                                         联系电话
                                     </div>
                                     <div class="planListRight">
-                                        <p class="enterhomeUserTelT">----</p>
+                                        <p data-name="contactPhone">----</p>
                                     </div>
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        入户情况
+                                        备用电话
                                     </div>
                                     <div class="planListRight">
-                                        <p class="enterhomeSituationTypeCodeT">----</p>
+                                        <p data-name="alternativePhone">----</p>
                                     </div>
                                 </div>
                             </div>
@@ -224,13 +241,31 @@
                                     详细地址
                                 </div>
                                 <div class="planListRight has-feedback">
-                                    <p class="enterhomeAddressT">----</p>
+                                    <p data-name="address">----</p>
+                                </div>
+                            </div>
+                            <div class="planList">
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        安全隐患
+                                    </div>
+                                    <div class="planListRight">
+                                        <p class="isdangerT">----</p>
+                                    </div>
+                                </div>
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        整改时间
+                                    </div>
+                                    <div class="planListRight">
+                                        <p data-name="remediationTime">----</p>
+                                    </div>
                                 </div>
                             </div>
                             <!--燃气表的插入开始-->
                             <div class="gasMeterList">
-                                <div class="planList">
-                                    <p class="gasTitle">燃气表一</p>
+                                <!--<div class="planList">
+                                    <p data-name="gasTitle">燃气表一</p>
                                 </div>
                                 <div class="planList">
                                     <div class="planListHalf">
@@ -238,7 +273,7 @@
                                             编号
                                         </div>
                                         <div class="planListRight">
-                                            <p class="">----</p>
+                                            <p data-name="">----</p>
                                         </div>
                                     </div>
                                     <div class="planListHalf">
@@ -246,7 +281,7 @@
                                             燃气表读数
                                         </div>
                                         <div class="planListRight">
-                                            <p class="">----</p>
+                                            <p data-name="">----</p>
                                         </div>
                                     </div>
                                 </div>
@@ -255,21 +290,13 @@
                                         左右表
                                     </div>
                                     <div class="planListRight">
-                                        <p class="">----</p>
+                                        <p data-name="">----</p>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                             <!--燃气表的插入结束-->
                             <div class="planList lineWhite"></div>
-                            <div class="planList">
-                                <div class="planListLeft">
-                                    安全隐患
-                                </div>
-                                <div class="planListRight">
-                                    <p class="isdangerT">----</p>
-                                </div>
-                            </div>
-                            <div class="planList isSuccess">
+                            <div class="planList isHasDanger">
                                 <div class="planListLeft">
                                     隐患情况
                                 </div>
@@ -277,12 +304,20 @@
                                     <p class="hiddendangersT">----</p>
                                 </div>
                             </div>
+                            <div class="planList isHasDanger">
+                                <div class="planListLeft">
+                                    隐患措施告知
+                                </div>
+                                <div class="planListRight textarea_text">
+                                    <p>隐患整改措施已告知用户并解释清楚</p>
+                                </div>
+                            </div>
                             <div class="planList">
                                 <div class="planListLeft">
                                     备注
                                 </div>
                                 <div class="planListRight textarea_text">
-                                    <p class="remarkT">----</p>
+                                    <p data-name="remark">----</p>
                                 </div>
                             </div>
                             <div class="planList">
@@ -301,11 +336,26 @@
                                     <ul class="userImg"></ul>
                                 </div>
                             </div>
+                            <div class="planList isSuccess">
+                                <div class="planListLeft">
+                                    用户满意度
+                                </div>
+                                <div class="planListRight satisfaction">
+                                    <ul>
+                                        <li><img src="/src/images/security/star.png" width="20" alt=""></li>
+                                        <li><img src="/src/images/security/star.png" width="20" alt=""></li>
+                                        <li><img src="/src/images/security/star.png" width="20" alt=""></li>
+                                        <li><img src="/src/images/security/star.png" width="20" alt=""></li>
+                                        <li><img src="/src/images/security/star.png" width="20" alt=""></li>
+                                    </ul>
+                                    <span>非常满意</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn deletePlan deleteRecord">删除</button>
+                    <!--<button class="btn deletePlan deleteRecord">删除</button>-->
                     <button class="btn submit openHistory">历史记录</button>
                     <button class="btn" data-dismiss="modal">取消</button>
                 </div>
@@ -387,7 +437,7 @@
     <script type="text/javascript" src="/src/js/common/view.pic.js"></script>
     <script type="text/javascript" src="/src/js/common/html5-storage.js"></script>
     <script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>
-
+    <script type="text/javascript" src="/src/js/common/form.js"></script>
     <script type="text/javascript" src="/src/js/security/securityRecord.js"></script>
 </body>
 <script>

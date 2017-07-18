@@ -42,7 +42,7 @@ var detailsObj = {
                     $(".picMun").text(images.length);
                     for (var i = 0; i < images.length; i++) {
                         pic_scr += '<li class="col-xs-12 col-sm-12 col-md-12 item">' +
-                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=fill&width=' + (w + 30) + '&hight=110" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" alt=""/>' +
+                            '<img  src="/cloudlink-core-file/file/getImageBySize?fileId=' + images[i] + '&viewModel=mfit&width=' + (w + 30) + '&hight=110" data-original="/cloudlink-core-file/file/downLoad?fileId=' + images[i] + '" id="imagesPic' + i + '" alt=""/>' +
                             '</li>';
                     }
                 } else {

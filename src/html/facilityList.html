@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="line">
+                                <!--<div class="line">
                                     <div class="title">时间</div>
                                     <div class="item_box">
                                         <div class="item1" data-class="date">
@@ -117,7 +117,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -132,10 +132,10 @@
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新建设施
                         </button>
                         <button id="export_all" type="button" class="btn btn-default">
-                            <span class="glyphicon glyphicon-share" aria-hidden="true"></span>导出全部
+                            <span class="glyphicon glyphicon-share" aria-hidden="true"></span>导出全部台账
                         </button>
                         <button id="export_choice" type="button" class="btn btn-default">
-                            <span class="glyphicon glyphicon-saved" aria-hidden="true"></span>导出已选
+                            <span class="glyphicon glyphicon-saved" aria-hidden="true"></span>导出已选台账
                         </button>
                         <button id="map_choice" type="button" class="btn btn-default">
                             <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>多点定位
@@ -155,7 +155,7 @@
                 <div class="modal-header">
                     <h3>新建设施<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id='addFacilityFrameT'>
                     <form>
                         <div class="planMain facilityAdd">
                             <div class="planList">
@@ -243,10 +243,10 @@
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        投产日期
+                                        安装日期
                                     </div>
                                     <div class="planListRight has-feedback">
-                                        <input type="text" name="investmentTime" class="form-control form_datetime" readonly id="investmentTimeAdd">
+                                        <input type="text" name="installationTime" class="form-control form_datetime" readonly id="dateTimeAdd">
                                         <span class="form-control-feedback" aria-hidden="true">
                                             <img src="/src/images/event/time.png" alt="">
                                         </span>
@@ -254,10 +254,10 @@
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        安装日期
+                                        投产日期
                                     </div>
                                     <div class="planListRight has-feedback">
-                                        <input type="text" name="installationTime" class="form-control form_datetime" readonly id="dateTimeAdd">
+                                        <input type="text" name="investmentTime" class="form-control form_datetime" readonly id="investmentTimeAdd">
                                         <span class="form-control-feedback" aria-hidden="true">
                                             <img src="/src/images/event/time.png" alt="">
                                         </span>
@@ -350,7 +350,7 @@
                 <div class="modal-header">
                     <h3>编辑<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id='modifyFacilityFrameT'>
                     <form>
                         <div class="planMain facilityModify">
                             <div class="planList">
@@ -438,10 +438,10 @@
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        投产日期
+                                        安装日期
                                     </div>
                                     <div class="planListRight has-feedback">
-                                        <input type="text" name="investmentTime" class="form-control form_datetime" readonly id="investmentTimeModify">
+                                        <input type="text" name="installationTime" class="form-control form_datetime" readonly id="dateTimeModify">
                                         <span class="form-control-feedback" aria-hidden="true">
                                             <img src="/src/images/event/time.png" alt="">
                                         </span>
@@ -449,10 +449,10 @@
                                 </div>
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        安装日期
+                                        投产日期
                                     </div>
                                     <div class="planListRight has-feedback">
-                                        <input type="text" name="installationTime" class="form-control form_datetime" readonly id="dateTimeModify">
+                                        <input type="text" name="investmentTime" class="form-control form_datetime" readonly id="investmentTimeModify">
                                         <span class="form-control-feedback" aria-hidden="true">
                                             <img src="/src/images/event/time.png" alt="">
                                         </span>
@@ -545,7 +545,7 @@
                 <div class="modal-header">
                     <h3>设施详情<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id='facilityDetailsFrameT'>
                     <div class="planDetails">
                         <div class="planDetailsMain">
                             <div class="planList">
@@ -616,18 +616,18 @@
                             <div class="planList">
                                 <div class="planListHalf">
                                     <div class="planListLeft">
-                                        投产日期
-                                    </div>
-                                    <div class="planListRight">
-                                        <p class="investmentTimeT">--</p>
-                                    </div>
-                                </div>
-                                <div class="planListHalf">
-                                    <div class="planListLeft">
                                         安装日期
                                     </div>
                                     <div class="planListRight">
                                         <p class="installationTimeT">--</p>
+                                    </div>
+                                </div>
+                                <div class="planListHalf">
+                                    <div class="planListLeft">
+                                        投产日期
+                                    </div>
+                                    <div class="planListRight">
+                                        <p class="investmentTimeT">--</p>
                                     </div>
                                 </div>
                             </div>
@@ -689,7 +689,7 @@
                 <div class="modal-footer">
                     <button class="btn deletePlan deleteFacility">删除</button>
                     <button class="btn submit getHistory">历史检查</button>
-                    <button class="btn submit getMeasurement">测量曲线</button>
+                    <button class="btn submit getMeasurement">测量统计</button>
                     <button class="btn" data-dismiss="modal">取消</button>
                 </div>
             </div>
@@ -703,7 +703,7 @@
                 <div class="modal-header">
                     <h3>历史检查<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="historyFrameT">
                     <div class="historyMain">
                         <table id="tableHistory"></table>
                     </div>
@@ -722,7 +722,7 @@
                 <div class="modal-header">
                     <h3>设施检查记录详情<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="historyDetailsFrameT">
                     <div class="planDetails">
                         <div class="planDetailsMain">
                             <div class="planList">
@@ -876,9 +876,9 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>测量曲线<a class="close" data-dismiss="modal">×</a></h3>
+                    <h3>测量统计<a class="close" data-dismiss="modal">×</a></h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="measurementFrameT">
                     <div class="planDetails">
                         <div class="planDetailsMain">
                             <div class="planList">
@@ -1018,6 +1018,7 @@
     <script type="text/javascript" src="/src/js/common/bootstrap.modal.alert.js"></script>
     <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ggGUMM84vpa9GRP6HkOvt2H5UneQeXCQ&s=1"></script>
     <script type="text/javascript" src="/lib/js/echarts.common.min.js"></script>
+    <script type="text/javascript" src="/src/js/common/coordTransform.js"></script>
     <script type="text/javascript" src="/src/js/common/drafting.js"></script>
     <script type="text/javascript" src="/src/js/event/ajaxFileUpload.js"></script>
     <script type="text/javascript" src="/src/js/common/view.pic.js"></script>

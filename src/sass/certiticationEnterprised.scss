@@ -166,27 +166,34 @@
                 background: url("/src/images/help/add.png") no-repeat center 20px;
             }
             .identify_img_file input,
+            .rose_img_file input,
             .business_img_file input {
                 display: none;
             }
             .identify_img_file,
-            .business_img_file {
+            .rose_img_file,
+            .business_img_file,
+            {
                 float: left;
             }
             .business_enterprise_images,
+            .rose_enterprise_images,
             .identify_enterprise_images {
                 width: 120px;
                 height: 80px;
                 float: left;
                 margin-right: 20px;
                 position: relative;
+                margin-bottom: 20px;
             }
             .business_enterprise_images img,
+            .rose_enterprise_images img,
             .identify_enterprise_images img {
                 width: 120px;
                 height: 80px;
             }
             .business_enterprise_images span,
+            .rose_enterprise_images span,
             .identify_enterprise_images span {
                 width: 28px;
                 height: 28px;

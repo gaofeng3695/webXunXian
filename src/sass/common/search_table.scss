@@ -95,6 +95,9 @@ body {
                     cursor: pointer;
                 }
             }
+            .ml110 {
+                margin-right: 110px;
+            }
             .search_btn_right {
                 margin-right: 15px;
                 position: absolute;
@@ -131,6 +134,9 @@ body {
                         background: #75c3fe;
                     }
                 }
+            }
+            .search_btn_w {
+                width: 80px;
             }
         }
     }

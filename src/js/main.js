@@ -37,7 +37,6 @@ var loadRelativePage = function(_url) {
     /*进行个人信息初始化 */
 var initPersonal = function() {
         var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
-        console.log(userBo);
         $(".userName").text(userBo.userName);
         $(".userEnterprise").text(userBo.enterpriseName);
 
@@ -92,6 +91,18 @@ var routerObj = {
                 loadRelativePage("/src/html/securityRecord.html");
                 if (zhugeSwitch == 1) {
                     zhuge.track('入户安检记录');
+                }
+            },
+            '/userList': function() {
+                loadRelativePage("/src/html/userList.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('用户台账');
+                }
+            },
+            '/userArea': function() {
+                loadRelativePage("/src/html/userArea.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('片区管理');
                 }
             },
             '/facilityList': function() {

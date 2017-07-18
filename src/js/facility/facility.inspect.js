@@ -8,6 +8,7 @@ var inspectRecordObj = {
         _this.getTable();
         //详情模态框加载完
         historyDetailsObj.$historyDetailsFrame.on('shown.bs.modal', function(e) {
+            document.getElementById('historyDetailsFrameT').scrollTop = 0;
             historyDetailsObj.geiHistoryDetails(_this._recordId);
         });
     },
@@ -103,11 +104,11 @@ var inspectRecordObj = {
                     if (row.isLeakage == 1) {
                         return "漏气";
                     } else {
-                        return "------";
+                        return "未漏气";
                     }
                 }
             }, {
-                field: 'isFacilityWorkName', //域值
+                field: 'facilityCheckResultName', //域值
                 title: '检查结果', //内容
                 align: 'center',
                 visible: true, //false表示不显示
@@ -115,7 +116,7 @@ var inspectRecordObj = {
                 width: '9%',
                 editable: true,
                 cellStyle: function(value, row, index) {
-                    if (row.isFacilityWork == 0) {
+                    if (row.facilityCheckResult == 0) {
                         return {
                             css: {
                                 "color": "#333",

@@ -292,8 +292,7 @@
                             //当前用户不存在默认企业Id
                             location.href = '/src/html/loginSet.html';
                         }
-                    }
-                    else{
+                    } else {
                         that.again();
                     }
                 },
@@ -377,3 +376,7 @@
         //new loginClass();
     });
 })(this, this.jQuery, document, lsObj, zhugeSwitch, zhuge);
+//点击打开版本信息模态框
+$('#versionInformation span').click(function() {
+    $("#versionmodal").modal()
+})

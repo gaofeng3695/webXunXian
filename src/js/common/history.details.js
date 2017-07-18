@@ -27,17 +27,7 @@ var historyDetailsObj = {
         });
         //导出
         _this.$exportBtn.click(function() {
-            var defaultOptions = {
-                tip: '您是否导出该设施检查记录？',
-                name_title: '提示',
-                name_cancel: '取消',
-                name_confirm: '确定',
-                isCancelBtnShow: true,
-                callBack: function() {
-                    _this.exportHistory(_this._recordId);
-                }
-            };
-            xxwsWindowObj.xxwsAlert(defaultOptions);
+            _this.exportHistory(_this._recordId);
         });
     },
     clearHistoryDetails: function() { //情况数据
@@ -68,13 +58,13 @@ var historyDetailsObj = {
             case 'FT_01':
                 box = '<div class="planList">' +
                     '<div class="planListHalf">' +
-                    '<div class="planListLeft">进口压力(kpa)</div>' +
+                    '<div class="planListLeft">进口压力(kPa)</div>' +
                     '<div class="planListRight">' +
                     '<p class="pressureInH">' + data.pressureIn + '</p>' +
                     '</div>' +
                     '</div>' +
                     '<div class="planListHalf">' +
-                    '<div class="planListLeft">出口压力(kpa)</div>' +
+                    '<div class="planListLeft">出口压力(kPa)</div>' +
                     '<div class="planListRight">' +
                     '<p class="pressureOutH">' + data.pressureOut + '</p>' +
                     '</div>' +
@@ -118,7 +108,7 @@ var historyDetailsObj = {
                     '</div>' +
                     '</div>' +
                     '<div class="planListHalf">' +
-                    '<div class="planListLeft">流量计读数</div>' +
+                    '<div class="planListLeft">流量计读数(m<sup>3</sup>)</div>' +
                     '<div class="planListRight">' +
                     '<p class="flowmeterDataH">' + data.flowmeterData + '</p>' +
                     '</div>' +
@@ -131,7 +121,7 @@ var historyDetailsObj = {
         return box;
     },
     setCenterZoom: function(data) { //设置中心点
-        var point = new BMap.Point(data.bdLon, data.bdLat);
+        var point = new BMap.Point(data.facilityBdLon, data.facilityBdLat);
         var marker = new BMap.Marker(point); // 创建标注
         this.$historyAddressMap.addOverlay(marker); // 将标注添加到地图中
         this.$historyAddressMap.setCenter(point);
@@ -149,7 +139,6 @@ var historyDetailsObj = {
             dataType: "json",
             success: function(data) {
                 if (data.success == 1) {
-                    console.log(data);
                     _this._recordId = data.rows[0].objectId;
 
                     $(".facilityCheckTimeH").text(data.rows[0].facilityCheckTime);

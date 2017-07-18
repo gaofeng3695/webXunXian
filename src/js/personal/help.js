@@ -186,3 +186,7 @@ function creatuuid() {
 $(".return").click(function() {
     parent.location.href = '../../main.html';
 });
+
+$("#close").click(function() {
+    $('.suspensionFrame').css({ display: "none" })
+})

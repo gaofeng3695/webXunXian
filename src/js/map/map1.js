@@ -98,7 +98,6 @@ var eventObj = {
         // mapObj.$bdMap.clearOverlays(); //清除地图上已经标注的点
         //清空事件点
         this.removePoints();
-
         var _this = this;
         if (boolean == '' || boolean == null || boolean == undefined) {
             //
@@ -112,25 +111,40 @@ var eventObj = {
         this.eventPoints = [];
         for (var i = 0; i < data.length; i++) {
             point = new BMap.Point(data[i].bdLon, data[i].bdLat);
-            if (data[i].parentTypeId == 1) {
+            if (data[i].eventIconName) {
                 if (data[i].status == 20) {
-                    myIcons = mapObj.bdIconObj.constructionOn;
+                    myIcons = new BMap.Icon("/src/images/common/process/" + data[i].eventIconName, new BMap.Size(29, 42), {
+                        anchor: new BMap.Size(15, 42)
+                    });
                 } else {
-                    myIcons = mapObj.bdIconObj.construction;
+                    myIcons = new BMap.Icon("/src/images/common/finish/" + data[i].eventIconName, new BMap.Size(29, 42), {
+                        anchor: new BMap.Size(15, 42)
+                    });
                 }
-            } else if (data[i].parentTypeId == 2) {
-                if (data[i].status == 20) {
-                    myIcons = mapObj.bdIconObj.disasterOn;
-                } else {
-                    myIcons = mapObj.bdIconObj.disaster;
-                }
-            } else if (data[i].parentTypeId == 3) {
-                if (data[i].status == 20) {
-                    myIcons = mapObj.bdIconObj.pipelineOn;
-                } else {
-                    myIcons = mapObj.bdIconObj.pipeline;
-                }
+            } else {
+                myIcons = new BMap.Icon("/src/images/common/process/D01.png", new BMap.Size(29, 42), {
+                    anchor: new BMap.Size(15, 42)
+                });;
             }
+            // if (data[i].parentTypeId == 1) {
+            //     if (data[i].status == 20) {
+            //         myIcons = mapObj.bdIconObj.constructionOn;
+            //     } else {
+            //         myIcons = mapObj.bdIconObj.construction;
+            //     }
+            // } else if (data[i].parentTypeId == 2) {
+            //     if (data[i].status == 20) {
+            //         myIcons = mapObj.bdIconObj.disasterOn;
+            //     } else {
+            //         myIcons = mapObj.bdIconObj.disaster;
+            //     }
+            // } else if (data[i].parentTypeId == 3) {
+            //     if (data[i].status == 20) {
+            //         myIcons = mapObj.bdIconObj.pipelineOn;
+            //     } else {
+            //         myIcons = mapObj.bdIconObj.pipeline;
+            //     }
+            // }
             markers = new BMap.Marker(point, {
                 icon: myIcons
             });

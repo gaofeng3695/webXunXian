@@ -132,6 +132,11 @@
                     width: 120px;
                     margin-top: 7px;
                     font-size: 16px;
+                    margin: 7px 20px 0 20px;
+                    &.getHistory {
+                        background: #59b6fc;
+                        color: #fff;
+                    }
                 }
             }
         }

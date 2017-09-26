@@ -192,7 +192,7 @@ var areaTable = {
         $("#editAreaRange").click(function() {
             choiceFrameObj.$choiceAreaFrame.modal();
             choiceFrameObj._areaChoiceData = $("#editAreaModal").data('userData');
-            console.log($("#editAreaModal").data('userData'))
+            // console.log($("#editAreaModal").data('userData'))
             _this._isModify = true;
         });
         //片区详情模态框渲染
@@ -303,7 +303,7 @@ var areaTable = {
             success: function(data, status) {
                 if (data.success == 1) {
                     var defaultOptions = {
-                        tip: '片区详情删除成功！',
+                        tip: '片区删除成功！',
                         name_title: '提示',
                         name_cancel: '取消',
                         name_confirm: '确定',
@@ -317,7 +317,7 @@ var areaTable = {
                     if (data.code == 410) {
                         xxwsWindowObj.xxwsAlert("您没有删除权限！");
                     } else {
-                        xxwsWindowObj.xxwsAlert("片区详情删除失败！");
+                        xxwsWindowObj.xxwsAlert("片区删除失败！");
                     }
                 }
             }
@@ -703,4 +703,17 @@ $(function() {
     primarySearchObj.init();
     areaTable.init();
     exportFileObj.init();
+    //通过该方法来为每次弹出的模态框设置最新的zIndex值，从而使最新的modal显示在最前面
+    $(document).on('show.bs.modal', '.modal', function(event) {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    $(document).on('hidden.bs.modal', '.modal', function(event) {
+        if ($('.modal:visible').length > 0) {
+            $("body").addClass("modal-open");
+        }
+    });
 });

@@ -5,6 +5,7 @@ $(function() {
 
 //查看事件详情
 var detailsObj = {
+    _eventId: "",
     $detailsMap: new BMap.Map("details_address_map"),
     init: function() {
         var _this = this;
@@ -24,6 +25,11 @@ var detailsObj = {
         this.$detailsMap.addControl(bottom_left_ScaleControl);
         this.$detailsMap.addControl(bottom_right_navigation);
         this.$detailsMap.addControl(new BMap.MapTypeControl());
+
+        //详情里面打开历史检查
+        $(".getHistory").click(function() {
+            repairObj.openHistoryFrame(_this._eventId);
+        });
     },
     setCenterZoom: function(msg) { //设置中心点
         var _this = this;
@@ -32,24 +38,19 @@ var detailsObj = {
         this.$detailsMap.clearOverlays();
         var point = new BMap.Point(lon, lat);
         var myIcon = null;
-        if (msg[0].parentTypeId == 1) {
-            if (msg[0].status == 20) {
-                myIcon = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+        if (msg[0].status == 20) {
+            if (msg[0].eventIconName) {
+                myIcon = new BMap.Icon("/src/images/common/process/" + msg[0].eventIconName, new BMap.Size(29, 42));
             } else {
-                myIcon = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+                myIcon = new BMap.Icon("/src/images/common/process/D01.png", new BMap.Size(29, 42));
             }
-        } else if (msg[0].parentTypeId == 2) {
-            if (msg[0].status == 20) {
-                myIcon = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+        } else {
+            if (msg[0].eventIconName) {
+                myIcon = new BMap.Icon("/src/images/common/finish/" + msg[0].eventIconName, new BMap.Size(29, 42));
             } else {
-                myIcon = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+                myIcon = new BMap.Icon("/src/images/common/finish/D01.png", new BMap.Size(29, 42));
             }
-        } else if (msg[0].parentTypeId == 3) {
-            if (msg[0].status == 20) {
-                myIcon = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
-            } else {
-                myIcon = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
-            }
+
         }
         var marker = new BMap.Marker(point, {
             icon: myIcon
@@ -61,20 +62,20 @@ var detailsObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-event/eventInfo/get?token="+lsObj.getLocalStorage('token')+"&eventId=" + eventId,
+            url: "/cloudlink-inspection-event/eventInfo/get?token=" + lsObj.getLocalStorage('token') + "&eventId=" + eventId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {
                 var msg = data.rows;
+                _this._eventId = msg[0].objectId;
                 var images = msg[0].pic;
                 $(".event_pic ul").html("");
                 $(".eventCode").text(msg[0].eventCode);
                 $(".occurrenceTime").text(msg[0].occurrenceTime);
-                $(".fullTypeName").text(msg[0].fullTypeName);
+                $(".fullTypeName").text(msg[0].fullTypeName ? msg[0].fullTypeName : "");
                 $(".inspectorName").text(msg[0].inspectorName);
                 $(".address").text(msg[0].address);
                 $(".description").text(msg[0].description);
-
                 var pic_scr = "";
                 if (images.length > 0) {
                     for (var i = 0; i < images.length; i++) {

@@ -16,6 +16,7 @@
     <link href="/src/css/common/bootstrapValidator.css" rel="stylesheet">
     <link href="/src/css/common/view.pic.css" rel="stylesheet">
     <link href="/src/css/userChoice.css" rel="stylesheet">
+    <link href="/src/css/detailsRepair.css" rel="stylesheet">
     <link href="/src/css/userArchives.css" rel="stylesheet">
 </head>
 
@@ -662,7 +663,7 @@
                                         压力最小值
                                     </div>
                                     <div class="frameListRight">
-                                        <p data-name="pressureRangeMin" data-type="Number" data-company="kPa">--</p>
+                                        <p data-name="pressureRangeMin" data-type="String" data-company="kPa">--</p>
                                     </div>
                                 </div>
                                 <div class="frameListHalf">
@@ -670,7 +671,7 @@
                                         压力最大值
                                     </div>
                                     <div class="frameListRight">
-                                        <p data-name="pressureRangeMax" data-type="Number" data-company="kPa">--</p>
+                                        <p data-name="pressureRangeMax" data-type="String" data-company="kPa">--</p>
                                     </div>
                                 </div>
                             </div>
@@ -798,6 +799,7 @@
                 <div class="modal-footer">
                     <button class="btn deleteframe deleteUserBtn">删除</button>
                     <button class="btn submit getHistory">历史安检记录</button>
+                    <button class="btn submit getRepairHistory">历史维修记录</button>
                     <button class="btn" data-dismiss="modal">取消</button>
                 </div>
             </div>
@@ -829,7 +831,7 @@
                                 <span class="historyTimeBtn" id="diyDateBtn" data-value="diy">确定</span>
                             </div>
                         </div>
-                        <div class="historyMain"></div>
+                        <div class="historyMainDetails"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -997,7 +999,65 @@
             </div>
         </div>
     </div>
-
+    <!--历史维修记录-->
+    <div id="repairHistory" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>历史维修记录<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="historyMain">
+                        <div class="historySeach">
+                            <div class="historySeachMain">
+                                <input type="text" placeholder="请输入关键字搜索" />
+                                <span class="historySeachBtn">确定</span>
+                            </div>
+                        </div>
+                        <table id="repairTableHistory"></table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--维修详情模态框-->
+    <div id="repairDetails" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>{{frameName}}<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="frameDetails">
+                        <div class="frameDetailsNav">
+                            <ul>
+                                <li v-bind:class="{active:detailsShow}" @click="tabChange('details')">维修详情</li>
+                                <li v-bind:class="{active:axisShow}" @click="tabChange('axis')">维修任务轴</li>
+                            </ul>
+                        </div>
+                        <div class="frameDetailsNavMian">
+                            <p class="detailsCode">维修编号：{{maintenanceCode}}</p>
+                            <!--维修详情-->
+                            <div class="frameDetailsMain" v-show="detailsShow">
+                                <component v-bind:is="which_to_show" v-bind:modifybtn="modifyShow" v-bind:openperson="openPerson" v-bind:my-msgdetails="dataBasics"></component>
+                            </div>
+                            <!--维修任务轴-->
+                            <div class="frameAxisMian" v-show="axisShow">
+                                <axis-html v-bind:my-msgaxis="dataAxis"></axis-html>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn submit" v-show="modifyShow" @click="modifySave">保存</button>
+                    <button class="btn" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript" src="/lib/js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/lib/js/bootstrap-table.min.js"></script>
@@ -1015,6 +1075,10 @@
     <script type="text/javascript" src="../js/common/common_selectAddress.js"></script>
     <script type="text/javascript" src="/src/js/user/address.select.js"></script>
     <script type="text/javascript" src="/src/js/user/user.list.js"></script>
+
+    <script type="text/javascript" src="/src/js/common/vue.js"></script>
+    <script type="text/javascript" src="/src/js/common/vue-resource.js"></script>
+    <script type="text/javascript" src="/src/js/maintenance/details.js"></script>
 </body>
 <script>
 </script>

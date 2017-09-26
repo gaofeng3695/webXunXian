@@ -1,0 +1,484 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.main,
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.pipe-left {
+    width: 300px;
+    height: 100%;
+    z-index: 999;
+    box-shadow: 0px 0px 12px #888;
+    position: relative;
+    .pipe_left_top {
+        position: absolute;
+        top: 0px;
+        background: #fff;
+        width: 300px;
+    }
+    .title {
+        margin: 20px;
+        background: #59b6fc;
+        color: #fff;
+        text-align: center;
+        font-size: 14px;
+        height: 40px;
+        line-height: 40px;
+        cursor: pointer;
+    }
+    // .left_content {
+    //     // position: absolute;
+    //     // top: 80px;
+    //     height: 100%;
+    //     padding-top: 80px;
+    //     width: 300px;
+    //     // bottom: 90px;
+    // }
+    .left_footer {
+        border-top: 1px solid #ccc;
+        position: absolute;
+        bottom: 0px;
+        width: 300px;
+        height: 60px;
+        text-align: center;
+        line-height: 60px;
+        background: #fff;
+        cursor: pointer;
+        span {
+            color: #fff;
+            background: #59b6fc;
+            padding: 10px 50px;
+            width: 139px;
+            text-align: center;
+            border-radius: 5px;
+        }
+    }
+}
+
+.pipe_line_list {
+    height: 100%;
+    .left_content {
+        // position: absolute;
+        // top: 80px;
+        height: 100%;
+        padding: 80px 0px 60px 0px;
+        width: 300px;
+        // bottom: 90px;
+    }
+    .pipe_top {
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        color: #666;
+        width: 300px;
+        text-align: center;
+        background: #f4f4f4;
+        border-bottom: 2px solid #dfdfdf;
+        position: absolute;
+        width: 100%;
+    }
+    .line_content {
+        padding-top: 40px;
+        height: 100%;
+    }
+    ul {
+        list-style: none;
+        width: 300px;
+        padding-bottom: 10px;
+        overflow: hidden;
+        li {
+            border-bottom: 1px solid #ececec;
+            width: 280px;
+            cursor: pointer;
+            margin: 10px 5px;
+            overflow: hidden;
+        }
+        .linecontent {
+            padding: 0px 5px;
+        }
+        .line_title {
+            height: 30px;
+            line-height: 30px;
+            font-size: 12px;
+            color: #333;
+            .wid200 {
+                float: left;
+                width: 240px;
+            }
+            .btn_close {
+                width: 20px;
+                float: right;
+                height: 30px;
+                vertical-align: middle;
+                background: url(/src/images/pipeline_map/delete_h.png) center no-repeat;
+                background-size: 16px 20px;
+                cursor: pointer;
+            }
+            .btn_close:hover,
+            .btn_closed {
+                background: url(/src/images/pipeline_map/delete.png) center no-repeat;
+                background-size: 16px 20px;
+            }
+        }
+        .w2 {
+            letter-spacing: 2em;
+            margin-right: -2em;
+        }
+    }
+}
+
+.umli100 {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.pipe_net_list {
+    .left_content {
+        // position: absolute;
+        // top: 80px;
+        height: 100%;
+        padding-top: 80px;
+        width: 300px;
+        // bottom: 90px;
+    }
+    height: 100%;
+    .pipe_top {
+        padding: 0px 10px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        color: #666;
+        background: #f4f4f4;
+        border-bottom: 2px solid #dfdfdf;
+        position: absolute;
+        width: 100%;
+    }
+    .num {
+        float: left;
+    }
+    .total {
+        float: right;
+        right: 10px;
+    }
+    .net_content {
+        padding: 40px 0 10px 0;
+        height: 100%;
+    }
+    ul li {
+        .content {
+            padding: 0px 5px;
+            width: 280px;
+        }
+        list-style: none;
+        padding: 10px 5px;
+        border-top: 1px solid #ececec;
+        border-bottom: 1px solid #ececec;
+        overflow: hidden;
+    }
+    .line {
+        font-size: 12px;
+        color: #6a6a6a;
+        height: 24px;
+        line-height: 24px;
+    }
+    .pipe_name {
+        /*padding-left: 10px;*/
+        float: left;
+        width: 255px;
+    }
+    .clrfff {
+        color: #fff;
+    }
+    .btn_pipe {
+        font-size: 14px;
+        background: #59b6fc;
+        padding: 5px 28px !important;
+        border-radius: 5px;
+        /*margin-left: 5px;*/
+    }
+    .line-footer {
+        height: 36px;
+        line-height: 36px;
+        .inputbg {
+            background: url(/src/images/pipeline_map/checked.png) 0 no-repeat;
+            background-size: 16px 16px;
+        }
+        .inputbg_h {
+            background: url(/src/images/pipeline_map/checked_h.png) 0 no-repeat !important;
+            background-size: 16px 16px;
+        }
+        .check {
+            float: left;
+            span {
+                font-size: 14px;
+                margin-bottom: 0px !important;
+                cursor: pointer;
+                padding-left: 20px;
+            }
+        }
+        .clr666 {
+            color: #666;
+        }
+        .btns {
+            float: right;
+            padding-top: 8px;
+            // width: 80px;
+            .btn_edit {
+                width: 20px;
+                float: right;
+                height: 20px;
+                vertical-align: middle;
+                background: url(/src/images/pipeline_map/enter_h.png) center center no-repeat;
+                background-size: 16px 20px;
+                cursor: pointer;
+                margin-right: 20px;
+            }
+            .btn_close {
+                width: 20px;
+                float: right;
+                height: 20px;
+                vertical-align: middle;
+                background: url(/src/images/pipeline_map/delete_h.png) no-repeat;
+                background-size: 16px 20px;
+                cursor: pointer;
+            }
+            .btn_close:hover,
+            .btn_closed {
+                background: url(/src/images/pipeline_map/delete.png) no-repeat;
+                background-size: 16px 20px;
+            }
+            .btn_edit:hover,
+            .btn_editd {
+                background: url(/src/images/pipeline_map/enter.png) center center no-repeat;
+                background-size: 16px 20px;
+            }
+        }
+    }
+}
+
+// #addNet {
+//     .modal-content {
+//         width: 600px;
+//         height: 350px;
+//         margin: 0 auto;
+//         border-radius: 8px;
+//         overflow: hidden;
+//     }
+//     .modal-header {
+//         height: 40px;
+//         background: #344052;
+//         color: #fff;
+//         padding: 0;
+//         margin: 0;
+//     }
+//     h3 {
+//         line-height: 40px;
+//         font-size: 16px;
+//         text-align: center;
+//         margin: 0;
+//     }
+//     a {
+//         color: #fff;
+//         margin-top: 6px;
+//         margin-right: 10px;
+//         font-weight: none;
+//         opacity: 1;
+//     }
+//     .modal-body {
+//         padding: 20px 15px;
+//         background: #e7e8ec;
+//         min-height: 260px;
+//     }
+//     .form_list {
+//         overflow: hidden;
+//         line-height: 30px;
+//         margin-top: 15px;
+//         .list_left {
+//             width: 80px;
+//             float: left;
+//             i {
+//                 color: red;
+//                 vertical-align: middle;
+//                 margin-right: 5px;
+//                 font-size: 20px;
+//             }
+//         }
+//         .list_right {
+//             margin-left: 80px;
+//             width: auto;
+//             padding: 0 20px 0 10px;
+//         }
+//         .textarea_text {
+//             position: relative;
+//             textarea {
+//                 resize: none;
+//                 height: 120px;
+//                 position: relative
+//             }
+//             .text_num {
+//                 color: #999;
+//                 position: absolute;
+//                 bottom: 2px;
+//                 right: 30px;
+//             }
+//         }
+//     }
+//     .netadd_main {
+//         height: 220px;
+//         overflow: hidden;
+//         background: #fff;
+//         border-radius: 5px;
+//         padding: 20px;
+//     }
+//     .modal-footer {
+//         text-align: center;
+//         background: #344052;
+//         height: 50px;
+//         padding: 0;
+//         margin: 0;
+//     }
+//     button {
+//         height: 36px;
+//         border: none;
+//         width: 120px;
+//         margin-top: 7px;
+//         font-size: 16px;
+//         margin: 7px 20px 0 20px;
+//     }
+//     .submit {
+//         background: #59b6fc;
+//         color: #fff;
+//     }
+// }
+// //新建维修模态框
+// #addpipe {
+//     font-size: 14px;
+//     .modal-lg {
+//         .modal-content {
+//             width: 800px;
+//             height: 500px;
+//             margin: 0 auto;
+//             border-radius: 8px;
+//             overflow: hidden;
+//             .modal-header {
+//                 height: 38px;
+//                 background: #344052;
+//                 color: #fff;
+//                 padding: 0;
+//                 margin: 0;
+//                 h3 {
+//                     line-height: 40px;
+//                     font-size: 16px;
+//                     text-align: center;
+//                     margin: 0;
+//                     a {
+//                         color: #fff;
+//                         margin-top: 6px;
+//                         margin-right: 10px;
+//                         font-weight: none;
+//                         opacity: 1;
+//                     }
+//                 }
+//             }
+//             .modal-body {
+//                 padding: 20px 20px 0 20px;
+//                 overflow-y: auto;
+//                 height: 410px;
+//                 .pipe_form {
+//                     background: #fff;
+//                     border-radius: 5px;
+//                     padding-top: 1px;
+//                     padding-bottom: 10px;
+//                     min-height: 390px;
+//                     color: #636363;
+//                     .form_part {
+//                         width: 50%;
+//                         float: left;
+//                     }
+//                     .form_list {
+//                         overflow: hidden;
+//                         line-height: 30px;
+//                         margin-top: 15px;
+//                         .list_left {
+//                             width: 80px;
+//                             float: left;
+//                             i {
+//                                 color: red;
+//                                 vertical-align: middle;
+//                                 margin-right: 5px;
+//                                 font-size: 20px;
+//                             }
+//                         }
+//                         .list_right {
+//                             margin-left: 80px;
+//                             width: auto;
+//                             padding: 0 20px 0 10px;
+//                         }
+//                         .textarea_text {
+//                             position: relative;
+//                             textarea {
+//                                 resize: none;
+//                                 height: 120px;
+//                                 position: relative
+//                             }
+//                             .text_num {
+//                                 color: #999;
+//                                 position: absolute;
+//                                 bottom: 2px;
+//                                 right: 30px;
+//                             }
+//                         }
+//                     }
+//                 }
+//                 .form_line {
+//                     border-bottom: 1px solid #ddd;
+//                     margin-top: 20px;
+//                 }
+//             }
+//             .modal-footer {
+//                 text-align: center;
+//                 background: #344052;
+//                 height: 50px;
+//                 padding: 0;
+//                 margin: 0;
+//                 button {
+//                     height: 36px;
+//                     border: none;
+//                     width: 120px;
+//                     margin: 7px 30px 0 30px;
+//                     font-size: 16px;
+//                 }
+//                 .submit {
+//                     background: #59b6fc;
+//                     color: #fff;
+//                 }
+//             }
+//         }
+//     }
+// }
+.clickon {
+    position: relative;
+}
+
+.clickon:after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(237, 247, 255, 0.5);
+    border: 2px solid #59b6fc;
+    z-index: -1;
+}
+
+.clickon li {
+    border: none !important;
+}

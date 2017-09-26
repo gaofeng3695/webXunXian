@@ -413,7 +413,8 @@ var facilityFrame = {
         });
         //详情里面打开历史检查
         _this.$getHistoryBtn.click(function() {
-            _this.$historyFrame.modal(); //打开历史检查模态框
+            repairObj.openHistoryFrame(_this._facilityId);
+            // _this.$historyFrame.modal(); //打开历史检查模态框
         });
         //历史检查加载完成
         _this.$historyFrame.on('shown.bs.modal', function(e) {
@@ -1831,6 +1832,7 @@ var searchObj = {
             obj[key] = value;
             that.renderActive(obj);
             that.refreshTable();
+            console.log(that.querryObj);
         });
 
         /* 搜索关键词 */

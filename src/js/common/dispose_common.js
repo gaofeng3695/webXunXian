@@ -93,7 +93,7 @@ var taskObj = {
         if (this.$flg == true) {
             this.$flg = false;
             if (content == "") {
-                xxwsWindowObj.xxwsAlert("请描述处置的信息!");
+                xxwsWindowObj.xxwsAlert("请描述处置的信息！");
                 this.again();
                 return false;
             } else if (this._taskType == "20") {
@@ -285,7 +285,7 @@ var taskObj = {
         var _this = this;
         $.ajax({
             type: 'GET',
-            url: "/cloudlink-inspection-task/task/getTaskStatus?token="+lsObj.getLocalStorage('token')+"&taskId=" + taskId,
+            url: "/cloudlink-inspection-task/task/getTaskStatus?token=" + lsObj.getLocalStorage('token') + "&taskId=" + taskId,
             contentType: "application/json",
             dataType: "json",
             success: function(data, status) {

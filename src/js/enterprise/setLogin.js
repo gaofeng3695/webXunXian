@@ -54,7 +54,7 @@ function relaodEnterprise() {
     });
 }
 /*选中之后 确认设置默认企业 */
-$(".setdefault").click(function() {
+$(".setdefault button").click(function() {
     var nojoin = '';
     var enterpriseId = "";
     enterpriseId = $("input[name='optionEnterprise']:checked").val();
@@ -177,6 +177,6 @@ function joinDefaultEnterprise(_enterpriseId) {
     });
 }
 /*退出将退出到登录页面，进行缓存清除*/
-$(".return").click(function() {
+$(".return button").click(function() {
     parent.location.href = '../../main.html';
 });

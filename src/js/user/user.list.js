@@ -197,7 +197,7 @@ var userTable = {
                     ids.push(objIds[i].objectId);
                 }
                 var defaultOptions = {
-                    tip: '您是否删除所选用户？',
+                    tip: '慎重！此删除操作会导致所选用户的相关数据彻底移除，您是否确认删除该用户？',
                     name_title: '提示',
                     name_cancel: '取消',
                     name_confirm: '确定',
@@ -374,7 +374,7 @@ var userTable = {
             //删除计划
             'click .delete': function(e, value, row, index) {
                 var defaultOptions = {
-                    tip: '您是否删除该用户？',
+                    tip: '慎重！此删除操作会导致该用户的相关数据移除，您是否确认删除该用户？',
                     name_title: '提示',
                     name_cancel: '取消',
                     name_confirm: '确定',
@@ -447,7 +447,7 @@ var farmeObj = {
         //删除用户
         _this.$deleteUserBtn.click(function() {
             var defaultOptions = {
-                tip: '您是否删除该用户？',
+                tip: '慎重！此删除操作会导致该用户的相关数据移除，您是否确认删除该用户？',
                 name_title: '提示',
                 name_cancel: '取消',
                 name_confirm: '确定',
@@ -471,7 +471,10 @@ var farmeObj = {
             // console.log("ddd")
             // _this.getHistoryData();
         });
-
+        //打开历史维修记录模态框
+        $(".getRepairHistory").click(function() {
+            repairObj.openHistoryFrame(_this._userId);
+        });
         $(".historyTimeBtn").click(function() {
             var txt = $(this).attr("data-value");
             if (txt == 'diy') {
@@ -1175,6 +1178,8 @@ var farmeObj = {
                         xxwsWindowObj.xxwsAlert("您没有删除用户的权限！");
                     } else if (data.code == "XE03004") {
                         xxwsWindowObj.xxwsAlert("该用户已存在安检记录，无法删除");
+                    } else if (data.code == "XE03006") {
+                        xxwsWindowObj.xxwsAlert("您没有删除用户的权限！");
                     } else {
                         xxwsWindowObj.xxwsAlert("用户删除失败！");
                     }
@@ -1218,6 +1223,8 @@ var farmeObj = {
                                 $(".hintsDeleteMainList ul").append(txt);
                             }
                         }
+                    } else if (data.code == "XE03006") {
+                        xxwsWindowObj.xxwsAlert("您没有删除用户的权限！");
                     } else {
                         xxwsWindowObj.xxwsAlert("用户删除失败！");
                     }
@@ -1340,13 +1347,13 @@ var farmeObj = {
         $("#historydateEnd").val('');
         $(".historyTimeBtn").removeClass("active");
         $(".historyTimeBtn").eq(0).addClass("active");
-        $(".historyMain").html('');
+        $(".historyMainDetails").html('');
         this.querryObj.startDate = '';
         this.querryObj.endDate = '';
     },
     getHistoryData: function() { //获取历史检查记录
         var _this = this;
-        $(".historyMain").html('');
+        $(".historyMainDetails").html('');
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/commonData/securityCheckRecordHistory/getList?token=" + lsObj.getLocalStorage('token'),
@@ -1500,7 +1507,7 @@ var farmeObj = {
                     } else {
                         txt = "<span class='notEmptyData'>暂无检查记录</span>";
                     }
-                    $(".historyMain").append(txt);
+                    $(".historyMainDetails").append(txt);
                 } else {
                     xxwsWindowObj.xxwsAlert("获取历史检查记录失败");
                 }

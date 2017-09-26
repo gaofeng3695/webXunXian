@@ -1,3 +1,335 @@
+$(function() {
+
+    searchObj.init(); //搜索条件
+    mapObj.init(); //地图初始化
+    mapAddObj.init(); //初始化-事件上报地图
+    addListenEventHandle(); //注册事件
+    initTable(); //初始化表格数据
+    exportFileObj.init(); //初始化导出表格方法
+
+    drafting('event_map', 'drafting_down'); //启动拖拽
+
+});
+/*searchObj*/
+(function(window, $, createSearhTemplate) {
+    var obj = {
+        queryObj: { //对象，必填，传输给后台的对象，也会用来初始化html视图展示，高亮显示
+            keyword: '',
+            status: '20,21,30', //类别vlaue值 ：类别内项目value值
+            type: '',
+            date: 'all', //all,day,week,month //时间类别
+            startDate: '',
+            endDate: '',
+            pageNum: 1,
+            pageSize: 10,
+            iscustorm: "1", //0表示自定义的 1表示item的
+        },
+
+        init: function() {
+            this.requestEventType();
+            //this.bindEvent();
+        },
+        requestEventType: function() {
+            var that = this;
+            var params = {};
+            $.ajax({
+                type: "POST",
+                url: "/cloudlink-inspection-event/commonData/eventType/getList?token=" + lsObj.getLocalStorage("token"),
+                data: JSON.stringify(params),
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    if (data.success == 1) {
+                        //that.servicedata = JSON.parse(JSON.stringify(data.rows));
+                        that.foramtEventType(data.rows);
+                        var obj = that.createSearchTemplateObj(that.aActiveData, that.hisData);
+                        that.searchInst = createSearhTemplate(obj);
+
+                        if (that.hisData.length > 0) {
+                            that.bindEvent();
+                            that.renderEventTypeTree(that.hisData);
+                        }
+                        eventObj.init(); //初始化-事件上报
+                    } else {
+                        xxwsWindowObj.xxwsAlert("网络异常请稍候尝试！");
+                    }
+                }
+            });
+        },
+        foramtEventType: function(data) {
+            var oAllTypes = {}; //活跃的：组、类型对应Map
+
+            data.forEach(function(item) {
+                if (+item.parentId === 0) { //父级节点作为map的key
+                    oAllTypes[item.objectId] = {
+                        typeName: item.typeName,
+                        nodeType: item.nodeType,
+                        indexNum: item.indexNum,
+                        active: item.active,
+                        aHisData: [],
+                        aActiveData: []
+                    }
+                }
+            });
+            data.forEach(function(item) {
+                if (+item.parentId !== 0) { //子集节点作为value放入响应的key中
+                    if (+item.active === 0) { //类型类型
+                        oAllTypes[item.parentId].aHisData.push({
+                            isParent: false,
+                            treenodename: item.typeName,
+                            pid: item.parentId,
+                            id: item.objectId
+                        });
+                    } else { //活动类型
+                        oAllTypes[item.parentId].aActiveData.push({
+                            name: item.typeName,
+                            value: item.objectId
+                        });
+                    }
+                }
+            });
+            //console.log(oAllTypes);
+            this._formatTypeDataForActiveAndHis(oAllTypes);
+        },
+        _formatTypeDataForActiveAndHis: function(obj) {
+            //渲染历史数据
+            var that = this;
+
+            var aHisData = [];
+            var aActiveData = [];
+
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    var item = obj[key];
+                    /*历史的类型*/
+                    if (item.aHisData.length > 0 && +item.nodeType !== 1) { //含有子级历史类型
+                        [].push.apply(aHisData, item.aHisData);
+                        aHisData.push({
+                            isParent: true,
+                            treenodename: item.typeName,
+                            pid: '',
+                            id: key
+                        });
+                    }
+                    if (+item.nodeType === 1 && +item.active === 0) { //父级是历史类型
+                        aHisData.push({
+                            isParent: false,
+                            treenodename: item.typeName,
+                            pid: '',
+                            id: key
+                        })
+                    }
+                    /*活动的类型*/
+                    if (item.aActiveData.length > 0) {
+                        var subValue = item.aActiveData.map(function(val) {
+                            return val.value;
+                        }).join(',');
+                        var children = item.aActiveData.length > 1 ? [{
+                            name: '全部',
+                            value: subValue
+                        }].concat(item.aActiveData) : item.aActiveData;
+                        aActiveData[item.indexNum] = {
+                            name: item.typeName,
+                            value: key,
+                            subValue: subValue,
+                            children: children
+                        };
+                    }
+                    if (+item.nodeType === 1 && +item.active === 1) { //父级是类型，且不是历史
+                        aActiveData[item.indexNum] = ({
+                            name: item.typeName,
+                            value: key
+                        });
+                    }
+                }
+            }
+            // alert(JSON.stringify(aActiveData));
+            that.hisData = aHisData;
+            that.aActiveData = aActiveData.filter(function(item) {
+                return item;
+            });
+            //console.log(that.aActiveData);
+        },
+        _initSearcEventType: function(aActiveData, hisData) { //返回组装后的事件类型
+            var that = this;
+            var aItems = [{
+                name: '全部',
+                value: '',
+            }].concat(aActiveData);
+            //console.log(hisData)
+            aItems.push(
+                hisData.length > 0 && ['<span class="fl history">',
+                    '<span class="fl itemHisData">历史类型：</span>',
+                    '<span class="peo_wrapper" data-class="userIds">',
+                    '<span class="peo_border">',
+                    '<input id="hisTypeInput" class="peo_selected" readonly>',
+                    '<span class="mybtn"></span>',
+                    '</span>',
+                    //'<span id="type_confirm" class="itemBtn">确定</span>',
+                    '<span id="clear_type" class="clear">清空</span>',
+                    '</span>',
+                    '</span>'
+
+                ].join('')
+            );
+            return aItems;
+        },
+        createSearchTemplateObj: function(aActiveData, hisData) {
+            var that = this;
+            var item = that._initSearcEventType(aActiveData, hisData);
+            return {
+                wrapper: '#search_wrapper', //必填 jquery选择器
+                topItem: { //必填 要显示在左上部的数据
+                    widthRate: [6, 6], //必填 宽度比 数值1-12,总和为12，可参考bootstrap的栅格系统
+                    data: [ //必填 数组，数组项：对象，'date', html字符串模板
+                        /**
+                         * 对象
+                         *
+                         **/
+                        { // 搜索的一个类别
+                            title: { //类别分类名称
+                                name: '完成状态',
+                                value: 'status', //类别的value值，可作为数据传回后台
+                            },
+                            items: [{
+                                name: '全部', //类别单项
+                                value: '20,21,30', //类别单项value值
+                            }, {
+                                name: '处理中',
+                                value: '20',
+                            }, {
+                                name: '已完成',
+                                value: '21,30',
+                            }]
+                        },
+                        'date', //'date'，自动生成日期类别
+                        // html字符串模板
+                    ]
+                },
+                itemArr: [ //数组，必填 高级搜索内的类别集合
+                    { //搜索的一个类别
+                        title: { //类别分类名称
+                            name: '事件类型',
+                            value: 'type', //类别的value值，可作为数据传回后台
+                        },
+                        items: item,
+                    },
+                    'date',
+                ],
+                cbRender: function() { ////选填，选项变更时会触发回调
+                    $('.itemHisData').removeClass('active');
+                    // that._clearHisActive();
+                },
+                queryObj: this.queryObj,
+                callback: function(data) { //初始化和更新queryObj后的回调，默认传入queryObj
+                    //console.log(data.type);
+                    that.refreshTable();
+                }
+            };
+        },
+        refreshTable: function() {
+            var that = this;
+            that.queryObj.pageNum = '1';
+            $('#table').bootstrapTable('refreshOptions', {
+                pageNumber: +that.queryObj.pageNum,
+                pageSize: +that.queryObj.pageSize,
+                queryParams: function(params) {
+                    that.queryObj.pageSize = params.pageSize;
+                    that.queryObj.pageNum = params.pageNumber;
+                    return that.queryObj;
+                }
+            });
+        },
+        bindEvent: function() {
+            var that = this;
+            $('body').on('click', '.peo_border', function() { //展现历史选择列表
+
+                $('#hisData').modal();
+            });
+            $('body').on('click', '#btn_hisData', function() {
+                that._setSelectedItems();
+                $('.item2_id').hide();
+                $('#hisTypeInput').val(that.aTypeName.join('，'));
+                $('#hisData').modal('hide');
+                if (!that.aTypeId || that.aTypeId.length === 0) {
+                    $('#clear_type').trigger('click'); //点击清空历史事件类型
+                    return;
+                }
+                $('.itemHisData').addClass('active');
+                $('div[data-class="type"]').find('.item').removeClass('active');
+                that.queryObj.type = that.aTypeId.join(',');
+                that.searchInst.callback();
+            });
+            $('body').on('click', '#clear_type', function() { //点击清空历史事件类型
+                that._clearHisActive();
+                that.queryObj.type = '';
+                that.searchInst.renderActive({
+                    type: ''
+                });
+                that.searchInst.callback();
+            });
+
+            $('body').on('click', '.search_reset', function() { //添加重置事件
+                that._clearHisActive();
+            });
+        },
+        renderEventTypeTree: function(data) {
+            var that = this;
+            var setting = {
+                view: {
+                    showLine: true,
+                    showIcon: false,
+                },
+                data: {
+                    key: {
+                        name: 'treenodename'
+                    },
+                    simpleData: {
+                        enable: true,
+                        pIdKey: 'pid'
+                    }
+                },
+                check: {
+                    enable: true,
+                    chkStyle: "checkbox",
+                }
+
+            };
+            that.zTree = $.fn.zTree.init($("#eventType_list"), setting, data);
+            that.zTree.expandAll(true);
+        },
+        _setSelectedItems: function() { //设定选中的历史事件类型
+            var that = this;
+            that.aTypeId = [];
+            that.aTypeName = [];
+            var arr = that.zTree.getCheckedNodes(true);
+            arr.forEach(function(item, index) {
+                if (item.isParent) {
+                    return;
+                }
+                that.aTypeId.push(item.id);
+                that.aTypeName.push(item.treenodename);
+            });
+        },
+        _clearHisActive: function() {
+            var that = this;
+            that.aTypeId = null;
+            that.aTypeName = null;
+            $('#hisTypeInput').val('');
+            $('.itemHisData').removeClass('active');
+            that.zTree.checkAllNodes(false);
+        },
+        // sortByKey: function(array, key) {
+        //     return array.sort(function(a, b) {
+        //         var x = a[key];
+        //         var y = b[key];
+        //         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        //     });
+        // },
+    };
+    window.searchObj = obj;
+})(window, $, createSearhTemplate);
+
 /*
  *新增事件对象
  *alex 2017-2-23 modify
@@ -62,16 +394,20 @@ var eventObj = {
         var description = $("#event_description").val().trim();
         if (this.$flg == true) {
             this.$flg = false;
-            if (occurrenceTime == "") {
-                xxwsWindowObj.xxwsAlert("请选择发生事件的时间!");
+            if ($("#eventType").val() == "" || $("#eventType").val() == null || $("#eventType").val() == undefined) {
+                xxwsWindowObj.xxwsAlert("请选择发生事件的类型！");
+                this.again();
+                return false;
+            } else if (occurrenceTime == "") {
+                xxwsWindowObj.xxwsAlert("请选择发生事件的时间！");
                 this.again();
                 return false;
             } else if (address == "") {
-                xxwsWindowObj.xxwsAlert("请选择发生事件的地点!");
+                xxwsWindowObj.xxwsAlert("请选择发生事件的地点！");
                 this.again();
                 return false;
             } else if (description == "") {
-                xxwsWindowObj.xxwsAlert("请描述发生的事件!");
+                xxwsWindowObj.xxwsAlert("请描述发生的事件！");
                 this.again();
                 return false;
             } else {
@@ -184,22 +520,45 @@ var eventObj = {
         return dataArr;
     },
     getType: function() {
-        $.ajax({
-            type: 'GET',
-            url: "/cloudlink-inspection-event/eventType/getTree?token=" + lsObj.getLocalStorage('token'),
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data, status) {
-                var typeList = data.rows[0].root.children;
-                var txt = null;
-                for (i = 0; i < typeList.length; i++) {
-                    for (j = 0; j < typeList[i].children.length; j++) {
-                        txt += '<option value=' + typeList[i].children[j].indexNum + '>' + typeList[i].text + '&nbsp-&nbsp' + typeList[i].children[j].text + '</option>'
+        var that = this;
+        var data = searchObj.aActiveData;
+        //console.log(data);
+
+        var sHtml = data.map(function(item, index) {
+            if (item.children) {
+                return item.children.map(function(subItem) {
+                    if (subItem.name === '全部') {
+                        return '';
                     }
-                }
-                $("#eventType").append(txt);
+                    return '<option value=' + subItem.value + '>' + item.name + '&nbsp-&nbsp' + subItem.name + '</option>';
+                }).join('');
             }
-        })
+            return '<option value=' + item.value + '>' + item.name + '</option>';
+        }).join('');
+
+        $("#eventType").append(sHtml);
+        return;
+
+        // var parentData = [];
+        // var txt = "";
+        // data.forEach(function(item, index, arr) {
+        //     if (item.parentId == '0' && item.active == "1") {
+        //         parentData.push(item);
+        //     }
+        // });
+        // parentData.forEach(function(item, index, arr) {
+        //     var z = 0;
+        //     data.map(function(val, index, arr) {
+        //         if (val.parentId == item.objectId && val.active == "1") {
+        //             txt += '<option value=' + val.objectId + '>' + item.typeName + '&nbsp-&nbsp' + val.typeName + '</option>';
+        //             z++;
+        //         }
+        //     });
+        //     if (z == 0 && item.nodeType == '1') {
+        //         txt += '<option value=' + item.objectId + '>' + item.typeName + '</option>';
+        //     }
+        // });
+        // $("#eventType").append(txt);
     },
     requestPeopleTree: function() { //请求人员信息
         var that = this;
@@ -242,7 +601,7 @@ var eventObj = {
     renderPeopleTree: function(data) { //遍历tree
         var that = this;
         //data = '';
-        // console.log(data)
+        //// console.log(data)
         ////console.log(JSON.stringify(data))
         var setting = {
             view: {
@@ -382,7 +741,7 @@ var mapAddObj = { //上报事件地图
         this.$map.addOverlay(this.$marker); // 将标注添加到地图中
 
         var _this = this;
-        // 根据坐标得到地址描述    
+        // 根据坐标得到地址描述
         this.$address.getLocation(this.$point, function(result) {
             if (result) {
                 _this.$text.val(result.address);
@@ -518,36 +877,37 @@ var mapObj = {
     },
     //地图打点(多个点)
     setPointsMarker: function(data) {
+
         //this.$bdMap.clearOverlays(); //清除地图上已经标注的点
         var txts = null;
         var myIcons = null;
         var markers = null;
         var point = null;
         for (var i = 0; i < data.length; i++) {
-            txts = '<div><p>事件类型：' + data[i].fullTypeName + '</p>' +
+            var fullTypeName = "";
+            if (data[i].fullTypeName) {
+                fullTypeName = data[i].fullTypeName;
+            }
+            txts = '<div><p class="text">事件类型：' + fullTypeName + '</p>' +
                 '<p>事件状态：' + data[i].statusValue + '</p>' +
                 '<p>上报人：' + data[i].inspectorName + '</p></div>';
-
             point = new BMap.Point(data[i].bdLon, data[i].bdLat);
-            if (data[i].parentTypeId == 1) {
-                if (data[i].status == 20) {
-                    myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
+            //有图标之后，根据字段里面的内容进行图标位置的添加。
+            if (data[i].status == 20) {
+                if (data[i].eventIconName) {
+                    myIcons = new BMap.Icon("/src/images/common/process/" + data[i].eventIconName, new BMap.Size(29, 42));
                 } else {
-                    myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
+                    myIcons = new BMap.Icon("/src/images/common/process/D01.png", new BMap.Size(29, 42));
                 }
-            } else if (data[i].parentTypeId == 2) {
-                if (data[i].status == 20) {
-                    myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
+            } else {
+                if (data[i].eventIconName) {
+                    myIcons = new BMap.Icon("/src/images/common/finish/" + data[i].eventIconName, new BMap.Size(29, 42));
                 } else {
-                    myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
+                    myIcons = new BMap.Icon("/src/images/common/finish/D01.png", new BMap.Size(29, 42));
                 }
-            } else if (data[i].parentTypeId == 3) {
-                if (data[i].status == 20) {
-                    myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
-                } else {
-                    myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
-                }
+
             }
+
             markers = new BMap.Marker(point, {
                 icon: myIcons
             });
@@ -592,8 +952,8 @@ var mapObj = {
     },
     //获取中心点及zoom级别
     getCenterPointAndZoomLevel: function(maxLon, maxLat, minLon, minLat) {
-        var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A  
-        var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B  
+        var pointA = new BMap.Point(maxLon, maxLat); // 创建点坐标A
+        var pointB = new BMap.Point(minLon, minLat); // 创建点坐标B
         var distance = this.$bdMap.getDistance(pointA, pointB).toFixed(1); //获取两点距离,保留小数点后两位
         //xxwsWindowObj.xxwsAlert(distance);
         var _obj = {
@@ -629,34 +989,32 @@ var mapObj = {
 
         var txts = null;
         var myIcons = null;
-        txts = '<div><p>事件类型：' + selectedItem.fullTypeName + '</p>' +
+        var fullTypeName = "";
+        if (selectedItem.fullTypeName) {
+            fullTypeName = selectedItem.fullTypeName;
+        }
+        txts = '<div><p class="text">事件类型：' + fullTypeName + '</p>' +
             '<p>事件状态：' + selectedItem.statusValue + '</p>' +
             '<p>上报人：' + selectedItem.inspectorName + '</p></div>';
+        if (selectedItem.status == 20) {
+            if (selectedItem.eventIconName) {
+                myIcons = new BMap.Icon("/src/images/common/process/" + selectedItem.eventIconName, new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/common/process/D01.png", new BMap.Size(29, 42));
+            }
+        } else {
+            if (selectedItem.eventIconName) {
+                myIcons = new BMap.Icon("/src/images/common/finish/" + selectedItem.eventIconName, new BMap.Size(29, 42));
+            } else {
+                myIcons = new BMap.Icon("/src/images/common/finish/D01.png", new BMap.Size(29, 42));
+            }
 
-        if (selectedItem.parentTypeId == 1) {
-            if (selectedItem.status == 20) {
-                myIcons = new BMap.Icon("/src/images/event/con1.png", new BMap.Size(29, 42));
-            } else {
-                myIcons = new BMap.Icon("/src/images/event/con2.png", new BMap.Size(29, 42));
-            }
-        } else if (selectedItem.parentTypeId == 2) {
-            if (selectedItem.status == 20) {
-                myIcons = new BMap.Icon("/src/images/event/dis1.png", new BMap.Size(29, 42));
-            } else {
-                myIcons = new BMap.Icon("/src/images/event/dis2.png", new BMap.Size(29, 42));
-            }
-        } else if (selectedItem.parentTypeId == 3) {
-            if (selectedItem.status == 20) {
-                myIcons = new BMap.Icon("/src/images/event/pip1.png", new BMap.Size(29, 42));
-            } else {
-                myIcons = new BMap.Icon("/src/images/event/pip2.png", new BMap.Size(29, 42));
-            }
         }
         _marker = new BMap.Marker(_point, {
             icon: myIcons
         });
 
-        this.$bdMap.addOverlay(_marker); // 将标注添加到地图中 
+        this.$bdMap.addOverlay(_marker); // 将标注添加到地图中
         _marker.setAnimation(BMAP_ANIMATION_BOUNCE);
         this.aCurrentPoints.push({
             key: selectedItem.objectId,
@@ -679,7 +1037,7 @@ var mapObj = {
         };
         var p = e.target;
         var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-        var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象 
+        var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象
         mapObj.$bdMap.openInfoWindow(infoWindow, point); //开启信息窗口
     }
 };
@@ -697,245 +1055,7 @@ function closeImg(e) {
 }
 
 
-//高级搜索相关的对象与方法
-var searchObj = {
-    $items: $('.top .item'), //搜索条件dom
-    $searchInput: $('#searchInput'), //搜索关键词dom
-    $startDate: $("#datetimeStart"),
-    $endDate: $("#datetimeEnd"),
-    // tracksIdsArr: [], //存放已被选中的轨迹ID
-    defaultObj: { //默认搜索条件
-        "status": "20", //20:处理中，21：已完成，:全部
-        "startDate": "", //开始日期
-        "endDate": "", //结束日期
-        "keyword": "", //高级搜索关键词
-        "type": "", //事件类型，逗号分隔的
-        "pageNum": 1, //第几页
-        "pageSize": 10 //每页记录数
-    },
-    querryObj: { //请求的搜索条件
-        "status": "20",
-        "startDate": "", //开始日期
-        "endDate": "", //结束日期
-        "keyword": "", //巡线人，巡线编号
-        "type": "",
-        "pageNum": 1, //第几页
-        "pageSize": 10 //每页记录数
-    },
-    activeObj: { //高亮默认搜索条件，用于渲染页面
-        "status": "20",
-        "date": "all",
-        "typeParent": '0'
-    },
-    init: function() {
-        this.renderActive(); //初始化显示被选中
-        this.bindEvent(); //监听事件
-        this.bindDateDiyEvent(); //时间控件初始化
-    },
-    renderActive: function(obj) { //被选中的样式
-        var that = this;
-        if (!obj) {
-            obj = that.activeObj;
-        }
-        for (var key in obj) {
-            var $parent = that.$items.parent('[data-class=' + key + ']');
-            $parent.find('.item').removeClass('active')
-            $parent.find('.item[data-value="' + obj[key] + '"]').addClass('active');
-            if (key === 'date') {
-                if (obj[key] === 'diy') {
-                    $('#item_diy').addClass('active');
-                } else {
-                    $('#item_diy').removeClass('active');
-                }
-            }
-            if (key === 'typeParent') {
-                if (obj[key] == '1') {
-                    that.renderActive({
-                        "type": "4,5,6,7,8,9,10"
-                    });
-                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
-                } else if (obj[key] == '2') {
-                    that.renderActive({
-                        "type": "11,12,13,14,15,16,17"
-                    });
-                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
-                } else if (obj[key] == '3') {
-                    that.renderActive({
-                        "type": "18,19"
-                    });
-                    $(".item2_id").eq(obj[key] - 1).show().siblings().hide();
-                } else {
-                    $(".item2_id").hide();
-                }
-            }
-        }
-    },
-    bindEvent: function() {
-        var that = this;
-        /* 选择条件 */
-        that.$items.click(function() {
-            // console.log(that.$searchInput.val().trim())
-            var key = $(this).parent().attr("data-class");
-            var value = $(this).attr("data-value");
 
-            if (key === 'date') {
-                that.setDate(value);
-            } else if (key === 'typeParent') {
-                that.setType(value);
-            } else {
-                that.querryObj[key] = value;
-            }
-
-            var obj = {};
-            obj[key] = value;
-            that.renderActive(obj);
-            that.refreshTable();
-        });
-
-        /* 搜索关键词 */
-        $('#gf_Btn').click(function() {
-            var s = $(this).parent().find('input').val();
-            that.querryObj.keyword = s;
-            that.refreshTable();
-        });
-
-        /* keyup事件 */
-        that.$searchInput.keypress(function(e) {
-            if (e && e.keyCode === 13) { // enter 键
-                //that.querryObj.keyword = that.$searchInput.val();
-                that.refreshTable();
-            }
-        });
-        /* 显示高级搜索 */
-        $('#search_more').click(function() {
-            if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
-                $('.more_item_wrapper').slideUp();
-            } else {
-                $(this).addClass('active');
-                $('.more_item_wrapper').slideDown();
-            }
-        });
-        /* 清空搜索条件 */
-        $('#gf_reset_Btn').click(function() {
-            //请求数据还原到初始话
-            $.extend(that.querryObj, that.defaultObj);
-            // Object.assign(that.querryObj, that.defaultObj);
-
-            that.$startDate.val("");
-            that.$endDate.val("");
-            that.$searchInput.val("");
-            $("#diyDateBtn").removeClass("active");
-            that.renderActive();
-            that.refreshTable();
-        });
-        //自定义时间
-        $('#diyDateBtn').on('click', function() {
-            var s = that.$startDate.val();
-            var e = that.$endDate.val();
-            if (!s) {
-                xxwsWindowObj.xxwsAlert('请选择开始时间');
-                return;
-            }
-            if (!e) {
-                xxwsWindowObj.xxwsAlert('请选择结束时间');
-                return;
-            }
-            that.querryObj.startDate = s;
-            that.querryObj.endDate = e;
-            that.renderActive({
-                'date': 'diy'
-            })
-            that.refreshTable();
-        });
-    },
-    setDate: function(value) {
-        var that = this;
-        switch (value) {
-            case 'day':
-                var date = new Date().Format('yyyy-MM-dd');
-                that.querryObj.startDate = date;
-                that.querryObj.endDate = date;
-                break;
-            case 'week':
-                var date = new Date();
-                that.querryObj.startDate = date.getWeekStartDate().Format('yyyy-MM-dd');
-                that.querryObj.endDate = date.getWeekEndDate().Format('yyyy-MM-dd');
-                break;
-            case 'month':
-                var date = new Date();
-                that.querryObj.startDate = date.getMonthStartDate().Format('yyyy-MM-dd');
-                that.querryObj.endDate = date.getMonthEndDate().Format('yyyy-MM-dd');
-                break;
-            default:
-                that.querryObj.startDate = '';
-                that.querryObj.endDate = '';
-        }
-    },
-    setType: function(e) {
-        var _this = this;
-        switch (e) {
-            case '0':
-                _this.querryObj.type = '';
-                break;
-            case '1':
-                _this.querryObj.type = '4,5,6,7,8,9,10';
-                break;
-            case '2':
-                _this.querryObj.type = '11,12,13,14,15,16,17';
-                break;
-            case '3':
-                _this.querryObj.type = '18,19';
-        }
-    },
-    refreshTable: function() {
-        var that = this;
-        // console.log(that.querryObj);
-        that.querryObj.keyword = that.$searchInput.val().trim();
-        that.$searchInput.val(that.querryObj.keyword);
-        that.querryObj.pageNum = '1';
-        $('#table').bootstrapTable('refreshOptions', {
-            pageNumber: +that.querryObj.pageNum,
-            pageSize: +that.querryObj.pageSize,
-            queryParams: function(params) {
-                that.querryObj.pageSize = params.pageSize;
-                that.querryObj.pageNum = params.pageNumber;
-                return that.querryObj;
-            }
-        });
-    },
-    bindDateDiyEvent: function() { //时间控件
-        $('#datetime').datetimepicker({
-            format: 'yyyy-mm-dd hh:ii',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            endDate: new Date()
-        });
-        $("#datetimeStart").datetimepicker({
-            format: 'yyyy-mm-dd',
-            minView: 'month',
-            language: 'zh-CN',
-            autoclose: true,
-            // startDate: new Date()
-        }).on("click", function() {
-            $("#datetimeStart").datetimepicker("setEndDate", $("#datetimeEnd").val());
-        });
-        $("#datetimeEnd").datetimepicker({
-            format: 'yyyy-mm-dd',
-            minView: 'month',
-            language: 'zh-CN',
-            autoclose: true,
-            // startDate: new Date()
-        }).on("click", function() {
-            $("#datetimeEnd").datetimepicker("setStartDate", $("#datetimeStart").val())
-        });
-    }
-}
 
 /*
  *初始化表单的方法
@@ -963,9 +1083,9 @@ function initTable() {
         queryParamsType: '', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
         // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
         queryParams: function(params) {
-            searchObj.querryObj.pageSize = params.pageSize;
-            searchObj.querryObj.pageNum = params.pageNumber;
-            return searchObj.querryObj;
+            searchObj.queryObj.pageSize = params.pageSize;
+            searchObj.queryObj.pageNum = params.pageNumber;
+            return searchObj.queryObj;
         },
         responseHandler: function(res) {
             return res;
@@ -988,80 +1108,90 @@ function initTable() {
         // },
         //表格的列
         columns: [{
-            field: 'state', //域值
-            checkbox: true, //复选框
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '3%',
-        }, {
-            field: 'occurrenceTime', //域值
-            title: '事件发生时间',
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '15%',
-            editable: true,
-        }, {
-            field: 'fullTypeName', //域值
-            title: '事件类型', //内容
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '17%',
-            editable: true,
-            cellStyle: function(value, row, index) {
-                return {
-                    css: {
-                        "max-width": "300px",
-                    }
-                };
+                field: 'state', //域值
+                checkbox: true, //复选框
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '3%',
+            }, {
+                field: 'occurrenceTime', //域值
+                title: '事件发生时间',
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '15%',
+                editable: true,
+            }, {
+                field: 'fullTypeName', //域值
+                title: '事件类型', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '17%',
+                editable: true,
+                cellStyle: function(value, row, index) {
+                    return {
+                        css: {
+                            "max-width": "300px",
+                        }
+                    };
+                }
+            }, {
+                field: 'statusValue', //域值
+                title: '事件状态', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '10%',
+                editable: true,
+            }, {
+                field: 'address', //域值
+                title: '事件地点', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '27%',
+                // editable: true,
+            }, {
+                field: 'inspectorName', //域值
+                title: '上报人', //内容
+                align: 'center',
+                visible: true, //false表示不显示
+                sortable: false, //启用排序
+                width: '15%',
+                editable: true,
+            },
+            {
+                field: 'eventIconName', //域值
+                title: 'eventIconName', //内容
+                align: 'center',
+                visible: false, //false表示不显示
+                sortable: false, //启用排序
+                width: '15%',
+                editable: true,
+            }, {
+                field: 'operate',
+                title: '操作',
+                align: 'center',
+                events: operateEvents,
+                width: '13%',
+                formatter: operateFormatter
             }
-        }, {
-            field: 'statusValue', //域值
-            title: '事件状态', //内容
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '10%',
-            editable: true,
-        }, {
-            field: 'address', //域值
-            title: '事件地点', //内容
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '27%',
-            // editable: true,
-        }, {
-            field: 'inspectorName', //域值
-            title: '上报人', //内容
-            align: 'center',
-            visible: true, //false表示不显示
-            sortable: false, //启用排序
-            width: '15%',
-            editable: true,
-        }, {
-            field: 'operate',
-            title: '操作',
-            align: 'center',
-            events: operateEvents,
-            width: '13%',
-            formatter: operateFormatter
-        }]
+        ]
     });
 }
 
 //判断时间选择是否有值
-function dateChangeForSearch() {
-    var startDate = $("#datetimeStart").val();
-    var endDate = $("#datetimeEnd").val();
-    if (startDate != "" && endDate !== "") {
-        $("#diyDateBtn").addClass("active");
-    } else {
-        $("#diyDateBtn").removeClass("active");
-    }
-}
+// function dateChangeForSearch() {
+//     var startDate = $("#datetimeStart").val();
+//     var endDate = $("#datetimeEnd").val();
+//     if (startDate != "" && endDate !== "") {
+//         $("#diyDateBtn").addClass("active");
+//     } else {
+//         $("#diyDateBtn").removeClass("active");
+//     }
+// }
 /*
  *表单的操作（html样式）
  */
@@ -1104,18 +1234,7 @@ window.operateEvents = {
 };
 
 
-$(function() {
-    mapObj.init(); //地图初始化
-    eventObj.init(); //初始化-事件上报
-    mapAddObj.init(); //初始化-事件上报地图
-    addListenEventHandle(); //注册事件
-    initTable(); //初始化表格数据
-    searchObj.init(); //搜索条件
-    exportFileObj.init(); //初始化导出表格方法
 
-    drafting('event_map', 'drafting_down'); //启动拖拽
-
-});
 
 
 
@@ -1165,12 +1284,12 @@ var exportFileObj = {
         });
     },
     expoerCondition: function() {
-        var searchMsg = searchObj.querryObj;
-        this.expoerObj.status = searchObj.querryObj.status;
-        this.expoerObj.type = searchObj.querryObj.type;
-        this.expoerObj.startDate = searchObj.querryObj.startDate;
-        this.expoerObj.endDate = searchObj.querryObj.endDate;
-        this.expoerObj.keyword = searchObj.querryObj.keyword;
+        var searchMsg = searchObj.queryObj;
+        this.expoerObj.status = searchObj.queryObj.status;
+        this.expoerObj.type = searchObj.queryObj.type;
+        this.expoerObj.startDate = searchObj.queryObj.startDate;
+        this.expoerObj.endDate = searchObj.queryObj.endDate;
+        this.expoerObj.keyword = searchObj.queryObj.keyword;
 
         this.expoerData(this.expoerObj);
     },

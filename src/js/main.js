@@ -75,6 +75,12 @@ var routerObj = {
                     zhuge.track('点击任务管理');
                 }
             },
+            '/maintenance': function() {
+                loadRelativePage("/src/html/maintenance.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击维修维护');
+                }
+            },
             '/track': function() {
                 loadRelativePage("/src/html/track.html");
                 if (zhugeSwitch == 1) {
@@ -200,6 +206,12 @@ var routerObj = {
                 if (zhugeSwitch == 1) {
                     zhuge.track('点击入户安检记录');
                 }
+            },
+            '/customModule': function() {
+                loadRelativePage("/src/html/customTemplates.html");
+                if (zhugeSwitch == 1) {
+                    zhuge.track('点击事件类型自定义');
+                }
             }
         });
         that.router.init('/index');
@@ -208,12 +220,22 @@ var routerObj = {
 
 function load() {
     var userBo = JSON.parse(lsObj.getLocalStorage("userBo"));
-    /*模块的显隐*/
+    /*用户台账功能菜单的显隐藏*/
     if (userBo.isSysadmin == 1) {
-        var html = '<li class="enterprise-management"> <a href="javascript:void(0)" data-toggle="collapse" data-target="#mangement"><i class="fa fa-fw fa-briefcase"></i> 企业管理<i class="fa fa-fw fa-caret-down"></i></a>' +
+        var html = '<li><a href="#/userList"><i class="fa fa-fw "></i>用户台账</a></li>';
+        $("#archives").append(html);
+    }
+
+    /*用户企业管理模块的显隐*/
+    if (userBo.isSysadmin == 1) {
+        var html1 = '<li class="moduleManagement"> <a href="javascript:void(0)" data-toggle="collapse" data-target="#customType"><i class="fa fa-fw fa-cogs"></i> 企业自定义<i class="fa fa-fw fa-caret-down"></i></a>' +
+            '<ul id="customType" class="collapse"><li><a href="#/customModule"><i class="fa fa-fw "></i>事件类型自定义</a> </li></ul></li>';
+        $(".side-nav").append(html1);
+
+        var html2 = '<li class="enterprise-management"> <a href="javascript:void(0)" data-toggle="collapse" data-target="#mangement"><i class="fa fa-fw fa-briefcase"></i> 企业管理<i class="fa fa-fw fa-caret-down"></i></a>' +
             '<ul id="mangement" class="collapse"><li><a href="#/organization"><i class="fa fa-fw "></i>组织机构管理</a> </li>' +
             '<li><a href="#/managementuser"><i class="fa fa-fw "></i>人员管理</a></li><li><a href="#/certification"><i class="fa fa-fw "></i>企业认证</a>' +
             '</li><li><a href="#/removemanager"><i class="fa fa-fw "></i>系统管理员移交</a> </li></ul></li>';
-        $(".side-nav").append(html);
+        $(".side-nav").append(html2);
     }
 }

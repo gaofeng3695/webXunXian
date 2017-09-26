@@ -186,8 +186,17 @@
         /*事件图表*/
         &:nth-of-type(3) {
             .chart {
-                height: 340px;
+                height: 100%;
+                .chart_tip{
+                    background: url(/src/images/index/tip_chart.png) no-repeat center center;
+                    text-align: center;
+                    line-height: 500px;
+                    font-size: 16px;
+                    height: 280px;
+                    color: #999;
+                }
             }
+
             .sub_title {
                 .line {
                     overflow: hidden;
@@ -264,6 +273,7 @@
                         height: 70px;
                         width: 60px;
                         float: left;
+
                         &.other {
                             background: url(/src/images/index/e_other.png) no-repeat 5px 4px;
                         }

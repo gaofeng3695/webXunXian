@@ -78,6 +78,9 @@ var fromObj = (function() {
             for (var i = 0; i < selects.length; i++) {
                 var key = selects.eq(i).attr("name");
                 var value = selects.eq(i).val();
+                if (value == "请选择") {
+                    value = "";
+                }
                 if (key == null || key == '' || key == undefined) {} else {
                     obj[key] = value;
                 }
@@ -135,15 +138,22 @@ var fromObj = (function() {
                 } else if (type == 'Number') {
                     data[key] = 0;
                 }
-            }
-            if (data[key] !== '' && data[key] !== 0) {
-                var company = $box.find('[data-name="' + key + '"]').attr("data-company");
-                if (company) {
-                    data[key] = data[key] + '(' + company + ')';
-                }
             } else {
-                data[key] = "";
+
+                var company = $box.find('[data-name="' + key + '"]').attr("data-company");
+                if (company != undefined && data[key] !== "") {
+                    data[key] = data[key] + '（' + company + '）';
+                }
             }
+            // var company = $box.find('[data-name="' + key + '"]').attr("data-company");
+            // if (data[key] !== '' && data[key] !== 0) {
+            //     var company = $box.find('[data-name="' + key + '"]').attr("data-company");
+            //     if (company) {
+            //         data[key] = data[key] + '(' + company + ')';
+            //     }
+            // } else {
+            //     data[key] = "";
+            // }
             $box.find('[data-name="' + key + '"]').text(data[key]);
         }
         if (data.pic) {

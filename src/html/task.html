@@ -37,7 +37,8 @@
         </div>
         <div class="wrapper-main">
             <!--高级搜索-->
-            <div class="container-fluid search_item_wrapper">
+            <div id="search_wrapper"></div>
+            <!--<div class="container-fluid search_item_wrapper">
                 <div class="top">
                     <div class="row search_title">
                         <div class="col-lg-6 col-xs-12 btn_wrapper">
@@ -51,31 +52,31 @@
                                 <div class="item col-xs-4" data-value="day">今天</div>
                                 <div class="item col-xs-4" data-value="week">本周</div>
                                 <!--<div class="item col-xs-4" data-value="month">本月</div>-->
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-xs-12 right_wrapper">
-                            <div class="search_btn_right">
-                                <div class="search_reset" id="gf_reset_Btn">重置</div>
-                                <div class="more" id="search_more">
-                                    高级搜索
-                                </div>
-                            </div>
-                            <div class="search_wrapper">
-                                <div class="input_wrapper">
-                                    <input class="" id="searchInput" type="text" placeholder="输入关键字搜索">
-                                </div>
-                                <span class="mybtn" id="gf_Btn">确定</span>
-                            </div>
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-lg-6 col-xs-12 right_wrapper">-->
+            <!--<div class="search_btn_right">
+            <div class="search_reset" id="gf_reset_Btn">重置</div>
+            <div class="more" id="search_more">
+                高级搜索
+            </div>
+        </div>
+        <div class="search_wrapper">
+            <div class="input_wrapper">
+                <input class="" id="searchInput" type="text" placeholder="输入关键字搜索">
+            </div>
+            <span class="mybtn" id="gf_Btn">确定</span>
+        </div>
 
-                        </div>
-                    </div>
-                    <div class="more_item_wrapper">
-                        <div class="sub_wrapper">
-                            <b class="up_triangle">
+    </div>
+    </div>
+    <div class="more_item_wrapper">
+        <div class="sub_wrapper">
+            <b class="up_triangle">
                                     <i></i>
                                 </b>
-                            <div class="son_wrapper">
-                                <!--<div class="line">
+            <div class="son_wrapper">-->
+            <!--<div class="line">
                                     <div class="title">事件状态</div>
                                     <div class="item_box">
                                         <div class="item1" data-class="status">
@@ -85,73 +86,73 @@
                                         </div>
                                     </div>
                                 </div>-->
-                                <div class="line">
-                                    <div class="title">事件类型</div>
-                                    <div class="item_box">
-                                        <div class="item1" data-class="typeParent">
-                                            <span class="item" data-value="0">全部</span>
-                                            <span class="item" data-value="1">第三方活动<i class="glyphicon glyphicon-menu-down"></i></span>
-                                            <span class="item" data-value="2">自然灾害<i class="glyphicon glyphicon-menu-down"></i></span>
-                                            <span class="item" data-value="3">管道设施<i class="glyphicon glyphicon-menu-down"></i></span>
-                                        </div>
-                                        <div class="item2">
-                                            <div class="item2_id" data-class="type">
-                                                <b>（</b>
-                                                <span class="item" data-value="4,5,6,7,8,9,10">全部</span>
-                                                <span class="item" data-value="4">施工</span>
-                                                <span class="item" data-value="5">占压</span>
-                                                <span class="item" data-value="6">圈闭或包封</span>
-                                                <span class="item" data-value="7">碾压</span>
-                                                <span class="item" data-value="8">耕种</span>
-                                                <span class="item" data-value="9">疏浚与清淤</span>
-                                                <span class="item" data-value="10">其他</span>
-                                                <b>）</b>
-                                            </div>
-                                            <div class="item2_id" data-class="type">
-                                                <b>（</b>
-                                                <span class="item active" data-value="11,12,13,14,15,16,17">全部</span>
-                                                <span class="item" data-value="11">地面沉降或塌陷</span>
-                                                <span class="item" data-value="12">边坡变化</span>
-                                                <span class="item" data-value="13">深根植物倾倒</span>
-                                                <span class="item" data-value="14">水淹</span>
-                                                <span class="item" data-value="15">泥石流</span>
-                                                <span class="item" data-value="16">山体滑坡</span>
-                                                <span class="item" data-value="17">其他</span>
-                                                <b>）</b>
-                                            </div>
-                                            <div class="item2_id" data-class="type">
-                                                <b>（</b>
-                                                <span class="item" data-value="18,19">全部</span>
-                                                <span class="item" data-value="18">本体</span>
-                                                <span class="item" data-value="19">附属设施</span>
-                                                <b>）</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="line">
-                                    <div class="title">时间</div>
-                                    <div class="item_box">
-                                        <div class="item1" data-class="date">
-                                            <span class="item" data-value="all">不限</span>
-                                            <span class="item" data-value="day">今日</span>
-                                            <span class="item" data-value="week">本周</span>
-                                            <span class="item" data-value="month">本月</span>
-                                            <span class="date">
-                                                    <span id="item_diy" class="diy">自定义：</span>
-                                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
-                                            <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
-                                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
-                                            <span class="itemBtn" id="diyDateBtn" data-value="diy">确定</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+            <!--<div class="line">
+                    <div class="title">事件类型</div>
+                    <div class="item_box">
+                        <div class="item1" data-class="typeParent">
+                            <span class="item" data-value="0">全部</span>
+                            <span class="item" data-value="1">第三方活动<i class="glyphicon glyphicon-menu-down"></i></span>
+                            <span class="item" data-value="2">自然灾害<i class="glyphicon glyphicon-menu-down"></i></span>
+                            <span class="item" data-value="3">管道设施<i class="glyphicon glyphicon-menu-down"></i></span>
+                        </div>
+                        <div class="item2">
+                            <div class="item2_id" data-class="type">
+                                <b>（</b>
+                                <span class="item" data-value="4,5,6,7,8,9,10">全部</span>
+                                <span class="item" data-value="4">施工</span>
+                                <span class="item" data-value="5">占压</span>
+                                <span class="item" data-value="6">圈闭或包封</span>
+                                <span class="item" data-value="7">碾压</span>
+                                <span class="item" data-value="8">耕种</span>
+                                <span class="item" data-value="9">疏浚与清淤</span>
+                                <span class="item" data-value="10">其他</span>
+                                <b>）</b>
+                            </div>
+                            <div class="item2_id" data-class="type">
+                                <b>（</b>
+                                <span class="item active" data-value="11,12,13,14,15,16,17">全部</span>
+                                <span class="item" data-value="11">地面沉降或塌陷</span>
+                                <span class="item" data-value="12">边坡变化</span>
+                                <span class="item" data-value="13">深根植物倾倒</span>
+                                <span class="item" data-value="14">水淹</span>
+                                <span class="item" data-value="15">泥石流</span>
+                                <span class="item" data-value="16">山体滑坡</span>
+                                <span class="item" data-value="17">其他</span>
+                                <b>）</b>
+                            </div>
+                            <div class="item2_id" data-class="type">
+                                <b>（</b>
+                                <span class="item" data-value="18,19">全部</span>
+                                <span class="item" data-value="18">本体</span>
+                                <span class="item" data-value="19">附属设施</span>
+                                <b>）</b>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="line">
+                    <div class="title">时间</div>
+                    <div class="item_box">
+                        <div class="item1" data-class="date">
+                            <span class="item" data-value="all">不限</span>
+                            <span class="item" data-value="day">今日</span>
+                            <span class="item" data-value="week">本周</span>
+                            <span class="item" data-value="month">本月</span>
+                            <span class="date">
+                                                    <span id="item_diy" class="diy">自定义：</span>
+                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeStart" placeholder="选择起始时间" readonly class="form_datetime">
+                            <span>&nbsp;&nbsp;至&nbsp;&nbsp;</span>
+                            <input size="16" type="text" onchange="dateChangeForSearch();" id="datetimeEnd" placeholder="选择结束时间" readonly class="form_datetime">
+                            <span class="itemBtn" id="diyDateBtn" data-value="diy">确定</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    </div>-->
+            <!--</div>-->
             <!--/高级搜索-->
             <!--表格-->
             <div class="data_tab">
@@ -349,6 +350,27 @@
             </div>
         </div>
     </div>
+    <!-- 历史类型 -->
+    <div id="hisData" class="modal big_modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="gridSystemModalLabel">历史类型筛选</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="sub_wrapper">
+                        <ul id="eventType_list" class="ztree"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn_hisData" type="button" class="btn modal_active btn-primary">确定</button>
+
+                    <button type="button" class="btn modal_close btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript" src="/lib/js/amrnb.js"></script>
     <script type="text/javascript" src="/lib/js/amrnb-play.js"></script>
     <script type="text/javascript" src="/lib/js/jquery-1.12.4.min.js"></script>
@@ -370,6 +392,7 @@
     <script type="text/javascript" src="/src/js/common/view.pic.js"></script>
     <script type="text/javascript" src="/src/js/common/dispose_common.js"></script>
     <script type="text/javascript" src="/src/js/common/zhuge.js"></script>
+    <script type="text/javascript" src="/src/js/common/search.template.js"></script>
     <script type="text/javascript" src="/src/js/task/task.js"></script>
 </body>
 <script>

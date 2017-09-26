@@ -6,11 +6,17 @@ var choiceFrameObj = {
     $choiceAreaFrame: $("#choiceAreaFrame"),
     $choiceUserFrame: $("#choiceUserFrame"),
     $viewDetailFrame: $("#viewDetailFrame"),
-    $isChoiceBtn: $(".searchListBtn ul li"),
+    $choiceRegionFrame: $("#choiceRegionFrame"),
+    $isChoiceBtn: $(".searchListBtn ul li"), //小区选择按钮
+    $isRegionChoiceBtn: $(".regionSearchListBtn ul li"), //片区选择按钮
     $areaResetBtn: $(".resetBtn span"),
+    $regionResetBtn: $(".regionResetBtn span"),
     $areaSearchBtn: $('.areaSearchBtn'),
+    $regionSearchBtn: $('.regionSearchBtn'),
     _areaChoiceData: null,
+    _regionChoiceData: null,
     _searchTxt: '',
+    _regionSearchTxt: '',
     _areaId: null,
     _regionId: null,
     _planId: null,
@@ -24,25 +30,81 @@ var choiceFrameObj = {
                 _this.areaShowHide(e, _this._searchTxt);
             });
         });
+        //片区选择与未选择筛选
+        _this.$isRegionChoiceBtn.each(function(e) {
+            $(this).click(function() {
+                $(this).attr("class", "active");
+                $(this).siblings("li").attr("class", "");
+                _this.regionShowHide(e, _this._regionSearchTxt);
+            });
+        });
         //小区的搜索框确定
         _this.$areaSearchBtn.click(function() {
             _this._searchTxt = $(".areaSearchText").val().trim();
             var num = $(".searchListBtn").find(".active").index();
             _this.areaShowHide(num, _this._searchTxt);
         });
+        //片区的搜索框确定
+        _this.$regionSearchBtn.click(function() {
+            _this._regionSearchTxt = $(".regionSearchText").val().trim();
+            var num = $(".regionSearchListBtn").find(".active").index();
+            _this.regionShowHide(num, _this._regionSearchTxt);
+        });
         //重置小区选择
         _this.$areaResetBtn.click(function() {
             _this.searchAreaReset();
         });
+        //重置片区选择
+        _this.$regionResetBtn.click(function() {
+            _this.searchRegionReset();
+        });
+
         //小区选择模态框加载完
         _this.$choiceAreaFrame.on('shown.bs.modal', function(e) {
             $(".areaTitle span").text(0);
             _this.areaReset();
             _this.areaRendering();
         });
+        //片区选择模态框加载完
+        _this.$choiceRegionFrame.on('shown.bs.modal', function(e) {
+            $(".regionTitle span").text(0);
+            _this.regionReset();
+            _this.regionRendering();
+        });
+        //选中片区
+        $('.regionPlace').on('click', '.regionList', function() {
+            // $(this).data('choiceArr', []);
+            if ($(this).find("input[type=checkbox]").prop('checked') == false) {
+                var num = $(this).find(".regionTotal").text();
+                $(this).find(".regionMun").text(num);
+                $(this).find("input[name=regionNumber]").val(num);
+            } else {
+                $(this).find(".regionMun").text(0);
+                $(this).find("input[name=regionNumber]").val(0);
+            }
+            $(this).find("input[type=checkbox]").trigger("click");
+        });
+        //片区复选框选择
+        $('.regionPlace').on('click', 'input[type=checkbox]', function(e) {
+            $(this).closest(".regionList").data('choiceArr', []);
+            if ($(this).prop('checked') == true) {
+                var num = $(this).closest(".regionList").find(".regionTotal").text();
+                $(this).closest(".regionList").find(".regionMun").text(num);
+                $(this).closest(".regionList").find("input[name=regionNumber]").val(num);
+            } else {
+                $(this).closest(".regionList").find(".regionMun").text(0);
+                $(this).closest(".regionList").find("input[name=regionNumber]").val(0);
+            }
+            e.stopPropagation();
+        });
+
         //小区选择模态框隐藏后
         _this.$choiceAreaFrame.on('hide.bs.modal', function(e) {
             _this._areaChoiceData = null;
+        });
+        //片区选择模态框隐藏后
+        _this.$choiceRegionFrame.on('hide.bs.modal', function(e) {
+            _this._regionChoiceData = null;
         });
         //选中小区
         $('.areaPlace').on('click', '.areaList', function() {
@@ -57,6 +119,7 @@ var choiceFrameObj = {
             }
             $(this).find("input[type=checkbox]").trigger("click");
         });
+
         //复选框选择
         $('.areaPlace').on('click', 'input[type=checkbox]', function(e) {
             $(this).closest(".areaList").data('choiceArr', []);
@@ -130,6 +193,13 @@ var choiceFrameObj = {
         _this.$isChoiceBtn.eq(0).attr("class", "active").siblings("li").attr("class", "");
         _this.areaShowHide(0, '');
     },
+    searchRegionReset: function() { //重置片区选择
+        var _this = this;
+        _this._regionSearchTxt = '';
+        $(".regionSearchText").val("");
+        _this.$isRegionChoiceBtn.eq(0).attr("class", "active").siblings("li").attr("class", "");
+        _this.regionShowHide(0, '');
+    },
     areaShowHide: function(num, string) { //小区的显隐判断
         var arr = [];
         for (var i = 0; i < $('.areaPlace .areaList').length; i++) {
@@ -155,12 +225,44 @@ var choiceFrameObj = {
             }
         }
     },
+    regionShowHide: function(num, string) { //片区的显隐判断
+        var arr = [];
+        for (var i = 0; i < $('.regionPlace .regionList').length; i++) {
+            arr.push($('.regionPlace .regionList').eq(i));
+            $('.regionPlace .regionList').eq(i).hide();
+        };
+        var newArr = arr.filter(function(item) {
+            return item.find(".regionName").text().indexOf(string) != -1;
+        });
+        if (newArr.length > 0) {
+            for (var i = 0; i < newArr.length; i++) {
+                if (num == 0) {
+                    newArr[i].show();
+                } else if (num == 1) {
+                    if (newArr[i].find("input[type=checkbox]").prop("checked") == true) {
+                        newArr[i].show();
+                    };
+                } else if (num == 2) {
+                    if (newArr[i].find("input[type=checkbox]").prop("checked") == false) {
+                        newArr[i].show();
+                    };
+                }
+            }
+        }
+    },
     areaReset: function() { //打开选择小区选择，重置
         var _this = this;
         _this._searchTxt = '';
         $(".areaSearchText").val("");
         _this.$isChoiceBtn.eq(0).attr("class", "active").siblings("li").attr("class", "");
         $(".areaPlace").html('');
+    },
+    regionReset: function() { //打开选择片区选择，重置
+        var _this = this;
+        _this._regionSearchTxt = '';
+        $(".regionSearchText").val("");
+        _this.$isRegionChoiceBtn.eq(0).attr("class", "active").siblings("li").attr("class", "");
+        $(".regionPlace").html('');
     },
     areaRendering: function() { //加载小区
         var _this = this;
@@ -209,6 +311,48 @@ var choiceFrameObj = {
             },
             error: function() {
                 xxwsWindowObj.xxwsAlert('获取小区信息失败');
+            }
+        });
+    },
+    regionRendering: function() { //加载片区
+        var _this = this;
+        var param = {
+            pageNum: 1,
+            pageSize: 100000
+        }
+        $.ajax({
+            type: "POST",
+            url: "/cloudlink-inspection-event/commonData/regionResidential/getList?token=" + lsObj.getLocalStorage('token'),
+            contentType: "application/json",
+            data: JSON.stringify(param),
+            dataType: "json",
+            success: function(data) {
+                if (data.success == 1) {
+                    var dataAll = data.rows;
+                    $(".regionTitle span").text(dataAll.length);
+                    for (var i = 0; i < dataAll.length; i++) {
+                        var txt = '<div class="regionList">' +
+                            '<dl>' +
+                            '<dt>' +
+                            '<input type="checkbox" name="">' +
+                            '<input type="hidden" value="0" name="regionNumber" >' +
+                            '<input type="hidden" value="' + dataAll[i].objectId + '" name="regionId" >' +
+                            '</dt>' +
+                            '<dd>' +
+                            '<p class="regionNameP"><span class="regionName" data-placement="top" title="' + dataAll[i].regionName + '">' + dataAll[i].regionName + '</span></p>' +
+                            '<p>已选<span class="regionMun">0</span>户/共<span class="regionTotal">' + dataAll[i].households + '</span>户</p>' +
+                            '<p class="regionContent" data-placement="top" title="' + dataAll[i].sphere + '">' + dataAll[i].sphere + '</p>' +
+                            '</dd>' +
+                            '</dl>' +
+                            '</div>';
+                        $(".regionPlace").append(txt);
+                        $(".regionPlace").find(".regionList:last").data("regionTnfor", dataAll[i].userFileIdVoSet);
+                    }
+                    _this.regionBoxChoice();
+                }
+            },
+            error: function() {
+                xxwsWindowObj.xxwsAlert('获取片区信息失败');
             }
         });
     },
@@ -322,7 +466,66 @@ var choiceFrameObj = {
             }
         }
         return userFileIdVoSet;
-    }
+    },
+    regionBoxChoice: function() { //片区初始化被选中
+        var _this = this;
+        if (_this._regionChoiceData) {
+            for (var i = 0; i < $(".regionPlace .regionList").length; i++) {
+                var dom = $(".regionPlace .regionList").eq(i);
+                for (var j = 0; j < _this._regionChoiceData.length; j++) {
+                    if (dom.find('input[name=regionId]').val() == _this._regionChoiceData[j]) {
+                        dom.find(".regionMun").text(dom.find(".regionTotal").text());
+                        dom.find("input[name=regionNumber]").val(dom.find(".regionTotal").text());
+                        dom.find("input[type=checkbox]").prop('checked', true);
+                    }
+                }
+            }
+        }
+    },
+    getRegionChoiceData: function() { //获取片区选择信息
+        var _this = this;
+        var userFileIdVoSet = [];
+        var ids = [];
+        var areaText = null;
+        for (var i = 0; i < $(".regionPlace .regionList").length; i++) {
+            var $dom = $(".regionPlace .regionList").eq(i);
+            if ($dom.find('input[type=checkbox]').prop('checked') == true) {
+                ids.push($dom.find("input[name=regionId]").val());
+                var arr = $dom.data("regionTnfor");
+                for (var j = 0; j < arr.length; j++) {
+                    userFileIdVoSet.push(arr[j]);
+                }
+            }
+        }
+        var obj = {
+            key: ids,
+            value: _this.mapVlaue(userFileIdVoSet)
+        }
+        return obj;
+    },
+    mapVlaue: function(arr) { //片区里面小区的查重
+        var obj = {};
+        for (var i = 0; i < arr.length; i++) {
+            var key = arr[i].residential;
+            if (obj.hasOwnProperty(key)) {
+                var newObj = {
+                    choiceNumber: obj[key].choiceNumber + arr[i].choiceNumber,
+                    regionId: '',
+                    residential: key,
+                    userFileIdSet: obj[key].userFileIdSet.concat(arr[i].userFileIdSet),
+                    userTotalCount: obj[key].userTotalCount
+                };
+                obj[key] = newObj;
+            } else {
+                obj[key] = arr[i];
+            }
+        }
+        var newArr = [];
+        for (var i in obj) {
+            newArr.push(obj[i]);
+        }
+        return newArr;
+    },
 };
 
 //人员选择高级搜索相关的对象与方法
@@ -840,6 +1043,12 @@ $(function() {
     userChoiceTable.init();
     userDetailedSearchObj.init();
     $(document).on("mouseover", ".areaName", function() {
+        $(this).tooltip('show');
+    });
+    $(document).on("mouseover", ".regionName", function() {
+        $(this).tooltip('show');
+    });
+    $(document).on("mouseover", ".regionContent", function() {
         $(this).tooltip('show');
     });
 });

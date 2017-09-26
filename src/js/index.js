@@ -193,8 +193,9 @@ var taskChartObj = {
 
 
 var eventChartObj = {
-    myChart: echarts.init($('#eventChart')[0]),
+    myChart: null,
     option: null,
+    $tip: $('#chart_tip'),
     init: function () {
         var that = this;
         that.request();
@@ -204,14 +205,28 @@ var eventChartObj = {
         if (!that.option) {
             return
         }
-        that.myChart.resize();
-        that.myChart.setOption(that.option);
+        if(that.myChart){
+            that.myChart.resize();
+            that.myChart.setOption(that.option);
+        }
+
     },
     request: function () {
         var that = this;
+
+        // var aData = [
+        //     {
+        //         "objectId":"3", //事件类型ID
+        //         "typeName":"第三方施工", //事件类型名称
+        //         "iconName":'C01.png', //图标名称
+        //         "indexNum":1, //排序
+        //         "count":26, //条数  整数类型
+        //     }
+        // ];
+
         $.ajax({
             type: "GET",
-            url: "/cloudlink-inspection-event/eventInfo/getEnterpriseEventsCountForWeek?token="+lsObj.getLocalStorage('token'),
+            url: "/cloudlink-inspection-event/eventInfo/web/v1/getEnterpriseEventsCountForWeek?token="+lsObj.getLocalStorage('token'),
             contentType: "application/json",
             data: {
                 token: lsObj.getLocalStorage('token')
@@ -224,11 +239,11 @@ var eventChartObj = {
                     xxwsWindowObj.xxwsAlert('网络连接出错！code:-1')
                     return;
                 }
-                var obj = data.rows[0];
-                that.render(obj.pipeEquipmentCount, obj.disasterCount, obj.constructionCount);
-            },
-            complete: function (xhr, txt) {
-                //console.log(xhr);
+                //var aData = data.rows;
+                //if(data.rows[0].iconName){
+                var aData = data.rows;
+                //}
+                that.render(aData);
             },
             statusCode: {
                 404: function () {
@@ -237,44 +252,62 @@ var eventChartObj = {
             }
         });
     },
-    render: function (pipe, nature, other) {
+    render: function (aData) {
         var that = this;
-        pipe = +pipe;
-        nature = +nature;
-        other = +other;
-        var all = pipe + nature + other;
-        $('#eventChart_all').html(all);
-        $('#pipeEquipmentCount').html(pipe);
-        $('#disasterCount').html(nature);
-        $('#constructionCount').html(other);
-
-
-        that.drawChart(pipe, nature, other);
+        //aData = [];
+        if(aData.length > 0){
+            that.$tip.hide();
+            if(!that.myChart){
+                that.myChart = echarts.init($('#eventChart')[0]);
+            }
+            that.drawChart(aData);
+        }else{
+            //$('#eventChart').html('暂无数据')
+            that.$tip.show();
+        }
     },
-    drawChart: function (pipe, nature, other) {
+    drawChart: function (aData) {
         var that = this;
+        var aColor = ['#58b7fd', '#ed7244', '#efcd2a','#706cfb', '#9387e3', '#a5f3ff','#9be534', '#64bd62'];
+        var index = 0;
         that.option = {
-            color: ['#59b6fc', '#64bd63', '#9186e4'],
+            color: aColor,
             tooltip: {
                 trigger: 'item',
-                formatter: "{b} {c} 起"
+                formatter: "{b} {c} 起",
+            },
+            legend: {
+                //itemHeight : 20,
+                itemWidth : 25,
+                itemGap : 10,
+                padding : [5,15,15,5],
+                data: aData.map(function(item,index){
+                    return{
+                        name : item.typeName,
+                        //icon : 'image://../images/common/eventTypeImg/'+item.iconName,
+                        // textStyle : {
+                        //     color : aColor[index],
+                        // }
+                    }
+                }),
+                // formatter : function(a,b){
+                //     console.log('index'+ index);
+                //     console.log('a'+a);
+                //     console.log('b'+b);
+                //     index++;
+                //     return a;
+                // }
             },
             series: [{
                 type: 'pie',
                 radius: ['35%', '65%'],
 
-                data: [{
-                        value: pipe,
-                        name: '管道设施'
-                    }, {
-                        value: nature,
-                        name: '自然灾害'
-                    }, {
-                        value: other,
-                        name: '第三方活动'
-                    },
-
-                ],
+                data: aData.map(function(item,index){
+                    return{
+                        name : item.typeName,
+                        value : item.count
+                    }
+                }),
                 label: {
                     normal: {
                         show: true,
@@ -285,7 +318,6 @@ var eventChartObj = {
                             fontSize: 14,
                         },
                     }
-
                 }
             }]
         };
@@ -448,6 +480,7 @@ var eventListObj = {
         });
     },
     render: function (count, arr) {
+        //console.log(arr);
         var that = this;
         var iconObj = {
             '1': 'other',
@@ -475,9 +508,9 @@ var eventListObj = {
                 '</span>',
                 '</div>',
                 '<div class="sub_wrap">',
-                '<div class="icon ',
-                iconObj[item.parentTypeId],
-                '">',
+                '<div class="icon" ',
+                //iconObj[1],
+                'style="background:url(/src/images/common/eventTypeImg/'+ (item.eventIconName || 'D01.png')+') no-repeat 5px 4px;background-size:43px 43px;">',
                 '</div>',
                 '<div class="content">',
                 '<div class="con_title">',

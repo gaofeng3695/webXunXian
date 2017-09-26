@@ -2,13 +2,21 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var uglify = require("gulp-uglify");
 var minifyCss = require("gulp-minify-css");
-var minifyHtml = require("gulp-minify-html");
+//var minifyHtml = require("gulp-minify-html");
+var minifyHtml = require("gulp-htmlmin");
 var imagemin = require('gulp-imagemin');
 
 
+
+
 gulp.task('html', function() {
-    gulp.src(['./**/*.html', '!{node_modules,demo,www}/**/*.html'])
-        .pipe(minifyHtml()) //压缩
+    gulp.src(['./**/*.html', '!{node_modules,demo,www,demoHtml}/**/*.html'])
+        .pipe(minifyHtml({
+            collapseWhitespace: true,
+            minifyJS : true,
+            minifyCSS : true,
+            removeComments : true,
+        })) //压缩
         .pipe(gulp.dest('www/'));
 });
 

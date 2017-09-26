@@ -15,6 +15,7 @@
     <link href="/lib/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="/src/css/common/search_table.css" rel="stylesheet">
     <link href="/src/css/common/view.pic.css" rel="stylesheet">
+    <link href="/src/css/detailsRepair.css" rel="stylesheet">
     <link href="/src/css/facility.css" rel="stylesheet">
 </head>
 
@@ -688,7 +689,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn deletePlan deleteFacility">删除</button>
-                    <button class="btn submit getHistory">历史检查</button>
+                    <button class="btn submit getHistory">历史维修记录</button>
                     <button class="btn submit getMeasurement">测量统计</button>
                     <button class="btn" data-dismiss="modal">取消</button>
                 </div>
@@ -1003,6 +1004,65 @@
             </div>
         </div>
     </div>
+    <!--历史维修记录-->
+    <div id="repairHistory" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>历史维修记录<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="historyMain">
+                        <div class="historySeach">
+                            <div class="historySeachMain">
+                                <input type="text" placeholder="请输入关键字搜索" />
+                                <span class="historySeachBtn">确定</span>
+                            </div>
+                        </div>
+                        <table id="repairTableHistory"></table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--维修详情模态框-->
+    <div id="repairDetails" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>{{frameName}}<a class="close" data-dismiss="modal">×</a></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="frameDetails">
+                        <div class="frameDetailsNav">
+                            <ul>
+                                <li v-bind:class="{active:detailsShow}" @click="tabChange('details')">维修详情</li>
+                                <li v-bind:class="{active:axisShow}" @click="tabChange('axis')">维修任务轴</li>
+                            </ul>
+                        </div>
+                        <div class="frameDetailsNavMian">
+                            <p class="detailsCode">维修编号：{{maintenanceCode}}</p>
+                            <!--维修详情-->
+                            <div class="frameDetailsMain" v-show="detailsShow">
+                                <component v-bind:is="which_to_show" v-bind:modifybtn="modifyShow" v-bind:openperson="openPerson" v-bind:my-msgdetails="dataBasics"></component>
+                            </div>
+                            <!--维修任务轴-->
+                            <div class="frameAxisMian" v-show="axisShow">
+                                <axis-html v-bind:my-msgaxis="dataAxis"></axis-html>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn submit" v-show="modifyShow" @click="modifySave">保存</button>
+                    <button class="btn" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript" src="/lib/js/amrnb.js"></script>
     <script type="text/javascript" src="/lib/js/amrnb-play.js"></script>
@@ -1026,6 +1086,10 @@
     <script type="text/javascript" src="/src/js/common/people.tree.js"></script>
     <script type="text/javascript" src="/src/js/common/history.details.js"></script>
     <script type="text/javascript" src="/src/js/facility/facility.list.js"></script>
+
+    <script type="text/javascript" src="/src/js/common/vue.js"></script>
+    <script type="text/javascript" src="/src/js/common/vue-resource.js"></script>
+    <script type="text/javascript" src="/src/js/maintenance/details.js"></script>
 </body>
 <script>
 </script>

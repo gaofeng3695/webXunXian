@@ -77,10 +77,10 @@ var enterprisedObj = {
         /*上传企业人员花名册 */
         that.$addroseImg.click(function() {
             var imgNum = $(".rose_img_list").find('.rose_enterprise_images').length;
-            if (imgNum <= 8) {
+            if (imgNum <= 5) {
                 $(".upload_rose_picture").trigger("click");
             } else {
-                xxwsWindowObj.xxwsAlert("最多上传9张图片");
+                xxwsWindowObj.xxwsAlert("最多上传6张图片");
             }
         });
         that.$submitInformation.click(function() {

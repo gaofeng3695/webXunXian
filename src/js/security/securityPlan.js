@@ -8,7 +8,8 @@ var planObj = {
     $planDetailsFrame: $("#planDetailsFrame"),
     $securityPeople: $(".planMainAdd input[name=securityPeople]"),
     $securityPeopleModify: $(".planMainModify input[name=securityPeople]"),
-    $addChoiceUserBtn: $(".addChoiceUserBtn span"),
+    $addChoiceUserBtn: $(".addChoiceUserBtn span.areaBtn"), //小区选择
+    $addChoiceRegionBtn: $(".addChoiceUserBtn span.regionBtn"), //片区选择
     $modifyChoiceUserBtn: $(".modifyChoiceUserBtn span"),
     $lookUserListBtn: $(".lookUserList span"),
     $copyPlanBtn: $(".copyPlan"),
@@ -31,6 +32,7 @@ var planObj = {
             $(".planMainAdd").find('input').val("");
             $(".planMainAdd").find('textarea').val("");
             $("#addPlanFrame").removeData('userData');
+            $("#addPlanFrame").removeData('regionData');
         });
         //新建模态框加载完成
         _this.$addPlanFrame.on('shown.bs.modal', function(e) {
@@ -42,6 +44,12 @@ var planObj = {
             choiceFrameObj.$choiceAreaFrame.modal();
             choiceFrameObj._areaChoiceData = $("#addPlanFrame").data('userData');
         });
+        //新建打开片区选择
+        _this.$addChoiceRegionBtn.click(function() {
+            // _this._isEdit = false;
+            choiceFrameObj.$choiceRegionFrame.modal();
+            choiceFrameObj._regionChoiceData = $("#addPlanFrame").data('regionData');
+        });
         //修改打开用户选择
         _this.$modifyChoiceUserBtn.click(function() {
             _this._isEdit = true;
@@ -49,6 +57,29 @@ var planObj = {
             choiceFrameObj._areaChoiceData = $("#modifyPlanFrame").data('userData');
         });
 
+        //确定片区选择
+        $(".regionChoiceTrueBtn").click(function() {
+            var obj = choiceFrameObj.getRegionChoiceData();
+            var data = obj.value;
+            choiceFrameObj.$choiceRegionFrame.modal('hide');
+            var txt = [],
+                total = 0;
+            for (var i = 0; i < data.length; i++) {
+                total += data[i].choiceNumber;
+                txt.push(data[i].residential + '(' + data[i].choiceNumber + '户)');
+                data[i].regionId = '';
+            }
+            // if (_this._isEdit == true) {
+            //     $("#modifyPlanFrame").data('userData', data);
+            //     $("#modifyPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
+            //     $("#modifyPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
+            // } else {
+
+            $("#addPlanFrame").data('regionData', obj.key);
+            $("#addPlanFrame").data('userData', data);
+            $("#addPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
+            $("#addPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
+        });
         //确定小区选择
         $(".areaChoiceTrueBtn").click(function() {
             var data = choiceFrameObj.getAreaChoiceData();
@@ -64,6 +95,7 @@ var planObj = {
                 $("#modifyPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
                 $("#modifyPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
             } else {
+                $("#addPlanFrame").removeData('regionData');
                 $("#addPlanFrame").data('userData', data);
                 $("#addPlanFrame").find("input[name=planWorkload]").val((total == 0) ? "" : total);
                 $("#addPlanFrame").find("textarea[name=securityCheckScope]").val(txt.join("，"));
@@ -649,7 +681,21 @@ var planObj = {
     addPlan: function(paramData) { //添加计划
         var _this = this;
         _this._flag = false;
-        paramData.userFileIdVoSet = $("#addPlanFrame").data('userData');
+        var ids = $("#addPlanFrame").data('regionData');
+        var regionArr = [];
+        if (ids) {
+            for (var i = 0; i < ids.length; i++) {
+                var obj = {
+                    "regionId": ids[i], //片区信息不为空时按片区选择
+                    "residential": "",
+                    "userFileIdSet": []
+                }
+                regionArr.push(obj);
+            }
+            paramData.userFileIdVoSet = regionArr;
+        } else {
+            paramData.userFileIdVoSet = $("#addPlanFrame").data('userData');
+        }
         $.ajax({
             type: "POST",
             url: "/cloudlink-inspection-event/securityCheckPlan/save?token=" + lsObj.getLocalStorage('token'),

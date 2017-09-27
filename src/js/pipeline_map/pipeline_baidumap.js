@@ -49,14 +49,16 @@ var pipeline_baidumap = {
     watch: {
         sCurrentTap : function(newVal){
             this._draw_lines();
+            if( newVal === 'save'){
+                //console.log('——————————触发保存')
+                this.$emit('savedetail');
+            }else{
+                console.log('——————————编辑状态发生改变')
+
+            }
         },
-        // isEditable : function(){
-        //     this._draw_lines();
-        // },
-        // isDrawable :function(){
-        //     this._draw_lines();
-        // },
         aLineDetailsToShow: function () {
+            console.log('——————————数据来源发生改变')
             this._draw_lines();
         },
     },
@@ -147,7 +149,7 @@ var pipeline_baidumap = {
 
             map.map.setViewport(aPoints, { //设定视野范围
                 enableAnimation: true,
-                margins: [0, 200, 0, 0],
+                margins: [0, 0, 0, 0],
             });
 
         },

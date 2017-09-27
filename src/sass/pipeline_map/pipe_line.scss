@@ -75,7 +75,7 @@ body {
         height: 40px;
         line-height: 40px;
         font-size: 14px;
-        color: #666;
+        color: #333;
         width: 300px;
         text-align: center;
         background: #f4f4f4;
@@ -94,7 +94,7 @@ body {
         overflow: hidden;
         li {
             border-bottom: 1px solid #ececec;
-            width: 280px;
+            width: 290px;
             cursor: pointer;
             margin: 10px 5px;
             overflow: hidden;
@@ -106,7 +106,7 @@ body {
             height: 30px;
             line-height: 30px;
             font-size: 12px;
-            color: #333;
+            color: #666;
             .wid200 {
                 float: left;
                 width: 240px;
@@ -174,7 +174,7 @@ body {
     ul li {
         .content {
             padding: 0px 5px;
-            width: 280px;
+            width: 290px;
         }
         list-style: none;
         padding: 10px 5px;
@@ -184,14 +184,23 @@ body {
     }
     .line {
         font-size: 12px;
-        color: #6a6a6a;
+        color: #666;
         height: 24px;
         line-height: 24px;
+        width: 270px;
     }
     .pipe_name {
         /*padding-left: 10px;*/
         float: left;
-        width: 255px;
+        width: 270px;
+        .w1 {
+            margin-right: -.5em;
+            letter-spacing: .5em;
+        }
+    }
+    .wid100 {
+        width: 60px;
+        display: inline-block;
     }
     .clrfff {
         color: #fff;
@@ -481,4 +490,15 @@ body {
 
 .clickon li {
     border: none !important;
+}
+
+.mCSB_scrollTools .mCSB_draggerContainer {
+    right: -11px;
+}
+
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    width: 5px !important;
+    opacity: .5;
+    background: #fff;
+    background: #999;
 }

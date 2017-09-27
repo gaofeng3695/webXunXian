@@ -1,9 +1,9 @@
 /**
  * 参数说明
- * inputobj：
- * title: "管线名称",
- *  type: 1,1：表示一行只显示一条；2：表示一行显示两天；0表示文本域
- *  required: true
+ *<modal-vue v-if="netshow" :styleobj="styleobj"  :footer="aFooters" @click1="createSave" @click2="cancel">
+ *styleobj:打开模态框的样式{title: '标题',width: '宽度800(不需要单位)',height: '高度',}
+ :footer="aFooters"下面按钮的样式[{ "title": "新建", "bgcolor": "#59b6fc","color":"按钮字体显示的颜色", "disabled": false }, { "title": "取消", "color": "#fff", "disabled": false }, ];
+ 后面的click1,click2依次写入  和前面的按钮相匹配上
  */
 
 // 实现列表组件展示
@@ -12,35 +12,31 @@ Vue.component('modal-vue', {
         styleobj: {
             type: Object,
         },
-        inputobj: {
-            type: Object,
+        footer: {
+            type: Array,
         }
     },
     template: [
+        '<transition name="fade">',
         '<div class="forms"><div class="modal_table" v-bind:style="whstyle">',
-        '<modal-top :title="styleobj.title" @closes="createinfo"></modal-top>',
+        '<modal-top :title="styleobj.title" @click1="click2"></modal-top>',
         '<div class="content"  v-bind:style="height">',
         '<div class="tablevue">',
         '<slot>',
         '</slot>',
         '</div>',
         '</div>',
-        '<modal-footer @closes="createinfo" @save="save"></modal-footer>',
+        '<modal-footer :footer="footer"  @click1="click1" @click2="click2" v-if="footer"></modal-footer>',
         '</div>',
         '</div>',
+        '</transition>',
     ].join(" "),
-    data: function() {
-        return {
-
-        }
-    },
     methods: {
-        createinfo: function() {
-            this.$emit('createinfo', this.styleobj);
+        click1: function() {
+            this.$emit('click1', this.styleobj);
         },
-        save: function() {
-            this.$emit('createsave');
-            // 进行数据的保存
+        click2: function() {
+            this.$emit('click2', this.styleobj);
         }
     },
     computed: {
@@ -68,28 +64,40 @@ Vue.component('modal-top', {
     template: [
         '<div class="top">',
         '<span class="htitle" v-text="title"></span>',
-        '<span class="closes"  @click="createInfo">X</span>',
+        '<span class="closes"  @click="click1">X</span>',
         '</div>',
     ].join(" "),
     methods: {
-        createInfo: function() {
-            this.$emit('closes');
+        click1: function() {
+            this.$emit('click1');
         },
     },
 });
 Vue.component('modal-footer', {
+    props: {
+        footer: {
+            type: Array,
+        }
+    },
     template: [
         '<div class="footer">',
-        '<button class="btns submit" @click="save()">保存</button>',
-        '<button class="btns cancel" @click="closes()">取消</button>',
+        '<button class="btns "  v-for="item,index in footer" @click="clickbtn($event.currentTarget,item,index)" :style=[{background:item.bgcolor,color:item.color}]>{{item.title}}</button>',
         '</div>',
     ].join(" "),
+    data: function() {
+        return {
+            style: {
+
+            }
+        };
+    },
     methods: {
-        closes: function() {
-            this.$emit('closes');
-        },
-        save: function() {
-            this.$emit('save');
+        clickbtn: function(dom, item, index) {
+            var that = this;
+            if (that.footer[index].disabled) {
+                return;
+            }
+            that.$emit('click' + (index + 1));
         }
     },
 });

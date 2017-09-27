@@ -157,7 +157,7 @@
             }
             .preview {
                 width: 150px;
-                height: 2px;
+                // height: 2px;
                 margin-top: 20px;
                 background: #59B6FC;
             }
@@ -267,6 +267,18 @@
             right: -20px;
             cursor: pointer;
         }
+        .left-edit-shrink {
+            width: 15px;
+            height: 15px;
+            background: #6a6a6a;
+            text-align: center;
+            line-height: 15px;
+            color: #fff;
+            position: absolute;
+            top: 20px;
+            right: -20px;
+            cursor: pointer;
+        }
     }
     .pipenetworkEdit {
         // display: none;
@@ -296,6 +308,7 @@
         .pipenetwork-attribute {
             width: 100%;
             height: 340px;
+            font-size: 12px;
             background: #fff;
             position: relative;
             .networkName {
@@ -315,25 +328,30 @@
             }
             .creatTime {
                 width: 205px;
-                height: 80px;
+                // height: 80px;
                 margin: 5px 10px;
                 background: #F9F9F9;
                 color: #727272;
                 ul {
                     list-style: none;
+                    padding: 5px;
+                    margin-bottom: 0;
                     li {
-                        height: 25px;
-                        padding-top: 5px;
+                        height: 100%;
+                        // line-height: 25px;
+                        // padding-top: 5px;
                         .left {
+                            height: 100%;
                             display: inline-block;
-                            width: 70px;
-                            line-height: 18px;
+                            width: 60px;
+                            line-height: 100%;
                             text-align: center;
                         }
                         .right {
+                            height: 100%;
                             display: inline-block;
-                            width: 120px;
-                            line-height: 18px;
+                            width: 130px;
+                            line-height: 100%;
                             padding-left: 5px;
                             border-left: 1px solid #EDEDED;
                         }
@@ -374,6 +392,7 @@
         bottom: 10px;
         text-align: center;
         button {
+            font-size: 14px;
             display: inline-block;
             width: 90px;
             height: 30px;
@@ -389,19 +408,4 @@
             }
         }
     }
-    // .commonBtn {
-    //     width: 90px;
-    //     height: 30px;
-    //     position: absolute;
-    //     bottom: 10px;
-    //     left: 67px;
-    //     border: none;
-    //     outline: none;
-    //     color: #fff;
-    //     cursor: default;
-    //     border-radius: 5px;
-    // }
-    // .btnBgcolor {
-    //     background: #59b6fc;
-    // }
 }

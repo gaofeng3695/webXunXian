@@ -61,3 +61,11 @@ body,
         }
     }
 }
+
+
+.slide-enter-active, .slide-leave-active {
+    transition: all .5s
+}
+.slide-enter, .slide-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+    margin-left: -300px;
+}
